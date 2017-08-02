@@ -1,0 +1,186 @@
+C51 COMPILER V9.00   GLOBAL                                                                07/03/2017 18:41:20 PAGE 1   
+
+
+C51 COMPILER V9.00, COMPILATION OF MODULE GLOBAL
+OBJECT MODULE PLACED IN .\Obj\Global.obj
+COMPILER INVOKED BY: C:\Keil4\C51\BIN\C51.EXE ..\Code\Global.c OPTIMIZE(9,SPEED) BROWSE INCDIR(..\Code\INC;..\Code\DRIVE
+                    -R\INC;..\Code\DRIVER\MST9U\INC;..\Code\DRIVER\MST9U3\INC) DEFINE(ModelName=MST9U3_DEMO,CHIP_ID=MST9U3) DEBUG OBJECTEXTEN
+                    -D PRINT(.\List\Global.lst) OBJECT(.\Obj\Global.obj)
+
+line level    source
+
+   1          #include "types.h"
+   2          #include "board.h"
+   3          #include "global.h"
+   4          #include "Debug.h"
+   5          #include "Common.h"
+   6          #include "Keypad.h"
+   7          #include "drvPM.h"
+   8          #include "msAPI_MailBox.h"
+   9          #include "drvGPIO.h"
+  10          #include "Keypaddef.h"
+  11          
+  12          #if ENABLE_WATCH_DOG_INT
+              BYTE xdata u8WDT_Status=0;
+              #endif
+  15          
+  16          #if EnableTime1Interrupt
+  17          WORD XDATA g_u16MsCounter1 = 1000; // for System timer
+  18          BOOL XDATA bSecondTimer1 = FALSE;
+  19          BYTE idata u8SecondTIMER1 = 0;
+  20          #endif
+  21          
+  22          BYTE g_ucTimer0_TH0;
+  23          BYTE g_ucTimer0_TL0;
+  24          BYTE xdata g_u8SystemSpeedMode=0;
+  25          bit g_bMcuPMClock = 0;
+  26          
+  27          BYTE xdata VKeyPad=VK_NOTHING;
+  28          
+  29          WORD xdata SystemFlags = 0; // for system status flags
+  30          
+  31          bit SecondFlag = 0;
+  32          bit ms10Flag = 0;
+  33          bit ms50Flag = 0;
+  34          bit ms500Flag = 0; // 120815 coding, set to bit data type for isr usage
+  35          WORD ms_Counter = SystemTick; // for System timer
+  36          BYTE xdata Second;
+  37          BYTE xdata KeypadButton = 0;
+  38          BYTE xdata ModeDetectCounter = 20;
+  39          WORD xdata g_u32MailCounter = 1;
+  40          WORD xdata CheckPMcounter =0;
+  41          
+  42          #if (IR_REMOTE_SEL!=NO_REMOTE)
+              BYTE xdata IRkeyDelayCounter=0;
+              #endif
+  45          
+  46          bit TI0_FLAG; // 120815 coding, set to bit data type for isr usage
+  47          BYTE xdata SIORxBuffer[_UART_BUFFER_LENGTH_];
+  48          BYTE xdata SIORxIndex;
+  49          BYTE ReSyncCounter;
+  50          
+  51          #if UART1
+              bit TI1_FLAG;
+              BYTE xdata SIORxBuffer1[_UART_BUFFER_LENGTH_];
+C51 COMPILER V9.00   GLOBAL                                                                07/03/2017 18:41:20 PAGE 2   
+
+              BYTE xdata SIORxIndex1;
+              BYTE ReSyncCounter1;
+              #endif
+  57          
+  58          WORD xdata PM_SleepModeCounter = 0;
+  59          
+  60          
+  61          BYTE XDATA MailBox[0x1000] _at_ 0xC000;
+  62          DWORD XDATA XDATA_TO_DRAM_ADDR _at_ XDATA_MBX_XD2MIU_ADDR;
+  63          #if ENABLE_MBX
+              bit bMailNT =0;
+              #endif
+  66          #if ENABLE_R2_INT_M51_Test
+              bit bR2_int_M51_flag=0;
+              BYTE u8nonPMFIQStatus=0;
+              BYTE u8HostS2D=0;
+              #endif
+  71          bit DebugOnlyFlag = 0;
+  72          WORD DelayCounter = 0;
+  73          bit bDelayFlag = 0;
+  74          
+  75          
+  76          BYTE xdata TimeOutCounter = 0; // 120510 coding, addition for checking register status
+  77          BYTE xdata g_ucPWMTimer = 0;
+  78          bit bBuzzer = 0;
+  79          bit g_bCorePowerStatus=1;
+  80          bit g_bR2Status=1;             // 1 : alive , 0 : power down
+  81          #if ENABLE_DRAM_SELFREFRESH
+              bit g_bSTRStatus=0;            // 1 : dram in STR , 0 : dram not in STR
+              #endif
+  84          extern void msDebugDummy(void);
+  85          
+  86          void DummyCall(void)
+  87          {
+  88   1          BYTE i = 0;
+  89   1      
+  90   1          if(i)
+  91   1          {
+  92   2      #if !ENABLE_DEBUG
+  93   2              msDebugDummy();
+  94   2      #endif
+  95   2              // Uncalled warnings
+  96   2              msRead2Byte(0);
+  97   2              msWrite3Byte(0,0);
+  98   2              msWrite4Byte(0,0);
+  99   2              msWrite2ByteMask(0,0,0);
+ 100   2              Delay1ms(0);
+ 101   2              Delay4us();
+ 102   2      
+ 103   2              mcuDMADownloadCode(0,0,0,0,0);
+ 104   2              mcuDMACRC32(0,0,0,0,0,0);
+ 105   2              mcuDMAMemoryFill(0,0,0,0,0);
+ 106   2              mcuDMAPatternSearch(0,0,0,0,0);
+ 107   2              mcuArrangeCodeAddr(0,0,0);
+ 108   2              mcuXdataMapToSRAM(0,0);
+ 109   2              codeMoveToXdata(0,0,0);
+ 110   2              mcuInitXdataMapToDRAM();
+ 111   2              mcuXdataMapToDRAM(0);
+ 112   2              PMDummy();
+ 113   2              Key_ScanKeypad();
+ 114   2              msDrvMcuMailBoxRead();
+ 115   2              msPM_IsState_IDLE();
+C51 COMPILER V9.00   GLOBAL                                                                07/03/2017 18:41:20 PAGE 3   
+
+ 116   2              #if ENABLE_MBX
+                      Mailbox_dummy();
+                      #endif
+ 119   2              drvGPIO_dummy();
+ 120   2              MsOS_DeleteMutex(0);
+ 121   2          }
+ 122   1      }
+ 123          
+ 124          void Init_GlobalVariables( void )
+ 125          {
+ 126   1      /////////////////////////////////////////////////
+ 127   1      // add for prevent complier warning
+ 128   1          DummyCall();
+ 129   1      //////////////////////////////////////////////////
+ 130   1          Second = 0;
+ 131   1      
+ 132   1          PM_SleepModeCounter=g_sMailBoxR2.u16PMCounter;
+ 133   1      
+ 134   1          Clr_SleepMode_Flag();       
+ 135   1      
+ 136   1      }
+ 137          
+ 138          Bool MsOS_DeleteMutex (Slong s32MutexId)
+ 139          {
+ 140   1          s32MutexId = s32MutexId;
+ 141   1          return TRUE;
+ 142   1      }
+ 143          
+ 144          BYTE TransNumToBit(BYTE value)
+ 145          {
+ 146   1          BYTE i=1;
+ 147   1          if(value == 0)
+ 148   1              return 1;
+ 149   1      
+ 150   1          while(value)
+ 151   1          {
+ 152   2              i <<= 1;
+ 153   2              value--;
+ 154   2          }
+ 155   1          return i;
+ 156   1      }
+ 157          
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    346    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =     69    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =      7    ----
+   IDATA SIZE       =      1    ----
+   BIT SIZE         =     11    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

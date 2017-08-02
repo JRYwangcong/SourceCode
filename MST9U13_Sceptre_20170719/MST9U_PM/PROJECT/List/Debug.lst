@@ -1,0 +1,1192 @@
+C51 COMPILER V9.00   DEBUG                                                                 07/03/2017 18:41:22 PAGE 1   
+
+
+C51 COMPILER V9.00, COMPILATION OF MODULE DEBUG
+OBJECT MODULE PLACED IN .\Obj\Debug.obj
+COMPILER INVOKED BY: C:\Keil4\C51\BIN\C51.EXE ..\Code\Debug.c OPTIMIZE(9,SPEED) BROWSE INCDIR(..\Code\INC;..\Code\DRIVER
+                    -\INC;..\Code\DRIVER\MST9U\INC;..\Code\DRIVER\MST9U3\INC) DEFINE(ModelName=MST9U3_DEMO,CHIP_ID=MST9U3) DEBUG OBJECTEXTEND
+                    - PRINT(.\List\Debug.lst) OBJECT(.\Obj\Debug.obj)
+
+line level    source
+
+   1          #define _DEBUG_C_
+   2          #include "types.h"
+   3          #include "Common.h"
+   4          #include "debugDef.h"
+   5          #include "global.h"
+   6          #include "board.h"
+   7          #include "ms_reg.h"
+   8          #include "ms_rwreg.h"
+   9          #include "misc.h"
+  10          #include "debug.h"
+  11          #include "Common.h"
+  12          #include "gpio_def.h"
+  13          #include "Mcu.h"
+  14          #include "NVRam.h"
+  15          #include "Misc.h"
+  16          
+  17          #if ENABLE_DEBUG
+              #message "Please remember to disable the debug function!"//Zhifeng.Wu Please don't canel it,just only a me
+             -ssage,thanks.
+              #endif
+  20          
+  21          //BYTE xdata SIORxIndex = 0;
+  22          //BYTE xdata ReSyncCounter;
+  23          extern Bool xdata bFlashWriteFactory;
+  24          #define DEBUG_Massage    1
+  25          #if ENABLE_DEBUG&&DEBUG_Massage
+                  #define DB_printData(str, value)   printData(str, value)
+                  #define DB_printMsg(str)           printMsg(str)
+              #else
+  29              #define DB_printData(str, value)
+  30              #define DB_printMsg(str)
+  31          #endif
+  32          
+  33          
+  34          void putSIOChar( unsigned char sendData )
+  35          {
+  36   1         if(!UART_READ_ES())
+  37   1              return;
+  38   1      
+  39   1          UART_BUFFER() = sendData;
+  40   1          while( 1 )
+  41   1          {
+  42   2              if( EA && UART_READ_ES() )
+  43   2              {
+  44   3                  if( TI0_FLAG )
+  45   3                  {
+  46   4                      TI0_FLAG = 0;
+  47   4                      break;
+  48   4                  }
+  49   3              }
+  50   2              else
+  51   2              {
+  52   3                  if(UART_TI_FLAG())
+C51 COMPILER V9.00   DEBUG                                                                 07/03/2017 18:41:22 PAGE 2   
+
+  53   3                  {
+  54   4                      UART_CLR_TI_FLAG();
+  55   4                      break;
+  56   4                  }
+  57   3              }
+  58   2          }
+  59   1      }
+  60          
+  61          #if ENABLE_R2_INT_M51_Test
+              void TestCommand_FIQ_INT(BYTE ucPara1)
+              {
+                      u8HostS2D=ucPara1;
+                      DB_printData("u8HostS2D==%d",u8HostS2D);
+                  switch (ucPara1)
+                  {
+                      case hst3to0_int:
+                              msWriteByteMask(REG_10190E, 0x00, BIT2);
+                              msWriteByteMask(REG_10054C, BIT0, BIT0);
+                              DB_printData("REG_10190E==%x",msReadByte(REG_10190E));
+                              DB_printData("REG_10054C==%x",msReadByte(REG_10054C));
+                              DB_printData("REG_10191E==%x",msReadByte(REG_10191E));
+                          break;
+                      case hst3to1_int:
+                              msWriteByteMask(REG_10190E, 0x00, BIT1);
+                              msWriteByteMask(REG_10054C, BIT1, BIT1);
+                              DB_printData("REG_10190E==%x",msReadByte(REG_10190E));
+                              DB_printData("REG_10054C==%x",msReadByte(REG_10054C));
+                              DB_printData("REG_10191E==%x",msReadByte(REG_10191E));
+                          break;
+                      case hst3to2_int:
+                              msWriteByteMask(REG_10190E, 0x00, BIT0);
+                              msWriteByteMask(REG_10054C, BIT2, BIT2);
+                              DB_printData("REG_10190E==%x",msReadByte(REG_10190E));
+                              DB_printData("REG_10054C==%x",msReadByte(REG_10054C));
+                              DB_printData("REG_10191E==%x",msReadByte(REG_10191E));
+                          break;
+              
+                      case hst2to0_int:
+                              msWriteByteMask(REG_10190D, 0x00, BIT6);
+                              msWriteByteMask(REG_100548, BIT0, BIT0);
+                              DB_printData("REG_10190D==%x",msReadByte(REG_10190D));
+                              DB_printData("REG_100548==%x",msReadByte(REG_100548));
+                              DB_printData("REG_10191D==%x",msReadByte(REG_10191D));
+                          break;
+                      case hst2to1_int:
+                              msWriteByteMask(REG_10190D, 0x00, BIT5);
+                              msWriteByteMask(REG_100548, BIT1, BIT1);
+                              DB_printData("REG_10190D==%x",msReadByte(REG_10190D));
+                              DB_printData("REG_100548==%x",msReadByte(REG_100548));
+                              DB_printData("REG_10191D==%x",msReadByte(REG_10191D));
+                          break;
+                      case hst2to3_int:
+                              msWriteByteMask(REG_10190D, 0x00, BIT4);
+                              msWriteByteMask(REG_100548, BIT2, BIT2);
+                              DB_printData("REG_10190D==%x",msReadByte(REG_10190D));
+                              DB_printData("REG_100548==%x",msReadByte(REG_100548));
+                              DB_printData("REG_10191D==%x",msReadByte(REG_10191D));
+                          break;
+              
+                      case hst1to0_int:
+                              msWriteByteMask(REG_10190D, 0x00, BIT2);
+                              msWriteByteMask(REG_100544, BIT0, BIT0);
+C51 COMPILER V9.00   DEBUG                                                                 07/03/2017 18:41:22 PAGE 3   
+
+                              DB_printData("REG_10190D==%x",msReadByte(REG_10190D));
+                              DB_printData("REG_100544==%x",msReadByte(REG_100544));
+                              DB_printData("REG_10191D==%x",msReadByte(REG_10191D));
+                          break;
+                      case hst1to2_int:
+                              msWriteByteMask(REG_10190D, 0x00, BIT1);
+                              msWriteByteMask(REG_100544, BIT1, BIT1);
+                              DB_printData("REG_10190D==%x",msReadByte(REG_10190D));
+                              DB_printData("REG_100544==%x",msReadByte(REG_100544));
+                              DB_printData("REG_10191D==%x",msReadByte(REG_10191D));
+                          break;
+                      case hst1to3_int:
+                              msWriteByteMask(REG_10190D, 0x00, BIT0);
+                              msWriteByteMask(REG_100544, BIT2, BIT2);
+                              DB_printData("REG_10190D==%x",msReadByte(REG_10190D));
+                              DB_printData("REG_100544==%x",msReadByte(REG_100544));
+                              DB_printData("REG_10191D==%x",msReadByte(REG_10191D));
+                          break;
+              
+                      case hst0to1_int:
+                              msWriteByteMask(REG_10190C, 0x00, BIT6);
+                              msWriteByteMask(REG_100540, BIT0, BIT0);
+                              DB_printData("REG_10190C==%x",msReadByte(REG_10190C));
+                              DB_printData("REG_100540==%x",msReadByte(REG_100540));
+                              DB_printData("REG_10191C==%x",msReadByte(REG_10191C));
+                          break;
+                      case hst0to2_int:
+                              msWriteByteMask(REG_10190C, 0x00, BIT5);
+                              msWriteByteMask(REG_100540, BIT1, BIT1);
+                              DB_printData("REG_10190C==%x",msReadByte(REG_10190C));
+                              DB_printData("REG_100540==%x",msReadByte(REG_100540));
+                              DB_printData("REG_10191C==%x",msReadByte(REG_10191C));
+                          break;
+                      case hst0to3_int:
+                              msWriteByteMask(REG_10190C, 0x00, BIT4);
+                              msWriteByteMask(REG_100540, BIT2, BIT2);
+                              DB_printData("REG_10190C==%x",msReadByte(REG_10190C));
+                              DB_printData("REG_100540==%x",msReadByte(REG_100540));
+                              DB_printData("REG_10191C==%x",msReadByte(REG_10191C));
+                          break;
+                      default:
+                                      msWriteByte(REG_10190C,0xFF);
+                                      msWriteByte(REG_10190D,0xFF);
+                                      msWriteByte(REG_10190E,0xFF);
+              
+                                      msWriteByte(REG_10054C,0x00);
+                                      msWriteByte(REG_100548,0x00);
+                                      msWriteByte(REG_100544,0x00);
+                                      msWriteByte(REG_100540,0x00);
+                                      DB_printMsg("Disable nonPM FIQ mark and enable it");
+                      break;
+              
+                  }
+              
+              }
+              #endif
+ 171          XDATA BYTE ucTempTbl[16];
+ 172          #if ENABLE_SW_DOUBLE_BUFFER
+              void checkMenuloadWriteData(void)
+              {
+                      BYTE i;
+                      DB_Mode(eDB_NORMAL_MODE);
+C51 COMPILER V9.00   DEBUG                                                                 07/03/2017 18:41:22 PAGE 4   
+
+                      for(i=0; i<0xFF; i++)
+                      {
+                              DB_WB(REG_003D00+i,i);
+                      }
+                      #if ENABLE_SW_DOUBLE_BUFFER
+                              msSWDBWriteToRegister();
+                      #endif
+              
+                      #if ENABLE_SW_DOUBLE_BUFFER
+                              msSWDBWriteToRegister();
+                              msSWDBWaitForRdy();
+                      #endif        
+                      
+                      for(i=0; i<0x10; i++)
+                      {
+                              if (msReadByte(REG_003D00+i)==i)
+                              {
+                                      //printData("i===%x", i);
+                                      DB_printData("msReadByte(REG_003D00+i)===%x", msReadByte(REG_003D00+i));
+                              }
+                      }
+              }
+              #endif
+ 200          void ExecTestCommand( void )
+ 201          {
+ 202   1          BYTE ucPara1 = SIORxBuffer[2];
+ 203   1          BYTE ucPara2 = SIORxBuffer[3];
+ 204   1          BYTE ucPara3 = SIORxBuffer[4];
+ 205   1          BYTE i;
+ 206   1      
+ 207   1          switch( SIORxBuffer[1] )
+ 208   1          {
+ 209   2              case 0x00:
+ 210   2                  //SPI mode 0~8
+ 211   2                  if(ucPara1 > 8)
+ 212   2                      ucPara1 = 8;
+ 213   2                  else if(ucPara1 < 0)
+ 214   2                      ucPara1 = 0;
+ 215   2                  mcuSetSpiSpeed(ucPara1);
+ 216   2                  break;
+ 217   2              case 0xFC:
+ 218   2                  NVRam_WriteWord((ucPara1<<8|ucPara1), ucPara3);
+ 219   2                  break;
+ 220   2              case 0xFD:
+ 221   2                  if(ucPara1 == 0x00)
+ 222   2                  {
+ 223   3                      for(i=0; i<16; i++)
+ 224   3                      {
+ 225   4                          ucTempTbl[i] = 0xFF-i;
+ 226   4                      }
+ 227   3                  }
+ 228   2                  else if(ucPara1 == 0x01)
+ 229   2                  {
+ 230   3                      for(i=0; i<16; i++)
+ 231   3                      {
+ 232   4                          ucTempTbl[i] = 0x00;
+ 233   4                      }
+ 234   3                  }
+ 235   2                  else if(ucPara1 == 0x02)
+ 236   2                  {
+ 237   3                      NVRam_ReadTbl(0x0000, (BYTE *)&ucTempTbl, 16);
+ 238   3                  }
+C51 COMPILER V9.00   DEBUG                                                                 07/03/2017 18:41:22 PAGE 5   
+
+ 239   2                  else if(ucPara1 == 0x03)
+ 240   2                  {
+ 241   3                      Clr_EEPROM_WP();
+ 242   3                      NVRam_WriteTbl(0x0000, (BYTE *)&ucTempTbl, 16);
+ 243   3                  }
+ 244   2                  else if(ucPara1 == 0xFF)
+ 245   2                  {
+ 246   3                      for(i=0; i<16; i++)
+ 247   3                      {
+ 248   4                          DB_printData("0x%x", ucTempTbl[i]);
+ 249   4                      }
+ 250   3                  }
+ 251   2                  break;
+ 252   2      
+ 253   2      #if ENABLE_DEBUG
+                      case 0x01:
+                      {
+                          WORD addr;
+                          for(addr=0x4000; addr<0x4200 ; addr++)
+                              msWriteByte(addr, 0xAA);
+                          for(addr=0x4800; addr<0x5100 ; addr++)
+                              msWriteByte(addr, 0xAB);
+                          for(addr=0x5F00; addr<0x5FFF ; addr++)
+                              msWriteByte(addr, 0xAC);
+                          DB_printMsg("test                   for    SRAM");
+                          break;
+                      }
+              
+                      case 0x02:
+                      {
+                          mcuDMAMemoryFill(CHANNEL_1,0,0x100000,0x40,0xAABBCCDD);
+                          DB_printMsg("BDMA pattern fill !!!!!!!");
+                          break;
+                      }
+                      case 0x03:
+                      {
+                          DB_printMsg("BDMA pattern search !!!!!!!");
+                          DB_printData("Result= 0x%x",mcuDMAPatternSearch(CHANNEL_0,0,0xFFFF0,0x100,0xAABBCCDD));
+                      }
+              
+              #if DEBUG_MCU_GPIO
+                      //BYTE i;
+                      //Open-drain:REG_1021/22/23/27/2A/2D[1:0] set to 2'b00 and REG_1029/2C/2E[1:0] set to 2'b11
+                      //Push-pull: REG_1021/22/23[1:0] need set to 2'b00 and REG_1027/2A/2D[1:0] need set to 2'b11
+                      //P10 and P11: GPIO34/35
+                      //P20 and P21: GPIO32/33
+                      //P30 and P31: GPIO40/41
+                      case 0x04:
+                      {
+                          BYTE temp;
+                          if(ucPara1==0x01)
+                          {
+                              DB_printMsg("P1");
+                              P1_0 = P1_1 = P1_2 = P1_3 = P1_4 = P1_5 = P1_6 = P1_7 = 0;
+                              msWriteByte(REG_00104E, 0x00);          //cltr init
+                              msWriteByte(REG_001050, 0x00);          //oe init
+              
+                              msWriteBit(REG_000417, _ENABLE, _BIT2);
+                              msWriteByte(REG_001042, 0x00);          //ov
+                              switch(ucPara2)
+                              {
+                                  case 0x00:
+C51 COMPILER V9.00   DEBUG                                                                 07/03/2017 18:41:22 PAGE 6   
+
+                                      temp = _BIT0;
+                                      P1_0 = 1;
+                                      break;
+                                  case 0x01:
+                                      temp = _BIT1;
+                                      P1_1 = 1;
+                                      break;
+                                  case 0x02:
+                                      temp = _BIT2;
+                                      P1_2 = 1;
+                                      break;
+                                  case 0x03:
+                                      temp = _BIT3;
+                                      P1_3 = 1;
+                                      break;
+                                  case 0x04:
+                                      temp = _BIT4;
+                                      P1_4 = 1;
+                                      break;
+                                  case 0x05:
+                                      temp = _BIT5;
+                                      P1_5 = 1;
+                                      break;
+                                  case 0x06:
+                                      temp = _BIT6;
+                                      P1_6 = 1;
+                                      break;
+                                  case 0x07:
+                                      temp = _BIT7;
+                                      P1_7 = 1;
+                                      break;
+                              }
+                              msWriteBit(REG_00104E, _ENABLE, temp);
+                              msWriteBit(REG_001050, _ENABLE, temp);
+                              DB_printData("P1_%x",ucPara2);
+                          }
+                          else if(ucPara1==0x03)
+                          {
+                              DB_printMsg("P3");
+                              P3_0 = P3_1 = P3_2 = 0;
+                              msWriteBit(REG_000417, _ENABLE, _BIT3);
+                              msWriteByte(REG_001046, 0x00);
+                              msWriteByte(REG_00105A, 0x00);
+                              msWriteByte(REG_00105C, 0x00);
+                              switch(ucPara2)
+                              {
+                                  case 0x00:
+                                      temp = _BIT0;
+                                      P3_0 = 1;
+                                      break;
+                                  case 0x01:
+                                      temp = _BIT1;
+                                      P3_1 = 1;
+                                      break;
+                                  case 0x02:
+                                      temp = _BIT2;
+                                      P3_2= 1;
+                                      break;
+                              }
+                              msWriteBit(REG_00105A, _ENABLE, temp);
+                              msWriteBit(REG_00105C, _ENABLE, temp);
+                              DB_printData("P3_%x",ucPara2);
+C51 COMPILER V9.00   DEBUG                                                                 07/03/2017 18:41:22 PAGE 7   
+
+                          }
+                          //msWriteByte(REG_00104E, 0x01);
+                          //msWriteByte(REG_001050, 0x01);
+                          break;
+                      }
+              #endif
+                      case 0x05:
+                      {
+              #if ENABLE_HK_CODE_ON_DRAM
+                          mcuDMADownloadCode(CHANNEL_0,DEST_MIU0,DMA_TO_DRAM_SOURCE_ADDR, HK_CODE_ADDR, DMA_TO_DRAM_BYTE
+             -_COUNT);
+                          mcuArrangeCodeAddr(_DRAM, MCU_ON_DRAM_START_ADDR , MCU_ON_DRAM_END_ADDR);
+                          mcuArrangeCodeAddr(_SPI, MCU_ON_SPI_START_ADDR, MCU_ON_SPI_END_ADDR);
+              #endif
+                          break;
+                      }
+                      case 0x06:
+                      {
+              #if ENABLE_HK_CODE_ON_SPI_DRAM_PSRAM    //this function must allocate right code area
+                          mcuArrangeCodeAddr(_SPI, MCU_ON_SPI_START_ADDR, MCU_ON_SPI_END_ADDR);
+              #endif
+              
+              #if ENABLE_HK_CODE_ON_SPI_DRAM_PSRAM
+                          mcuXdataMapToSRAM((PSRAM_MAP_XDATA_START>>10),(PSRAM_MAP_XDATA_END>>10));
+                          codeMoveToXdata(FLASH_TO_XDATA_START, PSRAM_MAP_XDATA_START, FLASH_TO_XDATA_COUNT);
+                          mcuDMADownloadCode(CHANNEL_0,DEST_MIU0,DMA_TO_DRAM_SOURCE_ADDR, HK_CODE_ADDR, DMA_TO_DRAM_BYTE
+             -_COUNT);  //spi to dram
+              
+                          mcuArrangeCodeAddr(_DRAM, MCU_ON_DRAM_START_ADDR , MCU_ON_DRAM_END_ADDR);
+                          mcuArrangeCodeAddr(_PSRAM, MCU_ON_PSRAM_START_ADDR, MCU_ON_PSRAM_END_ADDR);
+              #endif
+                          break;
+                      }
+                      case 0x07:          //for PSRAM 1K mapping
+                      {
+                          WORD i;
+              
+                          msWriteByte(REG_0010E0, (PSRAM_MAP_XDATA_START+0x400)>>10);
+                          msWriteByte(REG_0010E1, PSRAM_MAP_XDATA_START>>10);
+                          msWriteByte(REG_0010E4, 0x00);
+              
+                          msWriteBit(REG_0010E6, _ENABLE, _BIT3);
+                          DB_printMsg("1:1k mapping");
+                          P2 = 0;
+                          for(i=0; i<0x800; i++)
+                          {
+                              if(i < 0x400)
+                                  msRegs[PSRAM_MAP_XDATA_START+i]=0xAA;
+                              else
+                                  msRegs[PSRAM_MAP_XDATA_START+i]=0xCC;
+                          }
+              
+                          for(i=0; i<0x1f; i++)
+                              DB_printData("address = %x",msRegs[PSRAM_MAP_XDATA_START+i]);
+                          DB_printMsg("2:1k mapping");
+                          break;
+                      }
+              
+                      case 0x08:
+                          DB_printData("PMState = %d",sPMInfo.ePMState);
+                          DB_printData("PMMode  = %d",sPMInfo.ucPMMode);
+                          break;
+C51 COMPILER V9.00   DEBUG                                                                 07/03/2017 18:41:22 PAGE 8   
+
+              
+                      case 0x09:  //for menuload sram
+                      {
+                          WORD i;
+                          msWriteByteMask(REG_0010C1, BIT7, BIT7);
+                          for(i=0x6000; i<0x6100; i++)
+                              msWriteByte(i, 0x75);
+                          for(i=0x6100; i<0x6200; i++)
+                              msWriteByte(i, 0x37);
+                          DB_printMsg("menuload sram is ok!!");
+                          break;
+                      }
+              
+                      case 0x0A:  //for test Decrease move data step 1
+                      {
+                          mcuDMAMemoryFill(CHANNEL_0,0,0x100000,0x1000,0xAA);
+                          mcuDMAMemoryFill(CHANNEL_0,0,0x101000,0x1000,0x77);
+                          DB_printMsg("bdma fill datat!");
+                          break;
+                      }
+                      case 0x0B:  //for test Decrease move data step 2
+                      {
+                          msWriteByteMask(REG_100906, BIT0, BIT0);
+                          mcuDMADownloadCode(CHANNEL_0,DEST_MIU0,0x102FFF,0x101FFF,0x2000);
+                          DB_printMsg("BDMA decrease move data!");
+                          break;
+                      }
+              
+                      case 0x0C:  //for test mailbox
+                      {
+                          BYTE i;
+                          for(i=0x00; i<=0x2F; i++)
+                              msWriteByte(REG_103380+i, i);
+                          DB_printMsg("write mailbox finish!");
+                          break;
+                      }
+                      #if ENABLE_R2_INT_M51_Test
+                      case 0x0D:  //for test mailbox
+                      {
+                          BYTE i;
+                          DB_printMsg("=======TEST nonPM FIQ interrupt==============!");
+                          TestCommand_FIQ_INT(ucPara1);
+                          break;
+                      }
+                      #endif
+                     case 0x11:
+                          u8Loop4us = ucPara1;
+                          break;
+                      case 0x12:
+                      {
+                          mcuDMADataTransfer(CHANNEL_0,SOURCE_MIU0,DEST_MIU0,0x80000,0x80200,0x400);
+                      }
+              
+                      case 0x13:
+                          {
+                                  // write Pattern to DRAM first
+                                  XDATA DWORD result;
+                                  result = mcuDMACRC32(CHANNEL_0,SOURCE_MIU0,0x80000,0x40,0xB71DC104,0);
+                                  DB_printData("Check CRC Result_H: 0x%x",result>>16);
+                                  DB_printData("Check CRC Result_L: 0x%x",result);
+              
+                          }
+C51 COMPILER V9.00   DEBUG                                                                 07/03/2017 18:41:22 PAGE 9   
+
+                          break;
+                      case 0x14:
+                          {
+                                  XDATA DWORD result;
+                                  result = mcuDMAPatternSearch(CHANNEL_0,SOURCE_MIU0,0x80000,0x400,0xAABBCCDD);
+                                  DB_printData("Pattern Search Result_H: 0x%x",result>>16);
+                                  DB_printData("Pattern Search Result_L: 0x%x",result);
+                          }
+                          break;
+                      case 0x15:
+                          {
+                                  mcuDMAMemoryFill(CHANNEL_0,DEST_MIU0,0x80000,0x200,0xAABBCCDD);
+              
+                          }
+                          break;
+                      case 0x16:
+                          {
+              
+                                  mcuDMADownloadCode(CHANNEL_0,DEST_MIU0,0x0000,0x80000,0x20000);
+                          }
+                          break;
+                      case 0x17:
+                          {
+                                  mcuDMADataTransfer(CHANNEL_0,SOURCE_MIU0,DEST_MIU0,0x80000,0x80100,0x20);
+                                  mcuDMADataTransfer(CHANNEL_1,SOURCE_MIU0,DEST_MIU0,0x80110,0x80010,0x20);
+                                  mcuDMADataTransfer(CHANNEL_0,SOURCE_MIU0,DEST_MIU0,0x80020,0x80120,0x20);
+                                  mcuDMADataTransfer(CHANNEL_1,SOURCE_MIU0,DEST_MIU0,0x80130,0x80030,0x20);
+                                  mcuDMADataTransfer(CHANNEL_0,SOURCE_MIU0,DEST_MIU0,0x80040,0x80140,0x20);
+                                  mcuDMADataTransfer(CHANNEL_1,SOURCE_MIU0,DEST_MIU0,0x80150,0x80050,0x20);
+                          }
+                          break;
+              
+                      #if FPGA_HW_PMMODE
+                          case 0x18:
+                          {
+                              extern void msPM_SetFlagDPMS(void); //Command 18 01 force to DPMS mode
+                              msPM_SetFlagDPMS();
+                              DB_printMsg("msPM_SetFlagDPMS ");
+                          }
+                          break;
+                          case 0x19:
+                          {
+                              extern void msPM_SetFlagDPMS(void);//Write MCU bank to check if MCU bank can be reseted while
+             - PM wakes up.
+                              msWriteByte(0x0010C0, 0x11);
+                              DB_printData("0x0010C0==%x ",msReadByte(0x0010C0));
+                          }
+                          break;
+              
+                      #endif
+              
+              
+              
+                      case 0x50:
+                          if( DebugOnlyFlag )
+                          {
+                              Clr_DebugOnlyFlag();
+                              DB_printMsg( "<Free>" );
+                          }
+                          else
+                          {
+                              Set_DebugOnlyFlag();
+C51 COMPILER V9.00   DEBUG                                                                 07/03/2017 18:41:22 PAGE 10  
+
+                              DB_printMsg( "<Debug>" );
+                          }
+                          break;
+              
+                      #if ENABLE_SW_DOUBLE_BUFFER
+                          case 0x51:
+                          {
+                              checkMenuloadWriteData();
+                          }
+                          break;
+                      #endif
+              
+              
+                                      
+              #endif // ENABLE_DEBUG
+ 561   2      
+ 562   2              default:
+ 563   2              break;
+ 564   2          }
+ 565   1      }
+ 566          
+ 567          //I2C_SCL_Pin               // GPIO00
+ 568          //I2C_SDA_Pin               // GPIO01
+ 569          #undef Init_hwI2C_SCL_Pin
+ 570          #define Init_hwI2C_SCL_Pin()        (MEM_MSWRITE_BIT(_REG_GPIO0_OEZ, TRUE, BIT0))
+ 571          #undef Init_hwI2C_SDA_Pin
+ 572          #define Init_hwI2C_SDA_Pin()        (MEM_MSWRITE_BIT(_REG_GPIO0_OEZ, TRUE, BIT1))
+ 573          
+ 574          #define DSet_i2c_SDA()               (MEM_MSWRITE_BIT(_REG_GPIO0_OEZ, TRUE, BIT1))
+ 575          #define DClr_i2c_SDA()               (MEM_MSWRITE_BIT(_REG_GPIO0_OUT, FALSE, BIT1), MEM_MSWRITE_BIT(_REG_G
+             -PIO0_OEZ, FALSE, BIT1))
+ 576          #define Di2c_SDAHi()                 (_bit1_(MEM_MSREAD_BYTE(_REG_GPIO0_IN)))
+ 577          #define Di2c_SDALo()                 (!Di2c_SDAHi())
+ 578          #define DSet_i2c_SCL()               (MEM_MSWRITE_BIT(_REG_GPIO0_OEZ, TRUE, BIT0))
+ 579          #define DClr_i2c_SCL()               (MEM_MSWRITE_BIT(_REG_GPIO0_OUT, FALSE, BIT0), MEM_MSWRITE_BIT(_REG_G
+             -PIO0_OEZ, FALSE, BIT0))
+ 580          #define Di2c_SCLHi()                 (_bit0_(MEM_MSREAD_BYTE(_REG_GPIO0_IN)))
+ 581          #define Di2c_SCLLo()                 (!Di2c_SCLHi())
+ 582          
+ 583          typedef enum _I2cIoTransType
+ 584          {
+ 585              I2C_TRANS_READ,
+ 586              I2C_TRANS_WRITE
+ 587          }I2cIoTransType;
+ 588          
+ 589          #define I2C_DEVICE_ADR_WRITE(slave_adr)   (slave_adr & ~_BIT0)
+ 590          #define I2C_DEVICE_ADR_READ(slave_adr)    (slave_adr | _BIT0)
+ 591          
+ 592          #define I2C_ACCESS_DUMMY_TIME   3
+ 593          
+ 594          #define FWI2C_ACKNOWLEDGE           TRUE
+ 595          #define FWI2C_NON_ACKNOWLEDGE       FALSE
+ 596          #if 1//(USE_SW_I2C == 1)
+ 597          //====================================
+ 598          // Setup i2c Start condition
+ 599          Bool Di2c_Start( void )
+ 600          {
+ 601   1          DSet_i2c_SDA();
+ 602   1          DSet_i2c_SCL();
+ 603   1          Delay4us();
+ 604   1          if( Di2c_SDALo() || Di2c_SCLLo() )
+ 605   1              return FALSE;
+C51 COMPILER V9.00   DEBUG                                                                 07/03/2017 18:41:22 PAGE 11  
+
+ 606   1          DClr_i2c_SDA();
+ 607   1          Delay4us();
+ 608   1          DClr_i2c_SCL();
+ 609   1          Delay4us();
+ 610   1          return TRUE;
+ 611   1      }
+ 612          //=============================================
+ 613          // Setup i2c Stop condition
+ 614          void Di2c_Stop( void )
+ 615          {
+ 616   1          // SCL=L, SDA=L, Stop condition.
+ 617   1          DClr_i2c_SCL();
+ 618   1          DClr_i2c_SDA();
+ 619   1          Delay4us();
+ 620   1          DSet_i2c_SCL();
+ 621   1          Delay4us();
+ 622   1          DSet_i2c_SDA();
+ 623   1          Delay4us();
+ 624   1      }
+ 625          //============================================
+ 626          Bool DWait_i2C_Ack( void )
+ 627          {
+ 628   1          BYTE i;
+ 629   1          for( i = 0; i < 5; i++ )
+ 630   1          {
+ 631   2              if( Di2c_SDALo() )
+ 632   2                  return TRUE;
+ 633   2              Delay4us();
+ 634   2          }
+ 635   1      
+ 636   1          if( Di2c_SDALo() )
+ 637   1              return TRUE;
+ 638   1          else
+ 639   1              return FALSE;
+ 640   1      
+ 641   1      }
+ 642          //============================================
+ 643          Bool Di2c_SendByte( BYTE value )
+ 644          {
+ 645   1          BYTE i;
+ 646   1          Bool result;
+ 647   1      
+ 648   1          for( i = 0; i < 8; i++ ) // Send data via i2c pin
+ 649   1          {
+ 650   2              if( value & BIT7 )
+ 651   2                  DSet_i2c_SDA();
+ 652   2              else
+ 653   2                  DClr_i2c_SDA();
+ 654   2              Delay4us();
+ 655   2              DSet_i2c_SCL();
+ 656   2              Delay4us();
+ 657   2              value <<= 1;
+ 658   2              DClr_i2c_SCL();
+ 659   2          }
+ 660   1          DSet_i2c_SDA();
+ 661   1          result = DWait_i2C_Ack();
+ 662   1          DSet_i2c_SCL();
+ 663   1          Delay4us();
+ 664   1          DClr_i2c_SCL();
+ 665   1          Delay4us();
+ 666   1          DClr_i2c_SDA();
+ 667   1      
+C51 COMPILER V9.00   DEBUG                                                                 07/03/2017 18:41:22 PAGE 12  
+
+ 668   1          return result;
+ 669   1      }
+ 670          
+ 671          //============================================
+ 672          BYTE Di2c_ReceiveByte( const Bool ack )
+ 673          {
+ 674   1          BYTE i;
+ 675   1          BYTE value = 0;
+ 676   1      
+ 677   1          for( i = 0; i < 8; i++ )
+ 678   1          {
+ 679   2              value <<= 1;
+ 680   2              DSet_i2c_SDA();
+ 681   2              Delay4us();
+ 682   2              DSet_i2c_SCL();
+ 683   2              Delay4us();
+ 684   2              if( Di2c_SDAHi() )
+ 685   2                  value |= BIT0;
+ 686   2              DClr_i2c_SCL();
+ 687   2          }
+ 688   1          if( ack )
+ 689   1          {
+ 690   2              DClr_i2c_SDA();
+ 691   2          }
+ 692   1          else
+ 693   1          {
+ 694   2              DSet_i2c_SDA();
+ 695   2          }
+ 696   1          Delay4us();
+ 697   1          DSet_i2c_SCL();
+ 698   1          Delay4us();
+ 699   1          DClr_i2c_SCL();
+ 700   1      
+ 701   1          return value;
+ 702   1      }
+ 703          
+ 704          void Di2c_Start1(void)
+ 705          {
+ 706   1          DSet_i2c_SDA();
+ 707   1          Delay4us();
+ 708   1          DSet_i2c_SCL();
+ 709   1          Delay4us();
+ 710   1          DClr_i2c_SDA();
+ 711   1          Delay4us();
+ 712   1          DClr_i2c_SCL();
+ 713   1      }
+ 714          void Di2C_Intial(void)
+ 715          {
+ 716   1          BYTE i, j;
+ 717   1      
+ 718   1          for(i=0 ;i < 20; i++)   // Generate SCL signals to reset EEPROM.
+ 719   1          {
+ 720   2              DSet_i2c_SCL();
+ 721   2              Delay4us();
+ 722   2              DClr_i2c_SCL();
+ 723   2              Delay4us();
+ 724   2          }
+ 725   1      
+ 726   1          j = 20;
+ 727   1      
+ 728   1          while( j-- )    // Male EEPROM to Release I2C bus.
+ 729   1          {
+C51 COMPILER V9.00   DEBUG                                                                 07/03/2017 18:41:22 PAGE 13  
+
+ 730   2              for(i=0 ;i < 9; i++)    // 9 STARTs
+ 731   2              {
+ 732   3                  Di2c_Start1();
+ 733   3              }
+ 734   2              Di2c_Stop();
+ 735   2              ForceDelay1ms(10);
+ 736   2      
+ 737   2              if(Di2c_SDAHi())
+ 738   2                  break;
+ 739   2          }
+ 740   1      
+ 741   1      }
+ 742          
+ 743          #endif
+ 744          
+ 745          
+ 746          BOOL i2c_AccessStart(BYTE ucSlaveAdr, I2cIoTransType trans_t)
+ 747          {
+ 748   1          BYTE ucDummy; // loop dummy
+ 749   1      
+ 750   1          if (trans_t == I2C_TRANS_READ) // check i2c read or write
+ 751   1              ucSlaveAdr = I2C_DEVICE_ADR_READ(ucSlaveAdr); // read
+ 752   1          else
+ 753   1              ucSlaveAdr = I2C_DEVICE_ADR_WRITE(ucSlaveAdr); // write
+ 754   1          ucDummy = I2C_ACCESS_DUMMY_TIME;
+ 755   1          while (ucDummy--)
+ 756   1          {
+ 757   2              Di2c_Start();
+ 758   2      
+ 759   2              if (Di2c_SendByte(ucSlaveAdr) == FWI2C_ACKNOWLEDGE) // check acknowledge
+ 760   2                  return TRUE;
+ 761   2              Di2c_Stop();
+ 762   2      
+ 763   2              Delay1ms(1);
+ 764   2          } // while
+ 765   1          return FALSE;
+ 766   1      }
+ 767          
+ 768          void i2cBurstReadBytes(BYTE ucSlaveAdr, BYTE ucSubAdr, BYTE *pBuf, BYTE ucBufLen)
+ 769          {
+ 770   1          BYTE ucDummy; // loop dummy
+ 771   1      
+ 772   1          ucDummy = I2C_ACCESS_DUMMY_TIME;
+ 773   1          while(ucDummy--)
+ 774   1          {
+ 775   2              if (i2c_AccessStart(ucSlaveAdr, I2C_TRANS_WRITE) == FALSE)
+ 776   2              {
+ 777   3                  continue;
+ 778   3              }
+ 779   2              if (Di2c_SendByte(ucSubAdr) == FWI2C_NON_ACKNOWLEDGE) // check non-acknowledge
+ 780   2              {
+ 781   3                  continue;
+ 782   3              }
+ 783   2              if (i2c_AccessStart(ucSlaveAdr, I2C_TRANS_READ) == FALSE)
+ 784   2              {
+ 785   3                  continue;
+ 786   3              }
+ 787   2      
+ 788   2              while(ucBufLen) // loop to burst read
+ 789   2              {
+ 790   3                  ucBufLen--;
+ 791   3                  *pBuf = Di2c_ReceiveByte(ucBufLen); // receive byte
+C51 COMPILER V9.00   DEBUG                                                                 07/03/2017 18:41:22 PAGE 14  
+
+ 792   3      
+ 793   3                  pBuf++; // next byte pointer
+ 794   3              } // while
+ 795   2      
+ 796   2              break;
+ 797   2          } // while
+ 798   1      
+ 799   1          Di2c_Stop();
+ 800   1      
+ 801   1          while(ucBufLen--) // if read error, fill 0xff
+ 802   1          {
+ 803   2              *pBuf = 0xff; // clear
+ 804   2              pBuf++; // next byte pointer
+ 805   2          } // while
+ 806   1      }
+ 807          
+ 808          void i2cBurstWriteBytes(BYTE ucSlaveAdr, BYTE ucSubAdr, BYTE *pBuf, BYTE ucBufLen)
+ 809          {
+ 810   1          BYTE ucDummy; // loop dummy
+ 811   1      
+ 812   1          ucDummy = I2C_ACCESS_DUMMY_TIME;
+ 813   1          while(ucDummy--)
+ 814   1          {
+ 815   2              if (i2c_AccessStart(ucSlaveAdr, I2C_TRANS_WRITE) == FALSE)
+ 816   2                  continue;
+ 817   2      
+ 818   2              if (Di2c_SendByte(ucSubAdr) == FWI2C_NON_ACKNOWLEDGE) // check non-acknowledge
+ 819   2                  continue;
+ 820   2      
+ 821   2              while(ucBufLen--) // loop of writting data
+ 822   2              {
+ 823   3                  Di2c_SendByte(*pBuf); // send byte
+ 824   3      
+ 825   3                  pBuf++; // next byte pointer
+ 826   3              } // while
+ 827   2      
+ 828   2              break;
+ 829   2          } // while
+ 830   1      
+ 831   1          Di2c_Stop();
+ 832   1      }
+ 833          
+ 834          
+ 835          BYTE i2cReadByte(BYTE ucSlaveAdr, BYTE ucSubAdr)
+ 836          {
+ 837   1          BYTE ucBuf; // byte buffer
+ 838   1      
+ 839   1          i2cBurstReadBytes(ucSlaveAdr, ucSubAdr, &ucBuf, 1);
+ 840   1          return ucBuf;
+ 841   1      }
+ 842          
+ 843          void i2cWriteByte(BYTE ucSlaveAdr, BYTE ucSubAdr, BYTE ucVal)
+ 844          {
+ 845   1          i2cBurstWriteBytes(ucSlaveAdr, ucSubAdr, &ucVal, 1);        // wz@ fpga hang
+ 846   1      }
+ 847          
+ 848          void ProcessCommand( void )
+ 849          {
+ 850   1          Di2C_Intial();
+ 851   1          switch( UART_CMD )
+ 852   1          {
+ 853   2      #if 0
+C51 COMPILER V9.00   DEBUG                                                                 07/03/2017 18:41:22 PAGE 15  
+
+                      case kWrite_MST_Bank_n:
+                      {
+                          {
+                              const volatile BYTE ucBank = scReadByte( SC0_00 ); // store original bank
+                              scWriteByte( SC0_00, UART_CMD_MS_BANK );
+                              scWriteByte( UART_CMD_MS_REGINDEX, UART_CMD_MS_REGDATA );
+                              scWriteByte( SC0_00, ucBank ); // restore original bank
+                          }
+                          putSIOChar( 0xF1 );
+                          break;
+                      }
+              
+                      case kRead_MST_Bank_n:
+                      {
+                          {
+                              const volatile BYTE ucBank = scReadByte( SC0_00 ); // store original bank
+                              scWriteByte( SC0_00, UART_CMD_MS_BANK );
+                              UART_CMD_MS_REGDATA = scReadByte( UART_CMD_MS_REGINDEX );
+                              scWriteByte( SC0_00, ucBank ); // restore original bank
+                          }
+                          putSIOChar( 0xF2 );
+                          putSIOChar( UART_CMD_MS_REGDATA );
+                          break;
+                      }
+              #endif
+ 879   2              case kWrite_MCU_XDATA:
+ 880   2              {
+ 881   3                  //msWriteByte( MAKEWORD( UART_CMD_MCU_IDX_H, UART_CMD_MCU_IDX_L ), UART_CMD_MCU_DATA );
+ 882   3                  msRegs[MAKEWORD( UART_CMD_MCU_IDX_H, UART_CMD_MCU_IDX_L )] =  UART_CMD_MCU_DATA;
+ 883   3                  putSIOChar( 0xF1 );
+ 884   3                  break;
+ 885   3              }
+ 886   2      
+ 887   2              case kRead_MCU_XDATA:
+ 888   2              {
+ 889   3                  //UART_CMD_MCU_DATA = msReadByte( MAKEWORD( UART_CMD_MCU_IDX_H, UART_CMD_MCU_IDX_L ) );
+ 890   3                  UART_CMD_MCU_DATA = msRegs[( MAKEWORD( UART_CMD_MCU_IDX_H, UART_CMD_MCU_IDX_L ) )];
+ 891   3                  putSIOChar( 0xF2 );
+ 892   3                  putSIOChar( UART_CMD_MCU_DATA );
+ 893   3                  break;
+ 894   3              }
+ 895   2      
+ 896   2              case kTest_Command:
+ 897   2      
+ 898   2              {
+ 899   3                  ExecTestCommand();
+ 900   3                  break;
+ 901   3              }
+ 902   2          #if !USEFLASH
+ 903   2              case kWrite_EEPROM:
+ 904   2              {
+ 905   3                  WORD uwEEADDR;
+ 906   3                  uwEEADDR = MAKEWORD(SIORxBuffer[1],SIORxBuffer[2]);
+ 907   3                  NVRam_WriteByte(uwEEADDR, SIORxBuffer[3]);
+ 908   3                  //if (!g_bDebugASCIICommandFlag)
+ 909   3                      putSIOChar(0xF1);
+ 910   3                      //DB_printData("EEPROM[0x%x]=", uwEEADDR);
+ 911   3                      //DB_printData("0x%x \r\n", SIORxBuffer[_UART_CMD_INDEX3_]);
+ 912   3      
+ 913   3                  break;
+ 914   3              }
+ 915   2              case kRead_EEPROM:
+C51 COMPILER V9.00   DEBUG                                                                 07/03/2017 18:41:22 PAGE 16  
+
+ 916   2              {
+ 917   3              WORD uwEEADDR;
+ 918   3                  uwEEADDR = MAKEWORD(SIORxBuffer[1],SIORxBuffer[2]);
+ 919   3                  //uwEEADDR = g_UartCommand.Buffer[_UART_CMD_INDEX1_] & 0x0E;
+ 920   3                  //uwEEADDR = (uwEEADDR << 7) + g_UartCommand.Buffer[_UART_CMD_INDEX2_];
+ 921   3              NVRam_ReadByte(uwEEADDR , &SIORxBuffer[3]);
+ 922   3                  putSIOChar(0xF2);
+ 923   3                  putSIOChar(SIORxBuffer[3]);
+ 924   3                  //if (g_bDebugASCIICommandFlag)
+ 925   3                  //{
+ 926   3                      //DB_printData("EEPROM[0x%x]=", uwEEADDR);
+ 927   3                      //DB_printData("0x%x \r\n", SIORxBuffer[_UART_CMD_INDEX3_]);
+ 928   3                  //}
+ 929   3                  break;
+ 930   3              }
+ 931   2              case uartI2C_Device_Write:
+ 932   2              {
+ 933   3                  WORD adr;
+ 934   3                  adr = SIORxBuffer[1];
+ 935   3                  if (g_bDebugASCIICommandFlag)
+ 936   3                  {
+ 937   4                      DB_printData("w I2C 0x%x ", SIORxBuffer[1]);
+ 938   4                      DB_printData("w [0x%x]=", SIORxBuffer[2]);
+ 939   4                      DB_printData("w 0x%x \r\n", SIORxBuffer[3]);
+ 940   4                  }
+ 941   3      
+ 942   3                  i2cWriteByte( SIORxBuffer[1],SIORxBuffer[2],SIORxBuffer[3]);
+ 943   3      
+ 944   3      
+ 945   3                  //i2c_WriteTBL( g_UartCommand.Buffer[_UART_CMD_INDEX1_],
+ 946   3                  //  g_UartCommand.Buffer[_UART_CMD_INDEX2_],
+ 947   3                  //  &g_UartCommand.Buffer[_UART_CMD_INDEX3_],1);
+ 948   3                  //if (!g_bDebugASCIICommandFlag)
+ 949   3                      putSIOChar(0xF1);
+ 950   3              }
+ 951   2              break;
+ 952   2      
+ 953   2          case uartI2C_Device_Read:
+ 954   2          //i2c_ReadTBL( NVRAM_DEVICE, addr, value, 1 );
+ 955   2          {
+ 956   3          // ======== for touch sensor =========
+ 957   3              //SIORxBuffer[3] = i2cReadByte( SIORxBuffer[1],  SIORxBuffer[2]);
+ 958   3              SIORxBuffer[3] = i2cReadByte( SIORxBuffer[1],  SIORxBuffer[2]);
+ 959   3              if (g_bDebugASCIICommandFlag)
+ 960   3              {
+ 961   4                  DB_printData("I2C 0x%x ", SIORxBuffer[1]);
+ 962   4                  DB_printData("[0x%x]=", SIORxBuffer[2]);
+ 963   4                  DB_printData("0x%x \r\n", SIORxBuffer[3]);
+ 964   4              }
+ 965   3      
+ 966   3          //i2c_ReadTBL( g_UartCommand.Buffer[_UART_CMD_INDEX1_],
+ 967   3          //          g_UartCommand.Buffer[_UART_CMD_INDEX2_],
+ 968   3          //          (BYTE *)&g_UartCommand.Buffer[_UART_CMD_INDEX3_] ,1);
+ 969   3              putSIOChar(0xF2);
+ 970   3              putSIOChar(SIORxBuffer[3]);
+ 971   3          }
+ 972   2          break;
+ 973   2      
+ 974   2          #endif
+ 975   2              default:
+ 976   2                  break;
+ 977   2          }
+C51 COMPILER V9.00   DEBUG                                                                 07/03/2017 18:41:22 PAGE 17  
+
+ 978   1      }
+ 979          
+ 980          Bool GetCommand( void )
+ 981          {
+ 982   1          if ( (SIORxIndex >= UART_CMD_LENGTH) && (UART_CMD_LENGTH))
+ 983   1          {
+ 984   2              //Set_RxBusyFlag();
+ 985   2              return TRUE;
+ 986   2          }
+ 987   1          else
+ 988   1              return FALSE;
+ 989   1      }
+ 990          void DebugHandler( void )
+ 991          {
+ 992   1      
+ 993   1          if( !UART_READ_ES())
+ 994   1              return;
+ 995   1      
+ 996   1          if( GetCommand() )
+ 997   1          {
+ 998   2              ProcessCommand();
+ 999   2              SIORxIndex = 0;
+1000   2              //Clr_RxBusyFlag();
+1001   2          }
+1002   1      }
+1003          
+1004          
+1005          #if UART1
+              void putSIOChar_UART1( unsigned char sendData )
+              {
+                 if(!UART1_READ_ES())
+                      return;
+              
+                  UART1_BUFFER() = sendData;
+                  while( 1 )
+                  {
+                      if( EA && UART1_READ_ES() )
+                      {
+                          if( TI1_FLAG )
+                          {
+                              TI1_FLAG = 0;
+                              break;
+                          }
+                      }
+                      else
+                      {
+                          if(UART1_TI_FLAG())
+                          {
+                              UART1_CLR_TI_FLAG();
+                              break;
+                          }
+                      }
+                  }
+              }
+              
+              void ExecTestCommand_UART1( void )
+              {
+                  BYTE ucPara1 = SIORxBuffer1[2];
+                  BYTE ucPara2 = SIORxBuffer1[3];
+                  BYTE ucPara3 = SIORxBuffer1[4];
+              
+                  switch( SIORxBuffer1[1] )
+C51 COMPILER V9.00   DEBUG                                                                 07/03/2017 18:41:22 PAGE 18  
+
+                  {
+                      case 0x00:
+                          printData_UART1("PrintBuf[2]: %d", ucPara1);
+                          printData_UART1("PrintBuf[3]: %d", ucPara2);
+                          printData_UART1("PrintBuf[4]: %d", ucPara3);
+                          printMsg_UART1("Uart1 Print Msg Test");
+                          break;
+              
+                      case 0x50:
+                          if( DebugOnlyFlag )
+                          {
+                              Clr_DebugOnlyFlag();
+                              printMsg_UART1( "<Free - UART1 >" );
+                          }
+                          else
+                          {
+                              Set_DebugOnlyFlag();
+                              printMsg_UART1( "<Debug - UART1 >" );
+                          }
+                          break;
+                      default:
+                          break;
+                  }
+              }
+              
+              void ProcessCommand_UART1( void )
+              {
+                  switch( UART1_CMD )
+                  {
+                      case kWrite_MCU_XDATA:
+                      {
+                          msRegs[MAKEWORD( UART1_CMD_MCU_IDX_H, UART1_CMD_MCU_IDX_L )] =  UART1_CMD_MCU_DATA;
+                          putSIOChar_UART1( 0xF1 );
+                          break;
+                      }
+              
+                      case kRead_MCU_XDATA:
+                      {
+                          UART1_CMD_MCU_DATA = msRegs[( MAKEWORD( UART1_CMD_MCU_IDX_H, UART1_CMD_MCU_IDX_L ) )];
+                          putSIOChar_UART1( 0xF2 );
+                          putSIOChar_UART1( UART1_CMD_MCU_DATA );
+                          break;
+                      }
+              
+                      case kTest_Command:
+                      {
+                          ExecTestCommand_UART1();
+                          break;
+                      }
+                      default:
+                          break;
+                  }
+              }
+              
+              Bool GetCommand_UART1( void )
+              {
+                  if ( (SIORxIndex1 >= UART1_CMD_LENGTH) && (UART1_CMD_LENGTH))
+                  {
+                      //Set_RxBusyFlag();
+                      return TRUE;
+                  }
+                  else
+C51 COMPILER V9.00   DEBUG                                                                 07/03/2017 18:41:22 PAGE 19  
+
+                      return FALSE;
+              }
+              void UART1_Handler( void )
+              {
+              
+                  if( !UART1_READ_ES())
+                      return;
+              
+                  if( GetCommand_UART1() )
+                  {
+                      ProcessCommand_UART1();
+                      SIORxIndex1 = 0;
+                      //Clr_RxBusyFlag();
+                  }
+              }
+              #endif
+1118          
+1119          #if !ENABLE_DEBUG
+1120          BYTE code msDebugNullData[] = {0};
+1121          void msDebugDummy(void)
+1122          {
+1123   1          BYTE xdata i = msDebugNullData[0];
+1124   1      }
+1125          #endif
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =   1396    ----
+   CONSTANT SIZE    =      1    ----
+   XDATA SIZE       =     16       1
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----      33
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

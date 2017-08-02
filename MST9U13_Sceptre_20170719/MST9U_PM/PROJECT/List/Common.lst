@@ -1,0 +1,234 @@
+C51 COMPILER V9.00   COMMON                                                                07/03/2017 18:41:18 PAGE 1   
+
+
+C51 COMPILER V9.00, COMPILATION OF MODULE COMMON
+OBJECT MODULE PLACED IN .\Obj\Common.obj
+COMPILER INVOKED BY: C:\Keil4\C51\BIN\C51.EXE ..\Code\Common.c OPTIMIZE(9,SPEED) BROWSE INCDIR(..\Code\INC;..\Code\DRIVE
+                    -R\INC;..\Code\DRIVER\MST9U\INC;..\Code\DRIVER\MST9U3\INC) DEFINE(ModelName=MST9U3_DEMO,CHIP_ID=MST9U3) DEBUG OBJECTEXTEN
+                    -D PRINT(.\List\Common.lst) OBJECT(.\Obj\Common.obj)
+
+line level    source
+
+   1          #define _COMMON_C_
+   2          #include "types.h"
+   3          #include "board.h"
+   4          #include "debugDef.h"
+   5          #include "global.h"
+   6          #include "ms_reg.h"
+   7          #include "ms_rwreg.h"
+   8          #include "misc.h"
+   9          #include "Debug.h"
+  10          #include "Common.h"
+  11          
+  12          #if DEBUG_PRINT_ENABLE
+              void printMsg( char *str )
+              {
+                  char sendData;
+              
+                  if(!UART_READ_ES())//(!ES)
+                      return;
+              
+                  sendData = *( str++ );
+              
+                  while( sendData )        //!='\0')
+                  {
+                      putSIOChar(( unsigned char )sendData );
+                      sendData = *( str++ );
+                  }
+                  putSIOChar( 0xd );
+                  putSIOChar(( char )'\n' );
+              }
+              
+              void printData( char *str, WORD value )
+              {
+                  char sendData;
+              
+                  if(!UART_READ_ES())//(!ES)
+                      return;
+              
+                  sendData = Send_MsgValue;
+              
+                  while( sendData = *( str++ ) )
+                  {
+                      if( sendData == ( char )'%' )            // %
+                      {
+                          sendData = *( str++ );
+                          if( sendData == ( char )'d' || sendData == ( char )'x' )                // d
+                          {
+                              if( value )
+                              {
+                                  Bool noneZero = FALSE;
+                                  WORD divider = 10000;
+                                  char dispValue;
+                                  if( sendData == ( char )'x' )
+                                  {
+C51 COMPILER V9.00   COMMON                                                                07/03/2017 18:41:18 PAGE 2   
+
+                                      divider = 0x1000;
+                                  }
+                                  while( divider )
+                                  {
+                                      dispValue = value / divider;
+                                      value -= dispValue * divider;
+                                      if( dispValue )
+                                      {
+                                          noneZero = TRUE;
+                                      }
+                                      if( noneZero )
+                                      {
+                                          if( dispValue > 9 )
+                                          {
+                                              dispValue += 55;
+                                          }
+                                          else
+                                          {
+                                              dispValue += 0x30;
+                                          }
+                                          putSIOChar( dispValue );
+                                      }
+                                      if( sendData == ( char )'d' )
+                                      {
+                                          divider /= 10;
+                                      }
+                                      else
+                                      {
+                                          divider /= 0x10;
+                                      }
+                                  }
+                              }
+                              else
+                              {
+                                  putSIOChar( '0' );
+                              }
+                          }
+                          else if( sendData == ( char )'s' )
+                          {
+                              BYTE xdata *sPtr = (BYTE xdata *) value;
+                              while( *sPtr )
+                                  putSIOChar(*sPtr++);
+                              break;
+                          }
+                      }
+                      else
+                      {
+                          putSIOChar( sendData );
+                      }
+                  }
+                  putSIOChar( 0xd );
+                  putSIOChar(( char )'\n' );
+              }
+              #endif
+ 108          
+ 109          #if UART1
+              void printMsg_UART1( char *str )
+              {
+                  char sendData;
+              
+                  if(!UART1_READ_ES())//(!ES)
+                      return;
+C51 COMPILER V9.00   COMMON                                                                07/03/2017 18:41:18 PAGE 3   
+
+              
+                  sendData = *( str++ );
+              
+                  while( sendData )        //!='\0')
+                  {
+                      putSIOChar_UART1(( unsigned char )sendData );
+                      sendData = *( str++ );
+                  }
+                  putSIOChar_UART1( 0xd );
+                  putSIOChar_UART1(( char )'\n' );
+              }
+              void printData_UART1( char *str, WORD value )
+              {
+                  char sendData;
+              
+                  if(!UART1_READ_ES())//(!ES)
+                      return;
+              
+                  sendData = Send_MsgValue;
+              
+                  while( sendData = *( str++ ) )
+                  {
+                      if( sendData == ( char )'%' )            // %
+                      {
+                          sendData = *( str++ );
+                          if( sendData == ( char )'d' || sendData == ( char )'x' )                // d
+                          {
+                              if( value )
+                              {
+                                  Bool noneZero = FALSE;
+                                  WORD divider = 10000;
+                                  char dispValue;
+                                  if( sendData == ( char )'x' )
+                                  {
+                                      divider = 0x1000;
+                                  }
+                                  while( divider )
+                                  {
+                                      dispValue = value / divider;
+                                      value -= dispValue * divider;
+                                      if( dispValue )
+                                      {
+                                          noneZero = TRUE;
+                                      }
+                                      if( noneZero )
+                                      {
+                                          if( dispValue > 9 )
+                                          {
+                                              dispValue += 55;
+                                          }
+                                          else
+                                          {
+                                              dispValue += 0x30;
+                                          }
+                                          putSIOChar_UART1( dispValue );
+                                      }
+                                      if( sendData == ( char )'d' )
+                                      {
+                                          divider /= 10;
+                                      }
+                                      else
+                                      {
+C51 COMPILER V9.00   COMMON                                                                07/03/2017 18:41:18 PAGE 4   
+
+                                          divider /= 0x10;
+                                      }
+                                  }
+                              }
+                              else
+                              {
+                                  putSIOChar_UART1( '0' );
+                              }
+                          }
+                          else if( sendData == ( char )'s' )
+                          {
+                              BYTE xdata *sPtr = (BYTE xdata *) value;
+                              while( *sPtr )
+                                  putSIOChar_UART1(*sPtr++);
+                              break;
+                          }
+                      }
+                      else
+                      {
+                          putSIOChar_UART1( sendData );
+                      }
+                  }
+                  putSIOChar_UART1( 0xd );
+                  putSIOChar_UART1(( char )'\n' );
+              }
+              #endif
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =   ----    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

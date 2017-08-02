@@ -1,0 +1,1 @@
+#undef CONFIG_CPU_144MHZ

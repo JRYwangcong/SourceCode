@@ -1,0 +1,203 @@
+Obj_R2_MST9U3_ZUI_128MB/./core/driver/sys/MST9U/SysInit.o:  \
+ core/driver/sys/MST9U/SysInit.c core/lib/MST9U/include/stdio.h \
+  project/boarddef/Board.h core/lib/MST9U/include/datatype.h \
+  core/driver/sys/MST9U/include/hwreg.h \
+  core/lib/MST9U/include/c_m2_riubase.h \
+  core/lib/MST9U/include/c_pm_riubase.h \
+  core/lib/MST9U/include/c_riubase.h \
+  core/driver/sys/MST9U/include/hwreg_MST9U.h \
+  core/drv_bsp/MST9U_nos_r2/include/MsCommon.h \
+  core/drv_bsp/MST9U_nos_r2/include/MsTypes.h \
+  core/drv_bsp/MST9U_nos_r2/include/MsIRQ.h \
+  core/drv_bsp/MST9U_nos_r2/include/MsOS.h \
+  core/drv_bsp/MST9U_nos_r2/include/MsDevice.h \
+  core/lib/MST9U/include/chiptype.h \
+  core/drv_bsp/MST9U_nos_r2/include/drvXC_IOPort.h \
+  project/swdef/SW_Config.h project/swdef/SW_Config_Trunk_MST9U.h \
+  device/include/Enum_Device.h monitor_ap/CUSTOM/MSTAR/MODEL/Model.h \
+  project/boarddef/Board.h monitor_ap/CUSTOM/MSTAR/MODEL/Model_Define.h \
+  monitor_ap/CUSTOM/MSTAR/MODEL/MST9U3_DEMO.h \
+  monitor_ap/PANEL/INC/Panel_define.h \
+  monitor_ap/CUSTOM/MSTAR/MODEL/JRY_Model.h monitor_ap/PANEL/INC/Panel.h \
+  monitor_ap/PANEL/INC/Panel_define.h core/lib/MST9U/include/datatype.h \
+  monitor_ap/PANEL/INC/PanelM270QAN01.h \
+  monitor_ap/KERNEL/SYSTEM/INC/DefaultCompilerOption.h \
+  project/boarddef/BD_MST9UHD_DV1.h \
+  core/api/include/default_option_define.h project/mmap/sysinfo.h \
+  project/boarddef/Board.h project/mmap/sysinfo2_MST9U.h \
+  core/lib/MST9U/include/datatype.h project/mmap/MMAP_MST9U3_128_AEON.h \
+  project/mmap/MIUSEL_MST9U_MIU.h core/driver/sys/MST9U/include/hwreg.h \
+  core/driver/sys/MST9U/include/drvUartDebug.h \
+  core/lib/MST9U/include/datatype.h project/boarddef/Board.h \
+  include/debug.h core/lib/MST9U/include/datatype.h \
+  core/drv_bsp/MST9U_nos_r2/include/MsCommon.h \
+  core/drv_bsp/MST9U_nos_r2/include/MsIRQ.h \
+  core/drv_bsp/MST9U_nos_r2/include/MsOS.h \
+  core/drv_bsp/MST9U_nos_r2/include/drvUART.h \
+  core/drv_bsp/MST9U_nos_r2/include/MsTypes.h \
+  core/drv_bsp/MST9U_nos_r2/include/MsDevice.h \
+  core/drv_bsp/MST9U_nos_r2/include/drvMMIO.h \
+  core/drv_bsp/MST9U_nos_r2/include/drvBDMA.h \
+  core/drv_bsp/MST9U_nos_r2/include/drvMIU.h \
+  core/drv_bsp/MST9U_nos_r2/include/drvWDT.h \
+  core/driver/sys/MST9U/include/SysInit.h \
+  core/driver/sys/MST9U/include/hwreg.h \
+  core/lib/MST9U/include/drvGlobal.h core/lib/MST9U/include/datatype.h \
+  project/image/default/InfoBlock.h \
+  monitor_ap/CUSTOM/MSTAR/BININFO/BinInfo.h \
+  core/lib/MST9U/include/datatype.h project/mmap/sysinfo.h \
+  core/lib/MST9U/include/drvGlobal.h \
+  core/driver/sys/MST9U/include/drvISR.h include/debug.h \
+  core/drv_bsp/MST9U_nos_r2/include/drvUART.h \
+  core/util/include/util_symbol.h \
+  core/drv_bsp/MST9U_nos_r2/include/drvCPU.h project/image/imginfo.h \
+  core/lib/MST9U/include/datatype.h core/lib/MST9U/include/risc32_spr.h \
+  monitor_ap/DRIVER/MST9U3/HDCP22/INC/drvHDCPMbx.h \
+  monitor_ap/DRIVER/MST9U3/HDCP22/INC/drvHDCPRx.h \
+  monitor_ap/DRIVER/MST9U3/INC/combo_config.h
+
+core/lib/MST9U/include/stdio.h:
+
+project/boarddef/Board.h:
+
+core/lib/MST9U/include/datatype.h:
+
+core/driver/sys/MST9U/include/hwreg.h:
+
+core/lib/MST9U/include/c_m2_riubase.h:
+
+core/lib/MST9U/include/c_pm_riubase.h:
+
+core/lib/MST9U/include/c_riubase.h:
+
+core/driver/sys/MST9U/include/hwreg_MST9U.h:
+
+core/drv_bsp/MST9U_nos_r2/include/MsCommon.h:
+
+core/drv_bsp/MST9U_nos_r2/include/MsTypes.h:
+
+core/drv_bsp/MST9U_nos_r2/include/MsIRQ.h:
+
+core/drv_bsp/MST9U_nos_r2/include/MsOS.h:
+
+core/drv_bsp/MST9U_nos_r2/include/MsDevice.h:
+
+core/lib/MST9U/include/chiptype.h:
+
+core/drv_bsp/MST9U_nos_r2/include/drvXC_IOPort.h:
+
+project/swdef/SW_Config.h:
+
+project/swdef/SW_Config_Trunk_MST9U.h:
+
+device/include/Enum_Device.h:
+
+monitor_ap/CUSTOM/MSTAR/MODEL/Model.h:
+
+project/boarddef/Board.h:
+
+monitor_ap/CUSTOM/MSTAR/MODEL/Model_Define.h:
+
+monitor_ap/CUSTOM/MSTAR/MODEL/MST9U3_DEMO.h:
+
+monitor_ap/PANEL/INC/Panel_define.h:
+
+monitor_ap/CUSTOM/MSTAR/MODEL/JRY_Model.h:
+
+monitor_ap/PANEL/INC/Panel.h:
+
+monitor_ap/PANEL/INC/Panel_define.h:
+
+core/lib/MST9U/include/datatype.h:
+
+monitor_ap/PANEL/INC/PanelM270QAN01.h:
+
+monitor_ap/KERNEL/SYSTEM/INC/DefaultCompilerOption.h:
+
+project/boarddef/BD_MST9UHD_DV1.h:
+
+core/api/include/default_option_define.h:
+
+project/mmap/sysinfo.h:
+
+project/boarddef/Board.h:
+
+project/mmap/sysinfo2_MST9U.h:
+
+core/lib/MST9U/include/datatype.h:
+
+project/mmap/MMAP_MST9U3_128_AEON.h:
+
+project/mmap/MIUSEL_MST9U_MIU.h:
+
+core/driver/sys/MST9U/include/hwreg.h:
+
+core/driver/sys/MST9U/include/drvUartDebug.h:
+
+core/lib/MST9U/include/datatype.h:
+
+project/boarddef/Board.h:
+
+include/debug.h:
+
+core/lib/MST9U/include/datatype.h:
+
+core/drv_bsp/MST9U_nos_r2/include/MsCommon.h:
+
+core/drv_bsp/MST9U_nos_r2/include/MsIRQ.h:
+
+core/drv_bsp/MST9U_nos_r2/include/MsOS.h:
+
+core/drv_bsp/MST9U_nos_r2/include/drvUART.h:
+
+core/drv_bsp/MST9U_nos_r2/include/MsTypes.h:
+
+core/drv_bsp/MST9U_nos_r2/include/MsDevice.h:
+
+core/drv_bsp/MST9U_nos_r2/include/drvMMIO.h:
+
+core/drv_bsp/MST9U_nos_r2/include/drvBDMA.h:
+
+core/drv_bsp/MST9U_nos_r2/include/drvMIU.h:
+
+core/drv_bsp/MST9U_nos_r2/include/drvWDT.h:
+
+core/driver/sys/MST9U/include/SysInit.h:
+
+core/driver/sys/MST9U/include/hwreg.h:
+
+core/lib/MST9U/include/drvGlobal.h:
+
+core/lib/MST9U/include/datatype.h:
+
+project/image/default/InfoBlock.h:
+
+monitor_ap/CUSTOM/MSTAR/BININFO/BinInfo.h:
+
+core/lib/MST9U/include/datatype.h:
+
+project/mmap/sysinfo.h:
+
+core/lib/MST9U/include/drvGlobal.h:
+
+core/driver/sys/MST9U/include/drvISR.h:
+
+include/debug.h:
+
+core/drv_bsp/MST9U_nos_r2/include/drvUART.h:
+
+core/util/include/util_symbol.h:
+
+core/drv_bsp/MST9U_nos_r2/include/drvCPU.h:
+
+project/image/imginfo.h:
+
+core/lib/MST9U/include/datatype.h:
+
+core/lib/MST9U/include/risc32_spr.h:
+
+monitor_ap/DRIVER/MST9U3/HDCP22/INC/drvHDCPMbx.h:
+
+monitor_ap/DRIVER/MST9U3/HDCP22/INC/drvHDCPRx.h:
+
+monitor_ap/DRIVER/MST9U3/INC/combo_config.h:

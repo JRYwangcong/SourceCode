@@ -1,0 +1,1449 @@
+C51 COMPILER V9.00   MCU                                                                   07/03/2017 18:41:21 PAGE 1   
+
+
+C51 COMPILER V9.00, COMPILATION OF MODULE MCU
+OBJECT MODULE PLACED IN .\Obj\mcu.obj
+COMPILER INVOKED BY: C:\Keil4\C51\BIN\C51.EXE ..\Code\mcu.c OPTIMIZE(9,SPEED) BROWSE INCDIR(..\Code\INC;..\Code\DRIVER\I
+                    -NC;..\Code\DRIVER\MST9U\INC;..\Code\DRIVER\MST9U3\INC) DEFINE(ModelName=MST9U3_DEMO,CHIP_ID=MST9U3) DEBUG OBJECTEXTEND P
+                    -RINT(.\List\mcu.lst) OBJECT(.\Obj\mcu.obj)
+
+line level    source
+
+   1          #define _MCU_C_
+   2          #include "types.h"
+   3          #include "board.h"
+   4          #include "misc.h"
+   5          #include "debug.h"
+   6          #include "Common.h"
+   7          #include "ms_rwreg.h"
+   8          #include "Reg52.h"
+   9          #include "global.h"
+  10          #include "ms_reg.h"
+  11          #include "mcu.h"
+  12          #include "gpio_def.h"
+  13          
+  14          #define MCU_DEBUG    1
+  15          #if ENABLE_DEBUG&&MCU_DEBUG
+                  #define MCU_printData(str, value)   printData(str, value)
+                  #define MCU_printMsg(str)           printMsg(str)
+              #else
+  19              #define MCU_printData(str, value)
+  20              #define MCU_printMsg(str)
+  21          #endif
+  22          
+  23          
+  24          //////////////////////////////////
+  25          /////////////////////////////////
+  26          void Init_WDT( BYTE bEnable )
+  27          {
+  28   1          if( bEnable )
+  29   1          {
+  30   2      #if( ENABLE_WATCH_DOG )
+                      // initialize the watchdog timer reset interval
+                      SetWDTClk(CLK_LIVE_XTAL);
+              
+                    #if ENABLE_WATCH_DOG_INT
+                      msWriteBit(REG_002B08, 0, BIT1);
+                      msWriteBit(REG_002B28, 0, BIT1);
+                    #endif
+              #endif  // end of #if( ENABLE_WATCH_DOG )
+  39   2          }
+  40   1          else
+  41   1          {
+  42   2              msWrite2Byte( REG_002C08, 0x0000 );
+  43   2              msWrite2Byte( REG_002C0A, 0x0000 );
+  44   2              msWriteBit(REG_002B08, 1, BIT1);
+  45   2          }
+  46   1      }
+  47          void SetWDTClk(BYTE clk_live_sel)
+  48          {
+  49   1          ClearWDT();
+  50   1          if (clk_live_sel == CLK_LIVE_RCOSC_4M)
+  51   1          {
+  52   2              msWrite4Byte( REG_002C08, WATCH_DOG_TIME_RESET * CLOCK_4MHZ); // need set from H-byte to L-byte if
+             - default is not maximum
+C51 COMPILER V9.00   MCU                                                                   07/03/2017 18:41:21 PAGE 2   
+
+  53   2      #if ENABLE_WATCH_DOG_INT
+                      msWrite2Byte( REG_002C06, (WATCH_DOG_TIME_Interrupt * CLOCK_4MHZ)>>16 );
+              #endif
+  56   2          }
+  57   1          else // CLK_LIVE_XTAL
+  58   1          {
+  59   2              msWrite4Byte( REG_002C08, WATCH_DOG_TIME_RESET * CRYSTAL_CLOCK ); // need set from H-byte to L-byt
+             -e if default is not maximum
+  60   2      #if ENABLE_WATCH_DOG_INT
+                      msWrite2Byte( REG_002C06, (WATCH_DOG_TIME_Interrupt * CRYSTAL_CLOCK)>>16 );
+              #endif
+  63   2          }
+  64   1      }
+  65          void ClearWDT( void )
+  66          {
+  67   1      #if R2_51_DUAL_MODE
+  68   1          if(IsWDTAck() || !msPM_IsState_IDLE())
+  69   1          {
+  70   2              WDT_CLEAR();
+  71   2              SetWDTAck();
+  72   2          }
+  73   1      #else
+                  WDT_CLEAR();
+              #endif
+  76   1      }
+  77          
+  78          void TriggerWDT( BYTE clk_live_sel, BYTE second )
+  79          {
+  80   1          ClearWDT();
+  81   1          if (clk_live_sel == CLK_LIVE_RCOSC_4M)
+  82   1          {
+  83   2              msWrite4Byte( REG_002C08, second * CLOCK_4MHZ); // need set from H-byte to L-byte if default is no
+             -t maximum
+  84   2          }
+  85   1          else // CLK_LIVE_XTAL
+  86   1          {
+  87   2              msWrite4Byte( REG_002C08, second * CRYSTAL_CLOCK ); // need set from H-byte to L-byte if default i
+             -s not maximum
+  88   2          }
+  89   1          while(1);
+  90   1      }
+  91          /*
+  92          enum // UART GPIO
+  93          {
+  94              UART_GPIO02_03,
+  95              UART_GPIO40_41,  // VGA ?
+  96              UART_GPIO50_51,
+  97              UART_GPIOX03_04, // combo 0
+  98              UART_GPIOX13_14, // combo 1
+  99              UART_GPIOX23_24, // combo 2
+ 100              UART_GPIOX33_34, // combo 3
+ 101              UART_GPIOX43_44, // combo 4
+ 102              UART_GPIOX53_54, // combo 5
+ 103          };
+ 104          enum // UART Engine
+ 105          {
+ 106              51_UART0,
+ 107              51_UART1,
+ 108              R2_HK,
+ 109              R2_NONHK,
+ 110              DW_uart,
+ 111              RESERVED,
+C51 COMPILER V9.00   MCU                                                                   07/03/2017 18:41:21 PAGE 3   
+
+ 112          };
+ 113          */
+ 114          #if (ENABLE_DEBUG || UART1) //ENABLE_DEBUG:UART 0, UART1: UART 1
+              void mcuSetUartMux( UART_ENGINE ucUartEngine, UART_GPIO ucUartGPIO )
+              {
+              
+                  switch(ucUartGPIO)
+                  {
+                      case UART_GPIO02_03:
+                          msWriteByteMask(REG_000414, ucUartEngine, 0x07);
+                          break;
+                      case UART_GPIO40_41:
+                          msWriteByteMask(REG_000415, ucUartEngine, 0x07);
+                          break;
+                      case UART_GPIO50_51:
+                          msWriteByteMask(REG_000414, ucUartEngine<<4, 0x70);
+                          break;
+                      case UART_GPIOX03_04:
+                          msWriteByteMask(REG_000410, ucUartEngine, 0x07);
+                          break;
+                      case UART_GPIOX13_14:
+                          msWriteByteMask(REG_000410, ucUartEngine<<4, 0x70);
+                          break;
+                      case UART_GPIOX23_24:
+                          msWriteByteMask(REG_000411, ucUartEngine, 0x07);
+                          break;
+                      case UART_GPIOX33_34:
+                          msWriteByteMask(REG_000411, ucUartEngine<<4, 0x70);
+                          break;
+                      case UART_GPIOX43_44:
+                          msWriteByteMask(REG_000412, ucUartEngine, 0x07);
+                          break;
+                      case UART_GPIOX53_54:
+                          msWriteByteMask(REG_000412, ucUartEngine<<4, 0x70);
+                          break;
+                      default:
+                          MCU_printMsg("******UART MUX ERROR*****");
+                          break;
+                  }
+              }
+              #endif
+ 153          
+ 154          void SetSPI_Quad_En(BYTE ucEnable)
+ 155          {
+ 156   1          //    WREG(0x09C0) = 0x06;   //SPI Flash WREN Command
+ 157   1          //    WREG(0x09C1) = 0x01;   //SPI Flash Write Command
+ 158   1          msWrite2Byte(REG_0009C0, 0x0106);
+ 159   1          //    WREG(0x09C2) = 0x00;   //ADR(23:16)
+ 160   1          //    WREG(0x09C3) = 0x02;  //ADR(15:8)
+ 161   1          if (ucEnable==TRUE)
+ 162   1              msWrite2Byte(REG_0009C2, 0x0200);
+ 163   1          else
+ 164   1              msWrite2Byte(REG_0009C2, 0x0000);
+ 165   1          //    WREG(0x09C4) = 0x05;   //SPI Flash RDSR Command
+ 166   1          msWrite2Byte(REG_0009C4, 0x0005);
+ 167   1          //    WREG(0x09D4) = 0x31;   //Write length: 1 Bytes / 8 Bytes / 1 Bytes
+ 168   1          //    WREG(0x09D5) = 0x01;
+ 169   1          msWrite2Byte(REG_0009D4, 0x0131);
+ 170   1      
+ 171   1          //    WREG(0x09D6) = 0x00;   //Read length: 0 Bytes / 0 Bytes / 1 Bytes
+ 172   1          //    WREG(0x09D7) = 0x01;
+ 173   1          msWrite2Byte(REG_0009D6, 0x0100);
+C51 COMPILER V9.00   MCU                                                                   07/03/2017 18:41:21 PAGE 4   
+
+ 174   1      
+ 175   1          //    WREG(0x09D9) = 0xf0;   //enable second/third commands and auto check status
+ 176   1          //    WREG(0x09D8) = 0x07;  //fsp enable and interrupt enable
+ 177   1          msWrite2Byte(REG_0009D8, 0xf007);
+ 178   1      
+ 179   1          //    WREG(0x09DA) = 0x01;        //Trigger
+ 180   1          msWrite2Byte(REG_0009DA, 0x0001);
+ 181   1      
+ 182   1          //Done = RREG(0x09DC, Bit(0))  //Check FSP done flag
+ 183   1          //WREG(0x09DE, Bit(0)) = 1     //Clear FSP done flag
+ 184   1          //    while(!(WREG(0x09DC)&BIT0))
+ 185   1          DelayCounter = 10;
+ 186   1          bDelayFlag = 1;
+ 187   1          while( (!(msReadByte(REG_0009DC)&BIT0)) && bDelayFlag );
+ 188   1      #if ENABLE_DEBUG
+                  if( !bDelayFlag )
+                      printMsg("SetSPI_Quad_En Timeout !!!");
+              #endif
+ 192   1      
+ 193   1          msWrite2Byte(REG_0009DE, (msReadByte(REG_0009DE)|BIT0));     //Clear FSP done flag
+ 194   1      
+ 195   1      }
+ 196          
+ 197          //-------------------------------------------------------------------------------------------------
+ 198          // spi clock
+ 199          // SPI clock setting
+ 200          //
+ 201          // reg_reserved0[5:0]
+ 202          //
+ 203          // h0027    h0026   31  0   reg_reserved0   "Reserved.reg_reserved0[5:0]: for spi clock selectionreg_reser
+             -ved0[8]: for spi new cycle"
+ 204          //
+ 205          //
+ 206          // reg_ckg_spi[6]
+ 207          //  0: Crystal clock
+ 208          //  1: PLL clock
+ 209          //
+ 210          // reg_ckg_spi[4:2], clock selection
+ 211          //
+ 212          // ucIndex ( PLL clock selection)
+ 213          void mcuSetSpiSpeed( BYTE ucIndex )
+ 214          {
+ 215   1          if( ucIndex == IDX_SPI_CLK_XTAL)
+ 216   1          {
+ 217   2              msWriteByteMask( REG_000AE0, 0, _BIT2 );
+ 218   2          }
+ 219   1          else
+ 220   1          {
+ 221   2              msWriteByteMask( REG_000AE0, ucIndex << 3, _BIT5 | _BIT4 | _BIT3);
+ 222   2              msWriteByteMask( REG_000AE0, _BIT2, _BIT2 );
+ 223   2          }
+ 224   1      }
+ 225          
+ 226          /*
+ 227          SPI model select.
+ 228          0x0: Normal mode, (SPI command is 0x03)
+ 229          0x1: Enable fast read mode, (SPI command is 0x0B)
+ 230          0x2: Enable address single & data dual mode, (SPI command is 0x3B)
+ 231          0x3: Enable address dual & data dual mode, (SPI command is 0xBB)
+ 232          0xa: Enable address single & data quad mode, (SPI command is 0x6B) (Reserved)
+ 233          0xb: Enable address quad & data quad mode, (SPI command is 0xEB)
+ 234          (Reserved
+C51 COMPILER V9.00   MCU                                                                   07/03/2017 18:41:21 PAGE 5   
+
+ 235          */
+ 236          void mcuSetSpiMode( BYTE ucMode )
+ 237          {
+ 238   1          BYTE XDATA ucValue;
+ 239   1      
+ 240   1          switch( ucMode )
+ 241   1          {
+ 242   2              case SPI_MODE_FR:
+ 243   2                  ucValue = 0x01;
+ 244   2                  break;
+ 245   2      
+ 246   2              case SPI_MODE_SADD:
+ 247   2                  ucValue = 0x02;
+ 248   2                  break;
+ 249   2      
+ 250   2              case SPI_MODE_DADD:
+ 251   2                  ucValue = 0x03;
+ 252   2                  break;
+ 253   2      
+ 254   2              case SPI_MODE_SAQD:
+ 255   2                  ucValue = 0x0A;
+ 256   2                  break;
+ 257   2      
+ 258   2              case SPI_MODE_QAQD:
+ 259   2                  ucValue = 0x0B;
+ 260   2                  break;
+ 261   2      
+ 262   2              case SPI_MODE_NORMAL:
+ 263   2              default:
+ 264   2                  ucValue = 0x00;
+ 265   2          }
+ 266   1      
+ 267   1          //printf(" SPI_MODE=0x%x\r\n", MDrv_Read2Byte(REG_SEL_MODE));
+ 268   1          if ((ucMode == SPI_MODE_SAQD)||(ucMode == SPI_MODE_QAQD))
+ 269   1          {
+ 270   2      #if 0   // no semaphore protect, may conflict w/ R2 fsp code and hang
+                      msWriteByte( REG_000AE4, SPI_MODE_FR ); // For FSP in SetSPI_Quad_En()
+                      SetSPI_Quad_En(TRUE);
+              #endif
+ 274   2              msWriteByteMask( REG_000405, _BIT3, _BIT3 ); //spi_quad_en
+ 275   2              //printData( "Enable QUAL Mode = %d ", ucMode );
+ 276   2          }
+ 277   1          else
+ 278   1          {
+ 279   2      #if 0   // no semaphore protect, may conflict w/ R2 fsp code and hang
+                      msWriteByte( REG_000AE4, SPI_MODE_FR ); // For FSP in SetSPI_Quad_En()
+                      SetSPI_Quad_En(FALSE);
+              #endif
+ 283   2              msWriteByteMask( REG_000405, 0x00, _BIT3 ); //spi_quad_en
+ 284   2              //printData( "Disable QUAL Mode = %d ", ucMode );
+ 285   2          }
+ 286   1          msWriteByte( REG_000AE4, ucValue ); // SPI model select
+ 287   1      
+ 288   1      #if ENABLE_DEBUG
+                  printData( " SPI Mode = %d ", ucMode );
+              #endif
+ 291   1      }
+ 292          
+ 293          
+ 294          DWORD code g_mcuPLLFreqTable[] =
+ 295          {
+ 296              CLOCK_4MHZ,            // 0
+C51 COMPILER V9.00   MCU                                                                   07/03/2017 18:41:21 PAGE 6   
+
+ 297              CLOCK_12MHZ,           // 1
+ 298              CLOCK_216MHZ,          // 2
+ 299              CLOCK_MPLL_MHZ,        // 3,
+ 300              CLOCK_108MHZ,          // 4,
+ 301              CLOCK_86MHZ,           // 5,
+ 302              CLOCK_54MHZ,           // 6,
+ 303              CLOCK_0MHZ,            // 7
+ 304              CLOCK_XTAL,            // 8
+ 305          };
+ 306          
+ 307          
+ 308          void mcuSetMcuSpeed( BYTE ucSpeedIdx )
+ 309          {
+ 310   1          DWORD XDATA u32Freq;
+ 311   1          WORD XDATA u16Divider0;
+ 312   1          WORD XDATA u16Divider1;
+ 313   1      
+ 314   1          u32Freq = g_mcuPLLFreqTable[ucSpeedIdx];
+ 315   1          u16Divider0 = 1024 - (( _SMOD * u32Freq + u32Freq ) / SERIAL_BAUD_RATE ) / 64;
+ 316   1          u16Divider1 = 1024 - (( u32Freq ) / SERIAL_BAUD_RATE ) / 32;
+ 317   1          if ( ucSpeedIdx == IDX_MCU_CLK_XTAL )
+ 318   1              msWriteByteMask( REG_0003BC, 0, _BIT0 );
+ 319   1          else
+ 320   1          {
+ 321   2              msWriteByteMask( REG_0003BB, ucSpeedIdx, ( _BIT2 | _BIT1 | _BIT0 ) );
+ 322   2              msWriteByteMask( REG_0003BC, _BIT0, _BIT0 );
+ 323   2          }
+ 324   1      
+ 325   1          // Scaler WDT
+ 326   1          //MST9U ?? msWriteByte(SC0_00, 0x00);
+ 327   1          //MST9U ?? msWriteByte(SC0_B2, (u32Freq*4)/CRYSTAL_CLOCK);
+ 328   1      
+ 329   1      #if ENABLE_DEBUG
+                  ES = 0;
+                  S0RELH = HIBYTE( u16Divider0 );
+                  S0RELL = LOBYTE( u16Divider0 );
+                  ES = 1;
+                  printData( "MCU freq = %d MHz ", u32Freq / 1000 / 1000 );
+              #endif
+ 336   1      
+ 337   1      #if UART1
+                  IEN2 &= ~ES1;
+                  S1RELH = HIBYTE( u16Divider1 );
+                  S1RELL = LOBYTE( u16Divider1 );
+                  IEN2 |= ES1;
+              #endif
+ 343   1      
+ 344   1      #if !EXT_TIMER0_1MS
+ 345   1          // timer
+ 346   1          u32Freq = u32Freq / 1000;
+ 347   1          u16Divider0 = ( 65536 - ( u32Freq * INT_PERIOD + 6 ) / 12 );
+ 348   1          EA = 0;
+ 349   1          TR0 = 0;
+ 350   1          ET0 = 0;
+ 351   1          TH0 = g_ucTimer0_TH0 = HIBYTE( u16Divider0 );
+ 352   1          TL0 = g_ucTimer0_TL0 = LOBYTE( u16Divider0 );
+ 353   1          TR0 = 1;
+ 354   1          ET0 = 1;
+ 355   1          EA = 1;
+ 356   1      #endif
+ 357   1      }
+ 358          //=========================================================
+C51 COMPILER V9.00   MCU                                                                   07/03/2017 18:41:21 PAGE 7   
+
+ 359          void mcuSetSystemSpeed(BYTE u8Mode)
+ 360          {
+ 361   1      #if 0//def FPGA
+                  u8Mode = SPEED_XTAL_MODE;
+              #endif
+ 364   1      
+ 365   1          if (g_u8SystemSpeedMode!=u8Mode)
+ 366   1          { //MCU speed >= SPI speed
+ 367   2              switch(u8Mode)
+ 368   2              {
+ 369   3                  case SPEED_4MHZ_MODE:
+ 370   3                      mcuSetSpiSpeed(IDX_SPI_CLK_4MHZ); //spi speed down 1st
+ 371   3                      mcuSetSpiMode( SPI_MODE_FR );
+ 372   3                      mcuSetMcuSpeed(IDX_MCU_CLK_4MHZ);
+ 373   3                      g_bMcuPMClock = 1; // 120925 coding addition
+ 374   3                      break;
+ 375   3                  case SPEED_12MHZ_MODE:
+ 376   3                      if (g_u8SystemSpeedMode>SPEED_12MHZ_MODE)
+ 377   3                      {
+ 378   4                          mcuSetSpiSpeed( IDX_SPI_CLK_12MHZ );
+ 379   4                          mcuSetSpiMode( SPI_MODE_NORMAL );
+ 380   4                          mcuSetMcuSpeed( IDX_MCU_CLK_12MHZ);
+ 381   4                      }
+ 382   3                      else
+ 383   3                      {
+ 384   4                          mcuSetMcuSpeed( IDX_MCU_CLK_12MHZ );
+ 385   4                          mcuSetSpiSpeed( IDX_SPI_CLK_12MHZ );
+ 386   4                      }
+ 387   3                      g_bMcuPMClock = 1; // 120925 coding addition
+ 388   3                      break;
+ 389   3                  case SPEED_XTAL_MODE:
+ 390   3                      mcuSetSpiMode( SPI_MODE_FR );
+ 391   3                      if (g_u8SystemSpeedMode>SPEED_XTAL_MODE)
+ 392   3                      {
+ 393   4                          mcuSetSpiSpeed( IDX_SPI_CLK_XTAL );
+ 394   4                          mcuSetMcuSpeed( IDX_MCU_CLK_XTAL );
+ 395   4                      }
+ 396   3                      else
+ 397   3                      {
+ 398   4                          mcuSetMcuSpeed( IDX_MCU_CLK_XTAL );
+ 399   4                          mcuSetSpiSpeed( IDX_SPI_CLK_XTAL );
+ 400   4                      }
+ 401   3                      g_bMcuPMClock = 1; // 120925 coding addition
+ 402   3                      break;
+ 403   3                  default: //normal
+ 404   3                      mcuSetSpiMode( SPI_MODE );
+ 405   3                      msWriteByte( REG_101EDC, 0x08 );
+ 406   3                      msWriteByte( REG_101ED0, 0x02 );
+ 407   3                      msWriteByte( REG_101ED1, 0x04 );
+ 408   3                      ForceDelay1ms(10);
+ 409   3                      mcuSetMcuSpeed( MCU_SPEED_INDEX );
+ 410   3                      mcuSetSpiSpeed( SPI_SPEED_INDEX );
+ 411   3                      g_bMcuPMClock = 0; // 120925 coding addition
+ 412   3                    break;
+ 413   3              }
+ 414   2              g_u8SystemSpeedMode=u8Mode;
+ 415   2              //SetForceDelayLoop();
+ 416   2          }
+ 417   1      }
+ 418          
+ 419          void Init_MCU( void )
+ 420          {
+C51 COMPILER V9.00   MCU                                                                   07/03/2017 18:41:21 PAGE 8   
+
+ 421   1          EA=0;
+ 422   1      
+ 423   1      #if Enable_Cache
+ 424   1          CACHE_ENABLE();
+ 425   1      #else
+                  CACHE_DISABLE();
+              #endif
+ 428   1      
+ 429   1      #if( ENABLE_WATCH_DOG )
+                  Init_WDT( _ENABLE );
+              #else
+ 432   1          Init_WDT( _DISABLE );
+ 433   1      #endif  // end of #if( ENABLE_WATCH_DOG )
+ 434   1      
+ 435   1          Init_IOPorts();
+ 436   1          Init_ExternalInterrupt();
+ 437   1          Init_Timer();
+ 438   1          Init_SerialPort();
+ 439   1      #if (!R2_51_DUAL_MODE)
+                  msDrvMcu51ResetR2();
+              #endif
+ 442   1          msDrvMcuMailBoxRead();
+ 443   1      
+ 444   1      #if ENABLE_SW_DOUBLE_BUFFER
+                  msSWDBInit();
+              #endif
+ 447   1      
+ 448   1          EA=1;
+ 449   1      
+ 450   1      #if defined(FPGA)
+                  mcuSetUartMux((UART1)?(UART_ENGINE_51_UART1):(UART_ENGINE_51_UART0) , UART_GPIO40_41);
+                  mcuSetSystemSpeed(SPEED_XTAL_MODE);
+              #else
+ 454   1        #if ENABLE_DEBUG
+                  mcuSetUartMux(UART_ENGINE_51_UART0, DFT_51_UART0_GPIO);
+                #endif
+ 457   1        #if UART1
+                  mcuSetUartMux(UART_ENGINE_51_UART1, DFT_51_UART1_GPIO);
+                #endif
+ 460   1      
+ 461   1          mcuSetSystemSpeed(SPEED_NORMAL_MODE);
+ 462   1      #endif
+ 463   1      
+ 464   1          mcuInitXdataMapToDRAM();
+ 465   1          mcuXdataMapToDRAM(XDATA_TO_DRAM_ADDR);
+ 466   1      }
+ 467          
+ 468          
+ 469          // Initialize I/O setting
+ 470          void Init_IOPorts( void )
+ 471          {
+ 472   1      #if 0//tmp
+                  hw_SetDDC_WP();
+                  hw_SetFlashWP();
+                  #if !ENABLE_LED_CONTROLLER
+                  #endif
+                  hw_ClrPanel();
+                  hw_ClrGreenLed();
+                  hw_ClrAmberLed();
+              
+                  Init_hwDDC_WP_Pin();
+                  Init_hwFlash_WP_Pin();
+C51 COMPILER V9.00   MCU                                                                   07/03/2017 18:41:21 PAGE 9   
+
+                  Init_hwBlacklit_Pin();
+                  Init_hwPanel_Pin();
+                  Init_hwGreenLed_Pin();
+                  Init_hwAmberLed_Pin();
+              
+                  Init_PowerKey();
+                  Init_hwDSUBCable_Pin();
+              #endif
+ 491   1      
+ 492   1          //MEM_MSWRITE_BIT(_REG_GPIO1_OEZ, 0, BIT1);
+ 493   1      
+ 494   1          //hw_SetFlashWP();
+ 495   1          //Init_hwFlash_WP_Pin();
+ 496   1          Init_hwBlacklit_Pin();
+ 497   1          Init_hwGreenLed_Pin();
+ 498   1      
+ 499   1          INIT_HW_POWER_KEY();
+ 500   1          Init_hwEEPROM_WP();
+ 501   1      
+ 502   1      #if SwitchPortByDP_Detect_PM
+                  Init_DP_DET_Pin();
+              #endif
+ 505   1      
+ 506   1      }
+ 507          /* initialize 8051 CPU timer & interrupt routine */
+ 508          /* TCON.7(   TF1): Timer 1 overflow flag */
+ 509          /* TCON.6(   TR1): Timer 1 stop/start bit */
+ 510          /* TCON.5(   TF0): Timer 0 overflow flag */
+ 511          /* TCON.4(   TR0): Timer 0 stop/start bit */
+ 512          /* TCON.3(   IE1): Timer 1 INT1 interrupt flag */
+ 513          /* TCON.2(   IT1): Timer 1 INT1 interrupt style setup*/
+ 514          /* TCON.1(   IE0): Timer 0 /INT0 interrupt flag */
+ 515          /* TCON.0(   IT0): Timer 0 /INT0 interrupt style setup */
+ 516          void Init_ExternalInterrupt( void )
+ 517          {
+ 518   1          //INT0
+ 519   1      #if EXT_TIMER0_1MS || ENABLE_MBX
+                  IT0 = 0; // 0:Level  1: falling edge trigger
+                  IE0 = 0;
+                  EX0 = 1; // enable external interrupt 0
+              #else
+ 524   1          IT0 = 0;
+ 525   1          IE0 = 0;
+ 526   1      #if ENABLE_R2_INT_M51_Test
+                  EX0 = 1;  // enable external interrupt 0
+              #else
+ 529   1          EX0 = 0;  // disable external interrupt 0
+ 530   1      #endif
+ 531   1      #endif
+ 532   1      
+ 533   1          //INT1
+ 534   1      
+ 535   1      #if EXT_TIMER0_1MS
+                  INT_FIQ_TIMER0_ENABLE(TRUE);
+                  INT_IRQ_TIMER0_ENABLE(TRUE);
+              
+                  IT1 = 0;
+                  IE1 = 0;
+                  EX1 = 1;
+              #endif
+ 543   1      
+ 544   1      #if UseINT
+C51 COMPILER V9.00   MCU                                                                   07/03/2017 18:41:21 PAGE 10  
+
+                  INT_SYNC_CHANGE_TRIGGER_TYPE();//msWriteByteMask( SC0_CA, _BIT1 | _BIT0, _BIT1 | _BIT0); // BIT0 for l
+             -evel trigger, BIT1 for active high
+              
+                  INT_IRQ_DISP_ENABLE(TRUE); // disp_int
+              
+                  IT1 = 0;//1; // set external interrupt 0 & 1 as falling edge trigger
+                  IE1 = 0;  // interrupt flag
+                  EX1 = 1;  // enable external interrupt 1
+              #elif ENABLE_SW_DOUBLE_BUFFER
+                  IT1 = 0;  //1; // set external interrupt 0 & 1 as falling edge trigger
+                  IE1 = 0;  // interrupt flag
+                  EX1 = 1;  // enable external interrupt 1
+              #else
+ 557   1          IT1 = 0;
+ 558   1          IE1 = 0;
+ 559   1          EX1 = 1;//0;
+ 560   1      #endif
+ 561   1      
+ 562   1          PX0=1;  //
+ 563   1          PX1=1;  //
+ 564   1      
+ 565   1      #if ENABLE_DEBUG
+                  PS=1;
+              #endif
+ 568   1      
+ 569   1      #if (ENABLE_DEBUG)
+                  IP0 = _BIT0 | _BIT4;
+                  IP1 = _BIT0 | _BIT4;
+              #else
+ 573   1          IP0 = _BIT2;
+ 574   1          IP1 = _BIT0 | _BIT2 | _BIT4;
+ 575   1      #endif
+ 576   1      }
+ 577          
+ 578          void Init_Timer( void )
+ 579          {
+ 580   1          WORD XDATA clock_period = ClockPeriod;
+ 581   1      
+ 582   1        /* -------------initialize Timer 0 -----------------------------*/
+ 583   1        g_ucTimer0_TH0 = clock_period >> 8;
+ 584   1        g_ucTimer0_TL0 = clock_period & 0xFF;
+ 585   1        ET0=1;  // enable timer 0 interrupt
+ 586   1        TH0 = g_ucTimer0_TH0;
+ 587   1        TL0 = g_ucTimer0_TL0; // timer 0 counter
+ 588   1        TF0=0; // timer 1 flag
+ 589   1      
+ 590   1       /* -------------initialize Timer 0 -----------------------------*/
+ 591   1        ET1=0;  // disable timer 1 interrupt
+ 592   1        TH1=0;
+ 593   1        TL1=0; // timer 1 counter
+ 594   1        TF1=0; // timer 1 flag
+ 595   1      
+ 596   1        // setup Timer mode
+ 597   1        // TMOD=0x11;  // set timer 1 as timer(1) , timer 0 as counter(5)
+ 598   1        TMOD=0x21;
+ 599   1        // enable/disable timer
+ 600   1        TR0=1;  // disable timer 0
+ 601   1        TR1=0;  // disable timer 1
+ 602   1      
+ 603   1      #if EXT_TIMER0_1MS
+                  TR0 = 0;
+                  msWrite2Byte(REG_002C20, 0x0101);
+C51 COMPILER V9.00   MCU                                                                   07/03/2017 18:41:21 PAGE 11  
+
+                  msWriteByte(REG_002C24, 0xE0);
+                  msWriteByte(REG_002C25, 0x2E);
+                  msWriteByte(REG_002C26, 0x00);
+                  msWriteByte(REG_002C27, 0x00);
+              #endif
+ 611   1      
+ 612   1      #if EnableTime1Interrupt
+ 613   1          TR1 = 0;
+ 614   1          ET1 = 0;
+ 615   1          TH1 = g_ucTimer0_TH0;
+ 616   1          TL1 = g_ucTimer0_TL0;
+ 617   1          TMOD=0x11;
+ 618   1          TR1 = 1;
+ 619   1          ET1 = 1;
+ 620   1      #endif
+ 621   1      
+ 622   1      }
+ 623          /*----------Timer 2 -------------------*/
+ 624          /* T2CON.7(   TF2): overflow flag */
+ 625          /* T2CON.6(  EXF2): extern enable flag */
+ 626          /* T2CON.5(  RCLK): receive clock */
+ 627          /* T2CON.4(  TCLK): transfer clock */
+ 628          /* T2CON.3( EXEN2): extern enable flag */
+ 629          /* T2CON.2(   TR2): stop/start timer 2 */
+ 630          /* T2CON.1(  C_T2): intern clock(0)/extern counter(1) switch */
+ 631          /* T2CON.0(CP_RL2): capture flag */
+ 632          void Init_SerialPort( void )
+ 633          {
+ 634   1      #if ENABLE_DEBUG // Uart 0
+                  ADCON |= _BIT7;             // use S0RELH, S0RELL as baudrate generator
+                  SCON = 0x50;                // mode 1, 8-bit UART, enable receive
+                  PCON |= _BIT7;
+              
+                  // default baudrate-xtal
+                  S0RELH = HIBYTE( S0REL );
+                  S0RELL = LOBYTE( S0REL );
+              
+                  TI = 0;           // clear transfer flag
+                  RI = 0;
+                  TI0_FLAG = 0;
+                  ReSyncCounter = 0;
+                  SIORxIndex = 0;
+              
+                  ES = 1;                     // enable uart interrupt
+              #else
+ 651   1          ES = 0;                     // disable uart interrupt
+ 652   1      #endif
+ 653   1      
+ 654   1      
+ 655   1      #if UART1
+                  S1CON = (_BIT7 | _BIT4); // Uart 1
+              
+                  // baudrate
+                  S1RELH = HIBYTE( S1REL );
+                  S1RELL = LOBYTE( S1REL );
+              
+                  S1CON &= ~TI1;    // Uart 1, clear TI1
+                  S1CON &= ~RI1;    // Uart 1, clear RI1
+              
+                  TI1_FLAG = 0;
+                  ReSyncCounter1 = 0;
+                  SIORxIndex1 = 0;
+C51 COMPILER V9.00   MCU                                                                   07/03/2017 18:41:21 PAGE 12  
+
+              
+                  IEN2 |= ES1;
+              #else
+ 671   1          IEN2 &= ~ES1;
+ 672   1      #endif
+ 673   1      /*
+ 674   1          g_UartCommand.Index = 0;
+ 675   1          g_bUartDetected=0;
+ 676   1      
+ 677   1          g_bDebugASCIICommandFlag = _DISABLE;
+ 678   1          CLR_DEBUG_ONLY_FLAG();
+ 679   1      */
+ 680   1      }
+ 681          
+ 682          #if 1//ENABLE_HK_DATA_ON_DRAM
+ 683          void mcuInitXdataMapToDRAM(void)
+ 684          {
+ 685   1          /*
+ 686   1          Initial XDATA on DRAM.
+ 687   1          Win0: MCU view 0x5000~0xEFFF(40KB)
+ 688   1          Win1: MCU view 0xF000~0xFFFF(4KB)
+ 689   1          */
+ 690   1          msWriteByte(REG_002BC6, WIN0_ADDR_START); // unit is K Byte
+ 691   1          msWriteByte(REG_002BC7, WIN0_ADDR_END);
+ 692   1      
+ 693   1          msWriteByte(REG_002BCA, WIN1_ADDR_START);
+ 694   1          msWriteByte(REG_002BCB, WIN1_ADDR_END);
+ 695   1      
+ 696   1          msWriteBit(REG_002BC4, _ENABLE, _BIT2);   //  enable
+ 697   1      }
+ 698          
+ 699          void mcu4kXdataMapToDRAM(DWORD dw4k)
+ 700          {
+ 701   1          //printf("\r\nWin1: Access DRAM %dth 4KB", w4k);
+ 702   1          msWrite2Byte(REG_002BCC, dw4k);
+ 703   1          msWrite2Byte(REG_002BCE, (dw4k >> 16));
+ 704   1      }
+ 705          
+ 706          void mcu40kXdataMapToDRAM(WORD w64k)
+ 707          {
+ 708   1          /*
+ 709   1          The low byte address to access xdata from MIU.
+ 710   1          The granularity is 64k bytes.
+ 711   1          The actual address[26:0] to miu would be
+ 712   1          {reg_sdr_xd_map[10:8],reg_sdr_xd_map[7:0],xdata_addr[15:0]},
+ 713   1          where xdata_addr[15:0] is mcu xdata address of 64k bytes.
+ 714   1          reg_sdr_xd_map[10:8]
+ 715   1          */
+ 716   1          // printf("\r\nWin0: Access DRAM %dth 64KB", w64k);
+ 717   1          msWrite2Byte(REG_002BC8, w64k);
+ 718   1      }
+ 719          
+ 720          void mcuXdataMapToDRAM(DWORD dwADDR)
+ 721          {
+ 722   1          idata WORD Nth64k;
+ 723   1          idata DWORD Nth4k;
+ 724   1      
+ 725   1          Nth64k = dwADDR >> 16; //unit is 64K Byte
+ 726   1          Nth4k  = (dwADDR + ((DWORD)WIN1_ADDR_START<<10)) >> 12;
+ 727   1      
+ 728   1          mcu40kXdataMapToDRAM(Nth64k);
+ 729   1          mcu4kXdataMapToDRAM(Nth4k);  // let win0 & win1 start from the same address
+C51 COMPILER V9.00   MCU                                                                   07/03/2017 18:41:21 PAGE 13  
+
+ 730   1      }
+ 731          #endif
+ 732          
+ 733          //there is a offset add to dwDestiAddr.
+ 734          void mcuDMADownloadCode(BYTE ch,BYTE DestinaType,DWORD dwSourceAddr, DWORD dwDestinAddr, DWORD dwByteCount
+             -)
+ 735          {
+ 736   1          //BDMA_Operation(ch,0x40|SOURCE_SPI,0x40|DestinaType,dwSourceAddr,dwDestinAddr,dwByteCount,0,0);
+ 737   1          if(DestinaType == DEST_MIU0)
+ 738   1          {
+ 739   2              msWrite2Byte(REG_002B80, ((dwDestinAddr)>>16));
+ 740   2              dwDestinAddr = (dwDestinAddr&0xFFFF0000)+(dwSourceAddr&0xFFFF);
+ 741   2          }
+ 742   1      
+ 743   1          mcuDMADataTransfer(ch,  SOURCE_SPI, DestinaType, dwSourceAddr, dwDestinAddr, dwByteCount);
+ 744   1      
+ 745   1      }
+ 746          //------------------------------------------------------------------------------------------------------
+ 747          // Function Name:  mcuDMADataTransfer
+ 748          //
+ 749          //  Description: BDMA do Move Data from source to destination
+ 750          //
+ 751          //  Parameter:
+ 752          //          channel:  can be set to CHANNEL_AUTO / CHANNEL_0 / CHANNEL_1.We can assign BDMA channel by usi
+             -ng  CHANNEL_0 and CHANNEL_1
+ 753          //                           if we set to CHANNEL_AUTO, BDMA_Operation function will auto switch to chnnel
+             -1 if channel0 is busy.
+ 754          //          SourceType: you can choose device source, please refer to BDMA_SOURCE_TYPE structure
+ 755          //          DestinaType: you can choose destination, please refer to BDMA_DESTINATION_TYPE structure
+ 756          //          dwSourceAddr: set BDMA  Source Start Address
+ 757          //          dwDestinAddr: set BDMA destination Address
+ 758          //          dwByteCount:    set Data size
+ 759          //
+ 760          //------------------------------------------------------------------------------------------------------
+ 761          void mcuDMADataTransfer(BYTE ch,BYTE SourceType,BYTE DestinaType,DWORD dwSourceAddr, DWORD dwDestinAddr, D
+             -WORD dwByteCount)
+ 762          {
+ 763   1          XDATA BYTE width;
+ 764   1          if((SourceType != SOURCE_MIU0) && (SourceType != SOURCE_MIU1) && (SourceType != SOURCE_SPI))
+ 765   1              return;
+ 766   1          if((DestinaType == DEST_MIU0) || (DestinaType == DEST_MIU1))
+ 767   1          {
+ 768   2              width = 0x40;
+ 769   2              if((SourceType == DestinaType) && (dwSourceAddr+dwByteCount > dwDestinAddr))
+ 770   2                  msWriteByteMask(REG_100906,_BIT0,_BIT0); //decrease
+ 771   2          }
+ 772   1          else if(DestinaType == DEST_HKMCU)
+ 773   1              width = 0x00;
+ 774   1          else
+ 775   1              return;
+ 776   1      
+ 777   1          BDMA_Operation(ch,  0x40|SourceType, width|DestinaType, dwSourceAddr, dwDestinAddr, dwByteCount,0 ,0);
+ 778   1      }
+ 779          //------------------------------------------------------------------------------------------------------
+ 780          //  Function Name:  mcuDMAPatternSearch
+ 781          //
+ 782          //  Description: BDMA do Pattern Search
+ 783          //
+ 784          //  Parameter:
+ 785          //          channel:  can be set to CHANNEL_AUTO / CHANNEL_0 / CHANNEL_1.We can assign BDMA channel by usi
+             -ng  CHANNEL_0 and CHANNEL_1
+ 786          //                           if we set to CHANNEL_AUTO, BDMA_Operation function will auto switch to chnnel
+C51 COMPILER V9.00   MCU                                                                   07/03/2017 18:41:21 PAGE 14  
+
+             -1 if channel0 is busy.
+ 787          //          SourceType: you can choose device source, please refer to BDMA_SOURCE_TYPE structure
+ 788          //          dwSourceAddr:   set Pattern Search Start Address
+ 789          //          dwByteCount:    set Search size
+ 790          //          dwPattern:  Enter the pattern we want to search.
+ 791          //                              ex:  pattern = "0x0000BBCC"
+ 792          //  Return: address if hit, or 0 if not found or BDMA busy
+ 793          //
+ 794          //------------------------------------------------------------------------------------------------------
+ 795          
+ 796          DWORD mcuDMAPatternSearch(BYTE channel, BYTE SourceType,DWORD dwSourceAddr, DWORD dwByteCount,DWORD dwPatt
+             -ern)
+ 797          {
+ 798   1          XDATA DWORD dwExternPattern;
+ 799   1          XDATA BYTE index;
+ 800   1          //xdata BYTE uctemp;
+ 801   1      
+ 802   1          dwExternPattern = 0;
+ 803   1          index = 4;
+ 804   1      
+ 805   1      
+ 806   1      
+ 807   1          while(index)
+ 808   1          {
+ 809   2              index--;
+ 810   2              //MCU_printData("%d",index);
+ 811   2              if(dwPattern>>(index*8))
+ 812   2                  break;
+ 813   2              dwExternPattern += ((DWORD)0xFF<<(index*8));
+ 814   2      
+ 815   2          }
+ 816   1      
+ 817   1          dwSourceAddr = BDMA_Operation(channel, 0x40|SourceType, DEST_PATTERN_SEARCH, dwSourceAddr, dwSourceAdd
+             -r, dwByteCount, dwPattern, dwExternPattern);
+ 818   1          dwSourceAddr = dwSourceAddr-index+2;
+ 819   1      
+ 820   1          return dwSourceAddr;
+ 821   1      
+ 822   1      }
+ 823          //------------------------------------------------------------------------------------------------------
+ 824          // Function Name:  mcuDMAMemoryFill
+ 825          //
+ 826          //  Description: BDMA do Memory fill
+ 827          //
+ 828          // Parameter:
+ 829          //          channel:  can be set to CHANNEL_AUTO / CHANNEL_0 / CHANNEL_1.We can assign BDMA channel by usi
+             -ng  CHANNEL_0 and CHANNEL_1
+ 830          //                           if we set to CHANNEL_AUTO, BDMA_Operation function will auto switch to chnnel
+             -1 if channel0 is busy.
+ 831          //          DestinaType: you can choose destination device, please refer to BDMA_DESTINATION_TYPE structur
+             -e
+ 832          //          dwSourceAddr:   set Memory Fill Start Address
+ 833          //          dwByteCount:    set Fill pattern size
+ 834          //          dwPattern:  Filled pattern
+ 835          //------------------------------------------------------------------------------------------------------
+ 836          void mcuDMAMemoryFill(BYTE channel,BYTE DestinaType,DWORD dwSourceAddr, DWORD dwByteCount, DWORD dwPattern
+             -)
+ 837          {
+ 838   1          BDMA_Operation(channel, 0x20|SOURCE_MEMORY_FILL, 0x40|DestinaType, 0, dwSourceAddr, dwByteCount, dwPat
+             -tern, 0);
+ 839   1      }
+ 840          //------------------------------------------------------------------------------------------------------
+C51 COMPILER V9.00   MCU                                                                   07/03/2017 18:41:21 PAGE 15  
+
+ 841          // Function Name:  mcuDMACRC32
+ 842          //
+ 843          //  Description: BDMA do check CRC value
+ 844          //
+ 845          // Parameter:
+ 846          //          channel:  can be set to CHANNEL_AUTO / CHANNEL_0 / CHANNEL_1.We can assign BDMA channel by usi
+             -ng  CHANNEL_0 and CHANNEL_1
+ 847          //                           if we set to CHANNEL_AUTO, BDMA_Operation function will auto switch to chnnel
+             -1 if channel0 is busy.
+ 848          //          SourceType: you can choose device source, please refer to BDMA_SOURCE_TYPE structure
+ 849          //          dwSourceAddr:   set Check CRC Start Address
+ 850          //          dwByteCount:    set Check CRC  size
+ 851          //          dwPolynimial: set Polynomial
+ 852          //          dwSeed: set seed
+ 853          //          dwPattern:  return 4 byte value
+ 854          //
+ 855          //------------------------------------------------------------------------------------------------------
+ 856          DWORD mcuDMACRC32(BYTE channel,BYTE SourceType,DWORD dwSourceAddr, DWORD dwByteCount, DWORD dwPolynimial, 
+             -DWORD dwSeed)
+ 857          {
+ 858   1          return BDMA_Operation(channel, 0x40|SourceType, DEST_CRC32, dwSourceAddr, dwSourceAddr, dwByteCount,dw
+             -Polynimial, dwSeed);
+ 859   1      }
+ 860          
+ 861          DWORD BDMA_Operation(BYTE ch, BYTE SourceId, BYTE DestinId,DWORD dwSourceAddr, DWORD dwDestinAddr, DWORD d
+             -wByteCount, DWORD dwPattern, DWORD dwExternPattern)
+ 862          {
+ 863   1          xdata BYTE uctemp;
+ 864   1          if(ch == CHANNEL_AUTO)
+ 865   1          {
+ 866   2              if(!(msReadByte(REG_100902)&_BIT1))
+ 867   2                  uctemp = 0; // channel 0
+ 868   2              else if(!(msReadByte(REG_100902+0x20)&_BIT1))
+ 869   2                  uctemp = 0x20; // channel 1
+ 870   2              else
+ 871   2          {
+ 872   3                  MCU_printMsg("Both Ch0 and Ch1 are busy");
+ 873   3                  return 0; // both busy
+ 874   3              }
+ 875   2          }
+ 876   1          else if(ch ==CHANNEL_0)
+ 877   1          {
+ 878   2              if(msReadByte(REG_100902)&_BIT1)
+ 879   2          {
+ 880   3                  MCU_printMsg("Ch0 is busy");
+ 881   3                  return 0;
+ 882   3          }
+ 883   2              uctemp = 0;
+ 884   2          }
+ 885   1          else
+ 886   1          {
+ 887   2              if(msReadByte(REG_100902+0x20)&_BIT1)
+ 888   2          {
+ 889   3                  MCU_printMsg("Ch1 is busy");
+ 890   3                  return 0;
+ 891   3              }
+ 892   2              uctemp = 0x20;
+ 893   2          }
+ 894   1      
+ 895   1          msWriteByte(REG_100904+uctemp,SourceId);
+ 896   1          msWriteByte(REG_100905+uctemp,DestinId);
+ 897   1      
+C51 COMPILER V9.00   MCU                                                                   07/03/2017 18:41:21 PAGE 16  
+
+ 898   1          msWriteByteMask(REG_100902+uctemp,_BIT4|_BIT3,_BIT4|_BIT3); // clear  bdma_done and pattern search res
+             -ult flag
+ 899   1      
+ 900   1          msWrite4Byte(REG_100908+uctemp, dwSourceAddr);
+ 901   1          msWrite4Byte(REG_10090C+uctemp, dwDestinAddr);
+ 902   1          msWrite4Byte(REG_100910+uctemp, dwByteCount);
+ 903   1      
+ 904   1          msWriteByte(REG_100914+uctemp,(BYTE)(dwPattern>>24));
+ 905   1          msWriteByte(REG_100915+uctemp,(BYTE)(dwPattern>>16));
+ 906   1          msWriteByte(REG_100916+uctemp,(BYTE)(dwPattern>>8));
+ 907   1          msWriteByte(REG_100917+uctemp,(BYTE)(dwPattern));
+ 908   1      
+ 909   1          msWriteByte(REG_100918+uctemp,(BYTE)(dwExternPattern>>24));
+ 910   1          msWriteByte(REG_100919+uctemp,(BYTE)(dwExternPattern>>16));
+ 911   1          msWriteByte(REG_10091A+uctemp,(BYTE)(dwExternPattern>>8));
+ 912   1          msWriteByte(REG_10091B+uctemp,(BYTE)(dwExternPattern));
+ 913   1      
+ 914   1          msWriteBit(REG_100900+uctemp, 1, _BIT0);    //trigger
+ 915   1      
+ 916   1          if((DestinId&0x0F) == DEST_PATTERN_SEARCH) // pattern search
+ 917   1          {
+ 918   2              TimeOutCounter=10;
+ 919   2              while( TimeOutCounter && !( msReadByte(REG_100902+uctemp)&_BIT3 ) && !( msReadByte(REG_100902+ucte
+             -mp)&_BIT4) );
+ 920   2              if(TimeOutCounter == 0) MCU_printMsg("TIMEOUT!!");
+ 921   2      
+ 922   2              if(!( msReadByte(REG_100902+uctemp)&_BIT4))
+ 923   2              {
+ 924   3                  MCU_printMsg("Can't find the specific pattern in this range!!!");
+ 925   3                  return 0;
+ 926   3              }
+ 927   2      
+ 928   2              dwDestinAddr = 0;
+ 929   2              dwDestinAddr = (DWORD)msReadByte(REG_100908+uctemp);
+ 930   2              dwDestinAddr |= (DWORD)(msReadByte(REG_100909+uctemp))<<8;
+ 931   2              dwDestinAddr |= (DWORD)(msReadByte(REG_10090A+uctemp))<<16;
+ 932   2              dwDestinAddr |= ((DWORD)msReadByte(REG_10090B+uctemp))<<24;
+ 933   2      
+ 934   2              MCU_printData("BDMA_OP_dwDestinAddr_H: 0x%x",dwDestinAddr>>16);
+ 935   2              MCU_printData("BDMA_OP_dwDestinAddr_L: 0x%x",dwDestinAddr);
+ 936   2              return dwDestinAddr;
+ 937   2          }
+ 938   1          else if((DestinId&0x0F) == DEST_CRC32)
+ 939   1          {
+ 940   2              TimeOutCounter=10;
+ 941   2              while( TimeOutCounter && !( msReadByte(REG_100902+uctemp)&_BIT3 ) );
+ 942   2              if(TimeOutCounter == 0) MCU_printMsg("TIMEOUT!!");
+ 943   2              dwDestinAddr = 0;
+ 944   2              dwDestinAddr = (DWORD)msReadByte(REG_100918+uctemp);
+ 945   2              dwDestinAddr |= (DWORD)(msReadByte(REG_100919+uctemp))<<8;
+ 946   2              dwDestinAddr |= (DWORD)(msReadByte(REG_10091A+uctemp))<<16;
+ 947   2              dwDestinAddr |= ((DWORD)msReadByte(REG_10091B+uctemp))<<24;
+ 948   2      
+ 949   2              MCU_printData("BDMA_OP_dwDestinAddr_H: 0x%x",dwDestinAddr>>16);
+ 950   2              MCU_printData("BDMA_OP_dwDestinAddr_L: 0x%x",dwDestinAddr);
+ 951   2              return dwDestinAddr;
+ 952   2      
+ 953   2          }
+ 954   1          else // pattern search and  memory fill
+ 955   1          {
+ 956   2              TimeOutCounter=10;
+ 957   2              while( TimeOutCounter && !( msReadByte(REG_100902+uctemp)&_BIT3 ) );
+C51 COMPILER V9.00   MCU                                                                   07/03/2017 18:41:21 PAGE 17  
+
+ 958   2              if(TimeOutCounter == 0) MCU_printMsg("TIMEOUT!!");
+ 959   2          }
+ 960   1          return 0;
+ 961   1      
+ 962   1      
+ 963   1      }
+ 964          void mcuArrangeCodeAddr(BYTE ucType, DWORD dwAddrStart, DWORD dwAddrEnd)
+ 965          {
+ 966   1          XDATA BYTE ucTemp;
+ 967   1      
+ 968   1          if (ucType ==_SPI)
+ 969   1              ucTemp = 16;
+ 970   1          else if(ucType == _DRAM)
+ 971   1              ucTemp = 8;
+ 972   1          else if(ucType == _PSRAM)
+ 973   1              ucTemp = 0;
+ 974   1      
+ 975   1          msWriteByte(0x001004+ucTemp, (BYTE)(dwAddrStart)); // 0x1014
+ 976   1          msWriteByte(0x001005+ucTemp, (BYTE)(dwAddrStart>>8)); // 0x1015
+ 977   1          msWriteByte(0x001000+ucTemp, (BYTE)(dwAddrStart>>16)); // 0x1010
+ 978   1          msWriteByte(0x001001+ucTemp, (BYTE)(dwAddrStart>>24)); // 0x1011
+ 979   1      
+ 980   1          msWriteByte(0x001006+ucTemp, (BYTE)(dwAddrEnd)); // 0x1016
+ 981   1          msWriteByte(0x001007+ucTemp, (BYTE)(dwAddrEnd>>8)); // 0x1017
+ 982   1          msWriteByte(0x001002+ucTemp, (BYTE)(dwAddrEnd>>16)); // 0x1012
+ 983   1          msWriteByte(0x001003+ucTemp, (BYTE)(dwAddrEnd>>24)); // 0x1013
+ 984   1      
+ 985   1      
+ 986   1          if (ucType ==_SPI)
+ 987   1              ucTemp = _BIT1;
+ 988   1          else if(ucType == _DRAM)
+ 989   1              ucTemp = _BIT2;
+ 990   1          else if(ucType == _PSRAM)
+ 991   1              ucTemp = _BIT0;
+ 992   1      
+ 993   1          if (dwAddrStart < dwAddrEnd)
+ 994   1              msWriteBit(REG_001018, _ENABLE, ucTemp);
+ 995   1          else
+ 996   1              msWriteBit(REG_001018, _DISABLE, ucTemp);
+ 997   1      }
+ 998          
+ 999          void mcuXdataMapToSRAM(BYTE lbAddr, BYTE hbAddr)
+1000          {
+1001   1          msWriteByte(REG_0010E0, hbAddr);
+1002   1          msWriteByte(REG_0010E1, lbAddr);
+1003   1          msWriteByte(REG_0010E4, lbAddr);
+1004   1      
+1005   1          msWriteBit(REG_0010E6, _ENABLE, _BIT3);
+1006   1          msWriteBit(REG_0010E6, _ENABLE, _BIT4);
+1007   1      }
+1008          void codeMoveToXdata(DWORD FStartAddr, DWORD XStartAddr, DWORD XCOUNT)
+1009          {
+1010   1          DWORD idata i;
+1011   1          P2 = 0;
+1012   1          for(i=0; i<XCOUNT; i++)
+1013   1          {
+1014   2              msRegs[XStartAddr+i]=msCodeArea[FStartAddr+i];
+1015   2          }
+1016   1          for(i=0; i<XCOUNT; i++)
+1017   1          {
+1018   2              if(msCodeArea[FStartAddr+i] != msRegs[XStartAddr+i])
+1019   2              {
+C51 COMPILER V9.00   MCU                                                                   07/03/2017 18:41:21 PAGE 18  
+
+1020   3                  MCU_printData("FLASH to XDATA wrong address i = %x",i);
+1021   3              }
+1022   2          }
+1023   1      }
+1024          
+1025          #if ENABLE_DRAM_SELFREFRESH
+              void MIU_EnterSelfRefresh(void)
+              {
+                  msWrite2Byte(0x1012E0, 0x0000);
+              
+              //*************************************
+              #if CHIP_ID == MST9U3
+                  //Enter_self_refresh.txt
+                  ForceDelay1ms(1);
+                      msWrite2ByteMask(0x101206, BIT12, BIT12);
+                  msWrite2Byte(0x101246, 0xfffe); //mask other request => reg_rq0_mask(save path "0" for miu_cmd)
+                  msWrite2Byte(0x101266, 0xffff); //mask other request => reg_rq1_mask
+                  msWrite2Byte(0x101286, 0xffff); //mask other request => reg_rq2_mask
+                  msWrite2Byte(0x1012a6, 0xffff); //mask other request => reg_rq3_mask
+                  ForceDelay1ms(1);
+                  msWrite2Byte(0x101218, 0x0400);
+                  msWrite2Byte(0x101200, 0x002f);
+                  msWrite2Byte(0x101200, 0x052f);
+                  msWrite2Byte(0x101200, 0x002f);
+                  msWrite2Byte(0x101200, 0x032f);
+                  msWrite2Byte(0x101200, 0x002f);
+                  ForceDelay1ms(1);
+                  msWrite2Byte(0x101246, 0xffff);
+                  msWrite2Byte(0x101200, 0x202f);
+                  ForceDelay1ms(1);
+                  //msWriteByteMask(0x101203, 0xF0, 0xF0);
+              
+                  //AN_PowerDown.txt
+                  msWriteByteMask(0x101203, 0xF0, 0xF0);
+                  msWriteByteMask(0x101100, 0x08, 0x08);
+                  msWriteByteMask(0x101180, 0x08, 0x08);
+                  msWriteByteMask(0x101100, 0x18, 0x18);
+                  msWriteByteMask(0x101180, 0x18, 0x18);
+                  msWrite2Byte(0x101154, 0xC070);
+                  msWrite2Byte(0x1011D4, 0xC070);
+                  msWrite2Byte(0x101108, 0x0000);
+                  msWrite2Byte(0x101188, 0x0000);
+              #else
+              //*************************************
+              //*Enter SELF REFRESH
+              //*Set cko_oenz,adr_oenz,dq_oenz,cke_oenz as 1'b1
+              //*Store RX dqs phase value
+              //*Set gpio_oenz as 1'b1
+              //*Set gpio_mode as 1'b1
+              //*Set gpio_pad_mode as 1'b1
+              //*PM_power_down2standby
+              //*
+              //*(Set gpio_pad_mode as 1'b1§ï¦¨DDR_TEST_A[7:3] as 1'b1)
+              //*
+              //**************************************
+                  msWrite2Byte(0x101246, 0xfffe); //mask other request => reg_rq0_mask(save path "0" for miu_cmd)
+                  msWrite2Byte(0x101266, 0xffff); //mask other request => reg_rq1_mask
+                  msWrite2Byte(0x101286, 0xffff); //mask other request => reg_rq2_mask
+                  msWrite2Byte(0x1012a6, 0xffff); //mask other request => reg_rq3_mask
+                  //wait 1 //delay 1ms
+                  ForceDelay1ms(1);
+              
+C51 COMPILER V9.00   MCU                                                                   07/03/2017 18:41:21 PAGE 19  
+
+                  msWrite2Byte(0x101218, 0x0400); //tie A10=1 to enter precharge all
+                                         //reg_mrx = address in miu_cmd
+                  msWrite2Byte(0x101200, 0x002f); //turn off auto refresh
+                                         //reg_auto_ref_off                      1 : [5]
+                  msWrite2Byte(0x101200, 0x052f); //trigger precharge all
+                                         //single cmd [9:7] = {wez, casz, rasz} = {0, 1, 0}
+                                         //reg_single_cmd_en                     1 : [8]
+                  msWrite2Byte(0x101200, 0x002f);
+                  msWrite2Byte(0x101200, 0x032f); //trigger refresh
+                                         //single cmd [9:7] = {wez, casz, rasz} = {0, 0, 1}
+                                         //reg_single_cmd_en                     1 : [8]
+                  msWrite2Byte(0x101200, 0x002f);
+                  msWrite2ByteMask(0x101206, BIT12, BIT12); //csz cke always on
+                                         //reg_csz_always_on                     1 : [11] (ECO method)
+                                         //reg_cke_always_on                     1 : [12]
+                  //wait 1 //delay 1ms
+                  ForceDelay1ms(1);
+              
+                  msWrite2Byte(0x101246, 0xffff); //turn off command request
+                  msWrite2Byte(0x101200, 0x202f); //Enter self refresh mode
+                                         //reg_self_refresh                      1 : [13]
+              //********************
+              //Enter Self-Refresh!!!
+              //********************
+              //In self-refresh mode, reg_cke_oenz, reg_cs_oenz should be "0"
+              //for DDR3, RESET OENZ and cke OENZ are controlled by cke_oenz
+                  msWrite2ByteMask(0x101202, BIT15|BIT14|BIT13|BIT12, BIT15|BIT14|BIT13|BIT12); //turn on oenz
+              
+                                         //reg_cke_oenz                          1 : [12]
+                                         //reg_dq_oenz                           1 : [13]
+                                         //reg_adr_oenz                          1 : [14]
+                                         //reg_cko_oenz                          1 : [15]
+                  msWrite2ByteMask(0x101204, BIT11|BIT10, BIT11|BIT10); //reg_cs_oenz                           1 : [10]
+                                         //reg_cs1_oenz                          1 : [11]
+              
+              
+                  //Store RX dqs phase value
+                  //Saved_RX_DQS[0] = msRead2Byte(0x10116c);
+                  //Saved_RX_DQS[1] = msRead2Byte(0x10116e);
+              
+              
+              
+                  msWrite2ByteMask(0x101100, BIT3, BIT3); //[ 0: 0] reg_pkg_sel
+                                         //[ 3: 3] reg_gpio_oenz                 1
+                                         //[ 4: 4] reg_gpio_mode                 0
+                                         //[ 5: 5] reg_mclk_pd(this bit no use)
+                  //wait 1 //delay 1ms
+                  ForceDelay1ms(1);
+              
+                  msWrite2ByteMask(0x101100, BIT4, BIT4); //[ 0: 0] reg_pkg_sel
+              
+                                         //[ 3: 3] reg_gpio_oenz                 1
+                                         //[ 4: 4] reg_gpio_mode                 1
+                                         //[ 5: 5] reg_mclk_pd(this bit no use)
+              
+                  msWrite2Byte(0x10117e, 0x00fc); //[15: 0] reg_ddr_test                  1: [7:3] (cortrol gpio mode), 
+             -[2] for MST9U2, no loading in MST9U1
+                  //wait 1 //delay 1ms
+                  ForceDelay1ms(1);
+              #endif
+              }
+              
+C51 COMPILER V9.00   MCU                                                                   07/03/2017 18:41:21 PAGE 20  
+
+              Bool MIU_SelfRefreshGuard( void )
+              {
+              #define BIST_SIZE       0x200000
+              #define BIST_BASE_ADDR  0x800000
+              
+              #if (CHIP_ID == MST9U3)
+              #define BIST_BASE_UNIT      0x4000
+              #define MIU_UNIT            0x20
+              #define MIU_GROUP0_MASK     0xFFFE
+              #define MIU_GROUP2_MASK     0x7FFF
+              #else
+              #define BIST_BASE_UNIT      0x2000
+              #define MIU_UNIT            0x10
+              #define MIU_GROUP0_MASK     0x7FFE
+              #define MIU_GROUP2_MASK     0xFFFF
+              #endif
+              
+                  BYTE u8LoopMode  = 0;
+                  BYTE u8ReadOnly  = 0;
+                  BYTE u8WriteOnly = 1;
+              
+                  WORD i, bist_try;
+                  WORD u16TestMode, u16ExtraMode;
+                  Bool bReturn = FALSE;
+              
+              
+                  bist_try = 5;
+              
+                  u16TestMode  = (BIT2|BIT1); //BIST test mode [2:1]
+                  u16ExtraMode = u16TestMode;
+              
+                  if (u8LoopMode)
+                      u16ExtraMode |= BIT4;
+                  if (u8ReadOnly)
+                      u16ExtraMode |= BIT8;
+                  if (u8WriteOnly)
+                      u16ExtraMode |= BIT9;
+              
+                  msWrite2Byte(0x101246, MIU_GROUP0_MASK); //mask other request
+                  msWrite2Byte(0x101266, 0xffff); //mask other request
+                  msWrite2Byte(0x101286, MIU_GROUP2_MASK); //mask other request
+                  msWrite2Byte(0x1012a6, 0xffff); //mask other request
+              
+                  //DQS reset
+                  msWrite2Byte(0x10110e, msRead2Byte(0x10110e)|BIT6);
+                  msWrite2Byte(0x10110e, msRead2Byte(0x10110e)&~BIT6);
+              //-------------
+              //miu self test
+              //-------------
+                  msWrite2Byte(0x1012e0, 0x0000);
+              #if (CHIP_ID == MST9U3)
+                  msWriteByteMask(0x101203, 0x00, 0x08);
+              #else
+                  msWrite2Byte(0x1012F0, 0x0000);
+              #endif
+              
+                  msWrite2Byte(0x1012e2, BIST_BASE_ADDR/BIST_BASE_UNIT); //test base address
+                  msWrite4Byte(0x1012e4, BIST_SIZE/MIU_UNIT);          //test length
+                  msWrite2Byte(0x1012e8, 0xff00);                        //test pattern
+              
+                  msWrite2Byte(0x1012e0, u16ExtraMode);
+                      ForceDelay1ms(2);
+C51 COMPILER V9.00   MCU                                                                   07/03/2017 18:41:21 PAGE 21  
+
+                  msWrite2Byte(0x1012e0, u16ExtraMode|BIT0);
+                  for (i=0; i<bist_try; i++)
+                  {
+                      while(!(msRead2Byte(0x1012e0)&BIT15));
+              
+                      if (!(msRead2Byte(0x1012e0)&0x6000))
+                      {
+                          bReturn = TRUE;
+                          break;
+                      }
+                      msWrite2Byte(0x1012e0, u16ExtraMode);
+                              ForceDelay1ms(2);
+                      msWrite2Byte(0x1012e0, u16ExtraMode|BIT0);
+                  }
+                  if (i >= bist_try)
+                      bReturn = FALSE;
+              #if 0 // avoid the guard data overwriten by other clients
+                  msWrite2Byte(0x101246, 0x0000); //unmask other request
+                  msWrite2Byte(0x101266, 0x0000); //unmask other request
+                  msWrite2Byte(0x101286, 0x0000); //unmask other request
+                  msWrite2Byte(0x1012a6, 0x0000); //unmask other request
+              #endif
+                  return bReturn;
+              }
+              
+              void DeInit_Dram(void)
+              {
+                  if(g_bSTRStatus == 0)
+                  {
+                      MCU_printMsg("DeInit Dram SR (MIU_EnterSelfRefresh)!");
+                      MIU_SelfRefreshGuard();
+                      MIU_EnterSelfRefresh();
+                      MCU_printMsg("MIU_EnterSelfRefresh2!");
+                      g_bSTRStatus = 1;
+                  }
+              }
+              
+              void Init_Dram(void)
+              {
+                  g_bSTRStatus = 0;
+              #if 1
+                  // for ddr self-refresh init sequence.
+                  MCU_printMsg("Init Dram SR (TBD)!");
+              #else
+                  msWrite2Byte(0x101202, 0x0818);
+                  msWrite2Byte(0x101204, 0x01c5);
+                  msWrite2Byte(0x101206, 0x0120);
+                  msWrite2Byte(0x101208, 0x0833);
+                  msWrite2Byte(0x10120a, 0x0c33);
+                  msWrite2Byte(0x10120c, 0x7111);
+                  msWrite2Byte(0x10120e, 0x100e);
+                  msWrite2Byte(0x101210, 0x0031);
+                  msWrite2Byte(0x10121e, 0x1a08);
+              
+                  msWrite2Byte(0x10122a, 0x400f);
+              
+                  msWrite2Byte(0x101200, 0x0000);
+                  msWrite2Byte(0x101200, 0x0008);
+                  msWrite2Byte(0x101200, 0x000c);
+                  msWrite2Byte(0x101200, 0x000e);
+                  msWrite2Byte(0x101200, 0x001f);
+              // ===== miu self test =====
+C51 COMPILER V9.00   MCU                                                                   07/03/2017 18:41:21 PAGE 22  
+
+                  msWrite2Byte(0x1012E2, 0x0000);
+                  msWrite2Byte(0x1012E4, 0x0021);
+                  msWrite2Byte(0x1012E6, 0x0000);
+                  msWrite2Byte(0x1012E8, 0x5aa5);
+                  msWrite2Byte(0x1012E0, 0x0001);
+                  MCU_printMsg("Init Dram ! ");
+              #endif
+              }
+              #endif
+1276          
+1277          void msDrvMcu51ResetR2(void)
+1278          {
+1279   1          msWriteByteMask(REG_00039D, 0, BIT6);
+1280   1          msWriteByte(REG_000393, 0x3F);
+1281   1          msWriteByteMask(REG_00038A, BIT6, BIT7|BIT6);
+1282   1          g_bR2Status = 0;
+1283   1      }
+1284          
+1285          void msDrvMcu51ToR2(void)
+1286          {
+1287   1          MCU_printMsg("51 -> R2");
+1288   1      
+1289   1          #if (!R2_51_DUAL_MODE)
+                  CACHE_DISABLE();
+                  EA = 0;
+                  #endif
+1293   1      
+1294   1          msWrite2Byte(REG_100FB4, 0x00);  //reset base
+1295   1          msWrite2Byte(REG_100F80, 0x00);
+1296   1          msWrite2Byte(REG_100F80, 0x1F); //SPI boot
+1297   1      
+1298   1          msWriteByte(REG_000393, 0x5F); // to do, check flow if RST pin using 5V standby
+1299   1      
+1300   1          //CPU1 SW reset control  (CPU1: R2, CPU0: 51)
+1301   1          msWriteByteMask(REG_00038A, BIT7, BIT7);    //sw reset
+1302   1      
+1303   1          g_bR2Status = 1;
+1304   1      
+1305   1          #if (!R2_51_DUAL_MODE)
+                  EA = 0;
+                  while(1);
+                  #endif
+1309   1      }
+1310          
+1311          void msDrvMcuMailBoxRead(void)
+1312          {
+1313   1          BYTE i;
+1314   1          BYTE *pu8Tmp    = (BYTE *)(&g_sMailBoxR2);
+1315   1          BYTE u8MBSize   = sizeof(sMAILBOX_R2);
+1316   1      
+1317   1          if(IsMailBoxValid())
+1318   1          {
+1319   2              for( i=0 ; i<u8MBSize ; i+=2 )
+1320   2              {
+1321   3                  *(pu8Tmp+i+1) = msReadByte(REG_103380+i);
+1322   3                  *(pu8Tmp+i)   = msReadByte(REG_103380+i+1);
+1323   3              }
+1324   2          }
+1325   1      
+1326   1      }
+1327          
+1328          void msDrvMcuMailBoxWrite(void)
+C51 COMPILER V9.00   MCU                                                                   07/03/2017 18:41:21 PAGE 23  
+
+1329          {
+1330   1          BYTE i;
+1331   1          BYTE *pu8Tmp    = (BYTE *)(&g_sMailBox51);
+1332   1          BYTE u8MBSize   = sizeof(sMAILBOX_51);
+1333   1      
+1334   1          msDrvMcuMailBoxClear();
+1335   1      
+1336   1          for( i=0 ; i<u8MBSize ; i+=2 )
+1337   1          {
+1338   2              msWriteByte(REG_103380+i+1, *(pu8Tmp+i));
+1339   2              msWriteByte(REG_103380+i  , *(pu8Tmp+i+1));
+1340   2          }
+1341   1      
+1342   1          SetMailBoxValid();
+1343   1      }
+1344          
+1345          void msDrvMcuMailBoxClear(void)
+1346          {
+1347   1          BYTE i;
+1348   1      
+1349   1          for( i=0 ; i<NUM_MAILBOX ; i++ )
+1350   1          {
+1351   2              msWriteByte(REG_103380+i, 0x00);
+1352   2          }
+1353   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =   3969    ----
+   CONSTANT SIZE    =     36    ----
+   XDATA SIZE       =     14      19
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----     146
+   IDATA SIZE       =   ----      10
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

@@ -1,0 +1,34 @@
+---- LOGO_ENABLE Matches (33 in 16 files) ----
+appWindow.c (monitor_ap\custom\mstar\app):       #if LOGO_ENABLE
+appWindow.c (monitor_ap\custom\mstar\app):       #if LOGO_ENABLE
+ColorPalette.c (monitor_ap\custom\mstar\ui):#if LOGO_ENABLE
+ColorPaletteTbl.h (monitor_ap\custom\mstar\ui\inc):#if LOGO_ENABLE
+Detect.c (monitor_ap\kernel\scaler):           #if LOGO_ENABLE
+Detect.c (monitor_ap\kernel\scaler):#if LOGO_ENABLE
+Detect.c (monitor_ap\kernel\scaler):#if LOGO_ENABLE
+Detect.c (monitor_ap\kernel\scaler): #if LOGO_ENABLE
+DrawLogo.c (monitor_ap\custom\mstar\ui):#if LOGO_ENABLE
+Global.c (monitor_ap\kernel\system):      #if LOGO_ENABLE			
+Global.c (monitor_ap\kernel\system):      #if LOGO_ENABLE			
+JRY_Model.h (monitor_ap\custom\mstar\model):#define LOGO_ENABLE                   (MSTAR_LOGO|LOGO_IIIP|LOGO_RX|LOGO_MONOPRICE|LOGO_TERRA|LOGO_UPSTAR|LOGO_HKC|LOGO_ZEOL||LOGO_ZEOL_X2|LOGO_Neview||LOGO_HDC||LOGO_JAPANNEXT||LOGO_KOIS||LOGO_KOGAN||LOGO_KOGAN_NEW||LOGO_BENZ||LOGO_TIEMU||LOGO_X_Star||LOGO_BUBALUS||LOGO_Qnix||LOGO_AV||LOGO_AXM||LOGO_NIXEUS||LOGO_IMAGIC||LOGO_HYUNDAI)
+Main.c (monitor_ap\custom\mstar\app):#if LOGO_ENABLE
+Main.c (monitor_ap\custom\mstar\app):            #if 0//((LOGO_ENABLE)&&(MS_PANEL_TYPE==PanelHK395WLEDM_CH16H))
+Menu.c (monitor_ap\custom\mstar\ui):#if LOGO_ENABLE
+Menu.c (monitor_ap\custom\mstar\ui):#if LOGO_ENABLE
+Menu.c (monitor_ap\custom\mstar\ui):#if LOGO_ENABLE	
+Menu.c (monitor_ap\custom\mstar\ui):#if LOGO_ENABLE
+Menu.c (monitor_ap\custom\mstar\ui):#if LOGO_ENABLE
+Menu.c (monitor_ap\custom\mstar\ui):    #if LOGO_ENABLE	
+Menu.c (monitor_ap\custom\mstar\ui):    #if LOGO_ENABLE
+Menudef.h (monitor_ap\custom\mstar\ui\inc):#if LOGO_ENABLE    
+Menudef.h (monitor_ap\custom\mstar\ui\inc):#if LOGO_ENABLE
+MenuFont.c (monitor_ap\custom\mstar\ui):#if LOGO_ENABLE
+MenuFontTbl.h (monitor_ap\custom\mstar\ui\inc):#if LOGO_ENABLE
+MenuFunc.c (monitor_ap\custom\mstar\userfun):#if LOGO_ENABLE
+MenuFunc.c (monitor_ap\custom\mstar\userfun):#if LOGO_ENABLE
+MenuFunc.c (monitor_ap\custom\mstar\userfun):#if LOGO_ENABLE
+MenuFunc.c (monitor_ap\custom\mstar\userfun):#if LOGO_ENABLE
+MenuPropFont.c (monitor_ap\custom\mstar\ui):#if LOGO_ENABLE
+MenuPropFont.c (monitor_ap\custom\mstar\ui):#if LOGO_ENABLE
+MenuTbl.h (monitor_ap\custom\mstar\ui\inc):#if LOGO_ENABLE  
+Power.c (monitor_ap\kernel\system):#if LOGO_ENABLE    

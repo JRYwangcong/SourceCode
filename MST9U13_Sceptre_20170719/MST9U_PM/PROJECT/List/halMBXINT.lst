@@ -1,0 +1,398 @@
+C51 COMPILER V9.00   HALMBXINT                                                             07/03/2017 18:41:24 PAGE 1   
+
+
+C51 COMPILER V9.00, COMPILATION OF MODULE HALMBXINT
+OBJECT MODULE PLACED IN .\Obj\halMBXINT.obj
+COMPILER INVOKED BY: C:\Keil4\C51\BIN\C51.EXE ..\Code\halMBXINT.c OPTIMIZE(9,SPEED) BROWSE INCDIR(..\Code\INC;..\Code\DR
+                    -IVER\INC;..\Code\DRIVER\MST9U\INC;..\Code\DRIVER\MST9U3\INC) DEFINE(ModelName=MST9U3_DEMO,CHIP_ID=MST9U3) DEBUG OBJECTEX
+                    -TEND PRINT(.\List\halMBXINT.lst) OBJECT(.\Obj\halMBXINT.obj)
+
+line level    source
+
+   1          //<MStar Software>
+   2          //******************************************************************************
+   3          // MStar Software
+   4          // Copyright (c) 2010 - 2012 MStar Semiconductor, Inc. All rights reserved.
+   5          // All software, firmware and related documentation herein ("MStar Software") are
+   6          // intellectual property of MStar Semiconductor, Inc. ("MStar") and protected by
+   7          // law, including, but not limited to, copyright law and international treaties.
+   8          // Any use, modification, reproduction, retransmission, or republication of all
+   9          // or part of MStar Software is expressly prohibited, unless prior written
+  10          // permission has been granted by MStar.
+  11          //
+  12          // By accessing, browsing and/or using MStar Software, you acknowledge that you
+  13          // have read, understood, and agree, to be bound by below terms ("Terms") and to
+  14          // comply with all applicable laws and regulations:
+  15          //
+  16          // 1. MStar shall retain any and all right, ownership and interest to MStar
+  17          //    Software and any modification/derivatives thereof.
+  18          //    No right, ownership, or interest to MStar Software and any
+  19          //    modification/derivatives thereof is transferred to you under Terms.
+  20          //
+  21          // 2. You understand that MStar Software might include, incorporate or be
+  22          //    supplied together with third party`s software and the use of MStar
+  23          //    Software may require additional licenses from third parties.
+  24          //    Therefore, you hereby agree it is your sole responsibility to separately
+  25          //    obtain any and all third party right and license necessary for your use of
+  26          //    such third party`s software.
+  27          //
+  28          // 3. MStar Software and any modification/derivatives thereof shall be deemed as
+  29          //    MStar`s confidential information and you agree to keep MStar`s
+  30          //    confidential information in strictest confidence and not disclose to any
+  31          //    third party.
+  32          //
+  33          // 4. MStar Software is provided on an "AS IS" basis without warranties of any
+  34          //    kind. Any warranties are hereby expressly disclaimed by MStar, including
+  35          //    without limitation, any warranties of merchantability, non-infringement of
+  36          //    intellectual property rights, fitness for a particular purpose, error free
+  37          //    and in conformity with any international standard.  You agree to waive any
+  38          //    claim against MStar for any loss, damage, cost or expense that you may
+  39          //    incur related to your use of MStar Software.
+  40          //    In no event shall MStar be liable for any direct, indirect, incidental or
+  41          //    consequential damages, including without limitation, lost of profit or
+  42          //    revenues, lost or damage of data, and unauthorized system use.
+  43          //    You agree that this Section 4 shall still apply without being affected
+  44          //    even if MStar Software has been modified by MStar in accordance with your
+  45          //    request or instruction for your use, except otherwise agreed by both
+  46          //    parties in writing.
+  47          //
+  48          // 5. If requested, MStar may from time to time provide technical supports or
+  49          //    services in relation with MStar Software to you for your use of
+  50          //    MStar Software in conjunction with your or your customer`s product
+  51          //    ("Services").
+  52          //    You understand and agree that, except otherwise agreed by both parties in
+  53          //    writing, Services are provided on an "AS IS" basis and the warranty
+C51 COMPILER V9.00   HALMBXINT                                                             07/03/2017 18:41:24 PAGE 2   
+
+  54          //    disclaimer set forth in Section 4 above shall apply.
+  55          //
+  56          // 6. Nothing contained herein shall be construed as by implication, estoppels
+  57          //    or otherwise:
+  58          //    (a) conferring any license or right to use MStar name, trademark, service
+  59          //        mark, symbol or any other identification;
+  60          //    (b) obligating MStar or any of its affiliates to furnish any person,
+  61          //        including without limitation, you and your customers, any assistance
+  62          //        of any kind whatsoever, or any information; or
+  63          //    (c) conferring any license or right under any intellectual property right.
+  64          //
+  65          // 7. These terms shall be governed by and construed in accordance with the laws
+  66          //    of Taiwan, R.O.C., excluding its conflict of law rules.
+  67          //    Any and all dispute arising out hereof or related hereto shall be finally
+  68          //    settled by arbitration referred to the Chinese Arbitration Association,
+  69          //    Taipei in accordance with the ROC Arbitration Law and the Arbitration
+  70          //    Rules of the Association by three (3) arbitrators appointed in accordance
+  71          //    with the said Rules.
+  72          //    The place of arbitration shall be in Taipei, Taiwan and the language shall
+  73          //    be English.
+  74          //    The arbitration award shall be final and binding to both parties.
+  75          //
+  76          //******************************************************************************
+  77          //<MStar Software>
+  78          ////////////////////////////////////////////////////////////////////////////////
+  79          //
+  80          // Copyright (c) 2008-2009 MStar Semiconductor, Inc.
+  81          // All rights reserved.
+  82          //
+  83          // Unless otherwise stipulated in writing, any and all information contained
+  84          // herein regardless in any format shall remain the sole proprietary of
+  85          // MStar Semiconductor Inc. and be kept in strict confidence
+  86          // ("MStar Confidential Information") by the recipient.
+  87          // Any unauthorized act including without limitation unauthorized disclosure,
+  88          // copying, use, reproduction, sale, distribution, modification, disassembling,
+  89          // reverse engineering and compiling of the contents of MStar Confidential
+  90          // Information is unlawful and strictly prohibited. MStar hereby reserves the
+  91          // rights to any and all damages, losses, costs and expenses resulting therefrom.
+  92          //
+  93          ////////////////////////////////////////////////////////////////////////////////
+  94          ///////////////////////////////////////////////////////////////////////////////////////////////////
+  95          ///
+  96          /// file    halMBXINT.c
+  97          /// @brief  MStar MailBox interrupt DDI
+  98          /// @author MStar Semiconductor Inc.
+  99          ///////////////////////////////////////////////////////////////////////////////////////////////////
+ 100          
+ 101          #define _MHAL_MBX_INTERRUPT_C
+ 102          
+ 103          //=============================================================================
+ 104          // Include Files
+ 105          //=============================================================================
+ 106          #include "Types.h"
+ 107          #include "drvMBX.h"
+ 108          #include "regMBXINT.h"
+ 109          #include "halMBXINT.h"
+ 110          #include "Ms_reg.h"
+ 111          #include "Ms_rwreg.h"
+ 112          //=============================================================================
+ 113          // Compile options
+ 114          //=============================================================================
+ 115          #if ENABLE_MBX
+C51 COMPILER V9.00   HALMBXINT                                                             07/03/2017 18:41:24 PAGE 3   
+
+              
+              //=============================================================================
+              // Local Defines
+              //=============================================================================
+              
+              //=============================================================================
+              // Debug Macros
+              //=============================================================================
+              #define halMBXINT_DEBUG    1
+              #if ENABLE_DEBUG&&halMBXINT_DEBUG
+                  #define halMBXINT_printData(str, value)   printData(str, value)
+                  #define halMBXINT_printMsg(str)           printMsg(str)
+              #else
+                  #define halMBXINT_printData(str, value)
+                  #define halMBXINT_printMsg(str)
+              #endif
+              /*
+              //#define MBXINT_DEBUG
+              #ifdef MBXINT_DEBUG
+                  #define MBXINT_ERROR(fmt, args...)           printf("[MBX INT Driver USER ERR][%06d]     " fmt, __LINE
+             -__, ## args)
+                  #define MBXINT_WARN(fmt, args...)            printf("[MBX INT Driver WARN][%06d]    " fmt, __LINE__, #
+             -# args)
+                  #define MBXINT_PRINT(fmt, args...)           printf("[MBX INT Driver][%06d]     " fmt, __LINE__, ## ar
+             -gs)
+                  #define MBXINT_ASSERT(_cnd, _fmt, _args...)    \
+                                                  if (!(_cnd)) {              \
+                                                      MBXINT_PRINT(_fmt, ##_args);  \
+                                                  }
+              #else
+                  #define MBXINT_ERROR(fmt, args...)
+                  #define MBXINT_WARN(fmt, args...)
+                  #define MBXINT_PRINT(fmt, args...)
+                  #define MBXINT_ASSERT(_cnd, _fmt, _args...)
+              #endif
+              */
+              //=============================================================================
+              // Macros
+              //=============================================================================
+              
+              //=============================================================================
+              // Local Variables
+              //=============================================================================
+              static MBX_MSGRECV_CB_FUNC XDATA _pMBXMsgRecvCbFunc = NULL;
+              static WORD XDATA _u32RIUBaseAddrMBXINT = 0;
+              
+              //=============================================================================
+              // Global Variables
+              //=============================================================================
+              
+              //=============================================================================
+              // Local Function Prototypes
+              //=============================================================================
+              static void _MHAL_MBXINT_INTHandler(InterruptNum vector);
+              static MBX_Result _MHAL_MBXINT_SetHostCPU(MBX_CPU_ID eHostCPUID);
+              
+              //=============================================================================
+              // Local Function
+              //=============================================================================
+              void halMBX_dummy(void);
+              //-------------------------------------------------------------------------------------------------
+              /// Handle Interrupt, schedule tasklet
+C51 COMPILER V9.00   HALMBXINT                                                             07/03/2017 18:41:24 PAGE 4   
+
+              /// @param  irq                  \b IN: interrupt number
+              /// @param  dev_id                  \b IN: dev id
+              /// @return irqreturn_t: IRQ_HANDLED
+              /// @attention
+              /// <b>[MXLIB] <em></em></b>
+              //-------------------------------------------------------------------------------------------------
+              void _MHAL_MBXINT_INTHandler(InterruptNum eIntNum)
+              {
+                  if(NULL == _pMBXMsgRecvCbFunc)
+                  {
+                      return;
+                  }
+              
+                  _pMBXMsgRecvCbFunc(eIntNum);
+              
+                  //MsOS_EnableInterrupt(eIntNum);
+              }
+              
+              //-------------------------------------------------------------------------------------------------
+              /// Set Interrupt to Host CPU ID: Enable related interrupt and attached related callback.
+              /// @param  eHostCPUID                  \b IN: The Host CPU ID
+              /// @return E_MBX_SUCCESS
+              /// @attention
+              /// <b>[MXLIB] <em></em></b>
+              //-------------------------------------------------------------------------------------------------
+              MBX_Result _MHAL_MBXINT_SetHostCPU(MBX_CPU_ID eHostCPUID)
+              {
+                  switch(eHostCPUID)
+                  {
+                      case E_MBX_CPU_PM:
+                          msWriteBit(REG_10190D, 0, BIT2);
+                          //halMBXINT_printMsg("init interrupt mask R2 to 51");
+                          break;
+                      default:
+                          return E_MBX_ERR_INVALID_CPU_ID;
+                  }
+              
+                  return E_MBX_SUCCESS;
+              }
+              
+              //=============================================================================
+              // Mailbox HAL Interrupt Driver Function
+              //=============================================================================
+              
+              //-------------------------------------------------------------------------------------------------
+              /// Handle Interrupt INIT
+              /// @param  eHostCPU                  \b IN: interrupt owner
+              /// @param  pMBXRecvMsgCBFunc                  \b IN: callback func by driver
+              /// @param  u32RIUBaseAddrMBXINT                  \b IN: RIU Base Addr with platform
+              /// @return E_MBX_ERR_INVALID_CPU_ID: the cpu id is wrong
+              /// @return E_MBX_UNKNOW_ERROR: request_irq failed;
+              /// @return E_MBX_SUCCESS: success;
+              /// @attention
+              /// <b>[MXLIB] <em></em></b>
+              //-------------------------------------------------------------------------------------------------
+              #if 1
+              MBX_Result MHAL_MBXINT_Init (MBX_CPU_ID eHostCPU, WORD u32RIUBaseAddrMBXINT)
+              {
+                  _u32RIUBaseAddrMBXINT = u32RIUBaseAddrMBXINT;
+              
+                  return _MHAL_MBXINT_SetHostCPU(eHostCPU);
+              }
+C51 COMPILER V9.00   HALMBXINT                                                             07/03/2017 18:41:24 PAGE 5   
+
+              #else
+              MBX_Result MHAL_MBXINT_Init (MBX_CPU_ID eHostCPU, MBX_MSGRECV_CB_FUNC pMBXRecvMsgCBFunc, WORD u32RIUBaseAd
+             -drMBXINT)
+              {
+                  _pMBXMsgRecvCbFunc = pMBXRecvMsgCBFunc;
+                  _u32RIUBaseAddrMBXINT = u32RIUBaseAddrMBXINT;
+              
+                  return _MHAL_MBXINT_SetHostCPU(eHostCPU);
+              }
+              #endif
+              
+              //-------------------------------------------------------------------------------------------------
+              /// Handle Interrupt DeINIT
+              /// @param  eHostCPU                  \b IN: interrupt owner
+              /// @return void;
+              /// @attention
+              /// <b>[MXLIB] <em></em></b>
+              //-------------------------------------------------------------------------------------------------
+              void MHAL_MBXINT_DeInit (MBX_CPU_ID eHostCPU)
+              {
+                  switch(eHostCPU)
+                  {
+                      /*
+                      case E_MBX_CPU_AEON:
+                          MsOS_DisableInterrupt(E_INT_FIQ_R2_TO_8051);
+                          MsOS_DetachInterrupt(E_INT_FIQ_R2_TO_8051);
+                          break;
+                      */
+                      case E_MBX_CPU_PM:
+                          msWriteBit(REG_10190D, 1, BIT2);
+                          break;
+                      default:
+                          break;
+                  }
+              }
+              
+              //-------------------------------------------------------------------------------------------------
+              /// Reset Host CPU for MBX Interrupt
+              /// @param  ePrevCPU                  \b IN: previous host cpu id
+              /// @param  eConfigCpu                  \b IN: new configed cpu id
+              /// @return E_MBX_SUCCESS: success;
+              /// @return E_MBX_INVALID_CPU_ID
+              /// @attention
+              /// <b>[MXLIB] <em></em></b>
+              //-------------------------------------------------------------------------------------------------
+              MBX_Result MHAL_MBXINT_ResetHostCPU (MBX_CPU_ID ePrevCPU, MBX_CPU_ID eConfigCpu)
+              {
+                  MHAL_MBXINT_DeInit(ePrevCPU);
+              
+                  return _MHAL_MBXINT_SetHostCPU(eConfigCpu);
+              }
+              
+              //-------------------------------------------------------------------------------------------------
+              /// Fire Interrupt
+              /// @param  dstCPUID                  \b IN: dst cpu of interrupt
+              /// @param  srcCPUID                  \b IN: src cpu of interrupt
+              /// @return E_MBX_SUCCESS: success;
+              /// @attention
+              /// <b>[MXLIB] <em></em></b>
+              //-------------------------------------------------------------------------------------------------
+              MBX_Result MHAL_MBXINT_Fire (MBX_CPU_ID dstCPUID, MBX_CPU_ID srcCPUID)
+              {
+C51 COMPILER V9.00   HALMBXINT                                                             07/03/2017 18:41:24 PAGE 6   
+
+                  //MBXINT_ASSERT((dstCPUID!=srcCPUID),"dst cpu is the same as src cpu!\n");
+                  //MBXINT_PRINT("src %d to dst %d  interrupt \n", srcCPUID, dstCPUID);
+                  if((dstCPUID==srcCPUID))
+                      halMBXINT_printMsg("dst cpu is the same as src cpu!");
+                  //halMBXINT_printData("src cpu %d", srcCPUID);
+                  //halMBXINT_printData("dst cpu %d", dstCPUID);
+              
+                  switch(srcCPUID)
+                  {
+                      case E_MBX_CPU_PM:
+                          if(dstCPUID==E_MBX_CPU_AEON)
+                          {
+                              //FIQ_REG(REG_FIQ_H1_32_47) &= ~(INT_FIQMASK_PM_AEON);
+                              //P2 = 1;
+                              CPU_INT_REG(REG_INT_PMFIRE) |= INT_PM_AEON;
+                              //P2 = 1;
+                              CPU_INT_REG(REG_INT_PMFIRE) &= ~(INT_PM_AEON);
+                              //P2 = 0;
+                              msWriteByte(0x100540, 0x01);
+                              msWriteByte(0x100540, 0x00);
+                          }
+                          break;
+                      case E_MBX_CPU_AEON:
+                          if(dstCPUID==E_MBX_CPU_PM)
+                          {
+                              // AEON 2 PM
+                              //FIQ_REG(REG_FIQ_H1_32_47) &= ~(INT_FIQMASK_AEON_PM);
+                              CPU_INT_REG(REG_INT_AEONFIRE) |= INT_AEON_PM;
+                              CPU_INT_REG(REG_INT_AEONFIRE) &= ~(INT_AEON_PM);
+                              //MBXINT_PRINT("FIA [32-47]M = 0x%x\n", FIQ_REG(REG_FIQ_H1_32_47));
+                              //MBXINT_PRINT("FIQ [32-47]S = 0x%x\n", FIQ_REG(REG_FIQS_H1_32_47));
+                          }
+                          break;
+                      case 0xF0:
+                          halMBX_dummy();
+                          break;
+                      default:
+                          //MBXINT_ASSERT(FALSE,"wrong src cpu!\n");
+                          halMBXINT_printMsg("wrong src cpu!");
+                          break;
+                  }
+              
+                  return E_MBX_SUCCESS;
+              }
+              
+              MBX_Result MHAL_MBXINT_CpuInit(MBX_CPU_ID eHKCPU)
+              {
+                  if((eHKCPU == E_MBX_CPU_AEON) || (eHKCPU == E_MBX_CPU_PM))
+                  {
+                      return E_MBX_SUCCESS;
+                  }
+                  //MBXINT_ASSERT(FALSE, "[MHAL_MBXINT_CpuInit] Invalid HK CPU ID \n");
+                  halMBXINT_printMsg("Invalid HK CPU ID");
+                  return E_MBX_ERR_INVALID_CPU_ID;
+              }
+              void halMBX_dummy(void)
+              {
+                  _MHAL_MBXINT_INTHandler(E_INT_MAX);
+              }
+              #endif  //ENABLE_MBX
+
+
+C51 COMPILER V9.00   HALMBXINT                                                             07/03/2017 18:41:24 PAGE 7   
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =   ----    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

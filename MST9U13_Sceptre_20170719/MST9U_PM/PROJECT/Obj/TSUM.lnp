@@ -1,0 +1,38 @@
+COMMON {".\Obj\Common.obj"},
+COMMON {".\Obj\isr.obj"},
+COMMON {".\Obj\ms_rwreg.obj"},
+COMMON {".\Obj\STARTUP.obj"},
+COMMON {".\Obj\L51_MST.obj"},
+COMMON {".\Obj\NVRam.obj"},
+COMMON {".\Obj\hwi2c.obj"},
+COMMON {".\Obj\I2c.obj"},
+COMMON {".\Obj\swi2c_debug.obj"},
+COMMON {".\Obj\msAPI_DaisyChain.obj"},
+BANK0 {".\Obj\Global.obj"},
+BANK0 {".\Obj\Keypad.obj"},
+BANK0 {".\Obj\main.obj"},
+BANK0 {".\Obj\mcu.obj"},
+BANK0 {".\Obj\Debug.obj"},
+BANK0 {".\Obj\misc.obj"},
+BANK0 {".\Obj\mdrv_mhl.obj"},
+BANK0 {".\Obj\mhal_mhl.obj"},
+BANK0 {".\Obj\drvmStar.obj"},
+BANK0 {".\Obj\drvADC.obj"},
+BANK0 {".\Obj\halMBX.obj"},
+BANK0 {".\Obj\halMBXINT.obj"},
+BANK0 {".\Obj\drvMBX.obj"},
+BANK0 {".\Obj\drvMBXMsgPool.obj"},
+BANK0 {".\Obj\msAPI_MailBox.obj"},
+BANK0 {".\Obj\drvGPIO.obj"},
+BANK0 {".\Obj\Buzzer.obj"},
+BANK0 {".\Obj\mapi_mhl.obj"},
+BANK0 {".\Obj\mapi_tmds.obj"},
+BANK0 {".\Obj\mapi_combo.obj"},
+BANK0 {".\Obj\MsIR.obj"},
+BANK0 {".\Obj\IrFunc.obj"},
+BANK0 {".\Obj\drvPM.obj"} 
+TO ".\Obj\TSUM" BankArea(0x0000,0xFFFF) 
+PRINT(".\List\TSUM.m51") RAMSIZE(256) 
+
+
+XDATA( 0X5000-0X5FFF )

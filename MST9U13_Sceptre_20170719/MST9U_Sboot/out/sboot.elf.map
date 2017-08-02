@@ -1,0 +1,617 @@
+Archive member included because of file (symbol)
+
+src/lib.a(7alloc.o)           (--whole-archive)
+src/lib.a(MSDecompress.o)     (--whole-archive)
+src/lib.a(lzmadec.o)          (--whole-archive)
+src/lib.a(zlib.o)             (--whole-archive)
+src/MST9U/lib.a(backtrace.o)  (--whole-archive)
+src/MST9U/lib.a(bootaeonsysinit.o)
+                              (--whole-archive)
+src/MST9U/lib.a(cache.o)      (--whole-archive)
+src/MST9U/lib.a(context.o)    (--whole-archive)
+src/MST9U/lib.a(ddr_bd_mst203a_a01a_esmt_1333.o)
+                              (--whole-archive)
+src/MST9U/lib.a(ddr_bd_mst203a_a01a_etron_1333.o)
+                              (--whole-archive)
+src/MST9U/lib.a(ddr_bd_mst203a_a01a_winbond_1333.o)
+                              (--whole-archive)
+src/MST9U/lib.a(drvAeonUART.o)
+                              (--whole-archive)
+src/MST9U/lib.a(drvGlobal.o)  (--whole-archive)
+src/MST9U/lib.a(drvPadConf.o)
+                              (--whole-archive)
+src/MST9U/lib.a(exception.o)  (--whole-archive)
+src/MST9U/lib.a(init_MST9U.o)
+                              (--whole-archive)
+src/MST9U/lib.a(interrupt.o)  (--whole-archive)
+src/MST9U/lib.a(printf.o)     (--whole-archive)
+src/MST9U/lib.a(puts.o)       (--whole-archive)
+src/MST9U/lib.a(reset.o)      (--whole-archive)
+src/MST9U/lib.a(risc32.o)     (--whole-archive)
+src/MST9U/lib.a(setSPI.o)     (--whole-archive)
+src/MST9U/lib.a(snprintf.o)   (--whole-archive)
+src/MST9U/lib.a(stack.o)      (--whole-archive)
+src/MST9U/lib.a(vectors.o)    (--whole-archive)
+src/MST9U/lib.a(vsnprintf.o)  (--whole-archive)
+
+Allocating common symbols
+Common symbol       size              file
+
+loader_2nd_lma      0x4               src/MST9U/lib.a(init_MST9U.o)
+loader_2nd_len      0x4               src/MST9U/lib.a(init_MST9U.o)
+loader_2nd_vma      0x4               src/MST9U/lib.a(init_MST9U.o)
+risc32_regbase      0x4               src/MST9U/lib.a(bootaeonsysinit.o)
+
+Discarded input sections
+
+ .text          0x00000000        0x0 src/lib.a(7alloc.o)
+ .data          0x00000000        0x0 src/lib.a(7alloc.o)
+ .bss           0x00000000        0x0 src/lib.a(7alloc.o)
+ .text          0x00000000        0x0 src/lib.a(MSDecompress.o)
+ .data          0x00000000        0x0 src/lib.a(MSDecompress.o)
+ .bss           0x00000000        0x0 src/lib.a(MSDecompress.o)
+ .rodata._sbt_version
+                0x00000000        0x0 src/lib.a(MSDecompress.o)
+ .text          0x00000000        0x0 src/lib.a(lzmadec.o)
+ .data          0x00000000        0x0 src/lib.a(lzmadec.o)
+ .bss           0x00000000        0x0 src/lib.a(lzmadec.o)
+ .text          0x00000000        0x0 src/lib.a(zlib.o)
+ .data          0x00000000        0x0 src/lib.a(zlib.o)
+ .bss           0x00000000        0x0 src/lib.a(zlib.o)
+ .text          0x00000000        0x0 src/MST9U/lib.a(backtrace.o)
+ .data          0x00000000        0x0 src/MST9U/lib.a(backtrace.o)
+ .bss           0x00000000        0x0 src/MST9U/lib.a(backtrace.o)
+ .text          0x00000000        0x0 src/MST9U/lib.a(bootaeonsysinit.o)
+ .data          0x00000000        0x0 src/MST9U/lib.a(bootaeonsysinit.o)
+ .bss           0x00000000        0x0 src/MST9U/lib.a(bootaeonsysinit.o)
+ .text.CopyFLH2MIU1
+                0x00000000        0x0 src/MST9U/lib.a(bootaeonsysinit.o)
+ .text.SetSPI_Quad_En
+                0x00000000        0x0 src/MST9U/lib.a(bootaeonsysinit.o)
+ .text.Jump2AP  0x00000000        0x0 src/MST9U/lib.a(bootaeonsysinit.o)
+ .text.SetMIU_SEL
+                0x00000000        0x0 src/MST9U/lib.a(bootaeonsysinit.o)
+ COMMON         0x00000000        0x0 src/MST9U/lib.a(bootaeonsysinit.o)
+ .text          0x00000000        0x0 src/MST9U/lib.a(cache.o)
+ .data          0x00000000        0x0 src/MST9U/lib.a(cache.o)
+ .bss           0x00000000        0x0 src/MST9U/lib.a(cache.o)
+ .text          0x00000000        0x0 src/MST9U/lib.a(context.o)
+ .data          0x00000000        0x0 src/MST9U/lib.a(context.o)
+ .bss           0x00000000        0x0 src/MST9U/lib.a(context.o)
+ .text          0x00000000        0x0 src/MST9U/lib.a(ddr_bd_mst203a_a01a_esmt_1333.o)
+ .data          0x00000000        0x0 src/MST9U/lib.a(ddr_bd_mst203a_a01a_esmt_1333.o)
+ .bss           0x00000000        0x0 src/MST9U/lib.a(ddr_bd_mst203a_a01a_esmt_1333.o)
+ .text          0x00000000        0x0 src/MST9U/lib.a(ddr_bd_mst203a_a01a_etron_1333.o)
+ .data          0x00000000        0x0 src/MST9U/lib.a(ddr_bd_mst203a_a01a_etron_1333.o)
+ .bss           0x00000000        0x0 src/MST9U/lib.a(ddr_bd_mst203a_a01a_etron_1333.o)
+ .text          0x00000000        0x0 src/MST9U/lib.a(ddr_bd_mst203a_a01a_winbond_1333.o)
+ .data          0x00000000        0x0 src/MST9U/lib.a(ddr_bd_mst203a_a01a_winbond_1333.o)
+ .bss           0x00000000        0x0 src/MST9U/lib.a(ddr_bd_mst203a_a01a_winbond_1333.o)
+ .text          0x00000000        0x0 src/MST9U/lib.a(drvAeonUART.o)
+ .data          0x00000000        0x0 src/MST9U/lib.a(drvAeonUART.o)
+ .bss           0x00000000        0x0 src/MST9U/lib.a(drvAeonUART.o)
+ .text.uart_getc
+                0x00000000        0x0 src/MST9U/lib.a(drvAeonUART.o)
+ .text.uart_kbhit
+                0x00000000        0x0 src/MST9U/lib.a(drvAeonUART.o)
+ .text.uart_interrupt_enable
+                0x00000000        0x0 src/MST9U/lib.a(drvAeonUART.o)
+ .text          0x00000000        0x0 src/MST9U/lib.a(drvGlobal.o)
+ .data          0x00000000        0x0 src/MST9U/lib.a(drvGlobal.o)
+ .bss           0x00000000        0x0 src/MST9U/lib.a(drvGlobal.o)
+ .text.__MDrv_Write4Byte
+                0x00000000        0x0 src/MST9U/lib.a(drvGlobal.o)
+ .text.MDrv_WriteRegTbl_32
+                0x00000000        0x0 src/MST9U/lib.a(drvGlobal.o)
+ .text.MDrv_WriteRegTbl
+                0x00000000        0x0 src/MST9U/lib.a(drvGlobal.o)
+ .text.__MDrv_Read4Byte
+                0x00000000        0x0 src/MST9U/lib.a(drvGlobal.o)
+ .rodata.g_str_assert
+                0x00000000        0x0 src/MST9U/lib.a(drvGlobal.o)
+ .text          0x00000000        0x0 src/MST9U/lib.a(drvPadConf.o)
+ .data          0x00000000        0x0 src/MST9U/lib.a(drvPadConf.o)
+ .bss           0x00000000        0x0 src/MST9U/lib.a(drvPadConf.o)
+ .data.padInitTbl
+                0x00000000        0x0 src/MST9U/lib.a(drvPadConf.o)
+ .text          0x00000000        0x0 src/MST9U/lib.a(exception.o)
+ .data          0x00000000        0x0 src/MST9U/lib.a(exception.o)
+ .bss           0x00000000        0x0 src/MST9U/lib.a(exception.o)
+ .text.mhal_exception_attach
+                0x00000000        0x0 src/MST9U/lib.a(exception.o)
+ .text.mhal_exception_detach
+                0x00000000        0x0 src/MST9U/lib.a(exception.o)
+ .text          0x00000000        0x0 src/MST9U/lib.a(init_MST9U.o)
+ .data          0x00000000        0x0 src/MST9U/lib.a(init_MST9U.o)
+ .bss           0x00000000        0x0 src/MST9U/lib.a(init_MST9U.o)
+ .text.MDrv_WriteRegTbl32
+                0x00000000        0x0 src/MST9U/lib.a(init_MST9U.o)
+ .text.MDrv_MiuInitial_FPGA
+                0x00000000        0x0 src/MST9U/lib.a(init_MST9U.o)
+ .data.hex      0x00000000        0x0 src/MST9U/lib.a(init_MST9U.o)
+ .rodata.g_MemTestMask
+                0x00000000        0x0 src/MST9U/lib.a(init_MST9U.o)
+ .text          0x00000000        0x0 src/MST9U/lib.a(interrupt.o)
+ .data          0x00000000        0x0 src/MST9U/lib.a(interrupt.o)
+ .bss           0x00000000        0x0 src/MST9U/lib.a(interrupt.o)
+ .text.mhal_interrupt_disable
+                0x00000000        0x0 src/MST9U/lib.a(interrupt.o)
+ .text.mhal_interrupt_enable
+                0x00000000        0x0 src/MST9U/lib.a(interrupt.o)
+ .text.mhal_interrupt_restore
+                0x00000000        0x0 src/MST9U/lib.a(interrupt.o)
+ .text.mhal_interrupt_mask_all
+                0x00000000        0x0 src/MST9U/lib.a(interrupt.o)
+ .text.mhal_interrupt_mask
+                0x00000000        0x0 src/MST9U/lib.a(interrupt.o)
+ .text.mhal_interrupt_unmask
+                0x00000000        0x0 src/MST9U/lib.a(interrupt.o)
+ .text.mhal_interrupt_attach
+                0x00000000        0x0 src/MST9U/lib.a(interrupt.o)
+ .text.mhal_interrupt_detach
+                0x00000000        0x0 src/MST9U/lib.a(interrupt.o)
+ .text.mhal_interrupt_dumpvector
+                0x00000000        0x0 src/MST9U/lib.a(interrupt.o)
+ .text.mhal_interrupt_unlock
+                0x00000000        0x0 src/MST9U/lib.a(interrupt.o)
+ .text.mhal_interrupt_lock
+                0x00000000        0x0 src/MST9U/lib.a(interrupt.o)
+ .bss.nr_intr_locks
+                0x00000000        0x0 src/MST9U/lib.a(interrupt.o)
+ .bss.saved_intr_state
+                0x00000000        0x0 src/MST9U/lib.a(interrupt.o)
+ .text          0x00000000        0x0 src/MST9U/lib.a(printf.o)
+ .data          0x00000000        0x0 src/MST9U/lib.a(printf.o)
+ .bss           0x00000000        0x0 src/MST9U/lib.a(printf.o)
+ .text          0x00000000        0x0 src/MST9U/lib.a(puts.o)
+ .data          0x00000000        0x0 src/MST9U/lib.a(puts.o)
+ .bss           0x00000000        0x0 src/MST9U/lib.a(puts.o)
+ .text          0x00000000        0x0 src/MST9U/lib.a(reset.o)
+ .data          0x00000000        0x0 src/MST9U/lib.a(reset.o)
+ .bss           0x00000000        0x0 src/MST9U/lib.a(reset.o)
+ .text          0x00000000        0x0 src/MST9U/lib.a(risc32.o)
+ .data          0x00000000        0x0 src/MST9U/lib.a(risc32.o)
+ .bss           0x00000000        0x0 src/MST9U/lib.a(risc32.o)
+ .text.RISC32_DCACHE_FLUSH
+                0x00000000        0x0 src/MST9U/lib.a(risc32.o)
+ .text          0x00000000        0x0 src/MST9U/lib.a(setSPI.o)
+ .data          0x00000000        0x0 src/MST9U/lib.a(setSPI.o)
+ .bss           0x00000000        0x0 src/MST9U/lib.a(setSPI.o)
+ .text.PM_MCU_Init
+                0x00000000        0x0 src/MST9U/lib.a(setSPI.o)
+ .text          0x00000000        0x0 src/MST9U/lib.a(snprintf.o)
+ .data          0x00000000        0x0 src/MST9U/lib.a(snprintf.o)
+ .bss           0x00000000        0x0 src/MST9U/lib.a(snprintf.o)
+ .text.snprintf
+                0x00000000        0x0 src/MST9U/lib.a(snprintf.o)
+ .text          0x00000000        0x0 src/MST9U/lib.a(stack.o)
+ .data          0x00000000        0x0 src/MST9U/lib.a(stack.o)
+ .bss           0x00000000        0x0 src/MST9U/lib.a(stack.o)
+ .data          0x00000000        0x0 src/MST9U/lib.a(vectors.o)
+ .bss           0x00000000        0x0 src/MST9U/lib.a(vectors.o)
+ .text          0x00000000        0x0 src/MST9U/lib.a(vsnprintf.o)
+ .data          0x00000000        0x0 src/MST9U/lib.a(vsnprintf.o)
+ .bss           0x00000000        0x0 src/MST9U/lib.a(vsnprintf.o)
+
+Memory Configuration
+
+Name             Origin             Length             Attributes
+ram              0x00000000         0x01000000
+sram             0xb0000000         0x00002000
+ld2              0x01000100         0x00010000
+*default*        0x00000000         0xffffffff
+
+Linker script and memory map
+
+
+.vectors        0x00000000      0xf00
+                0x00000000                . = .
+ *(.reset)
+ .reset         0x00000000      0x171 src/MST9U/lib.a(reset.o)
+                0x00000100                __reset
+ *(.vectors)
+ *fill*         0x00000171       0x8f 00
+ .vectors       0x00000200      0xd00 src/MST9U/lib.a(vectors.o)
+                0x00000400                __exception_instruction_page_fault
+                0x00000200                __exception_bus_error
+                0x00000b00                __exception_range
+                0x00000a00                __exception_itlb_miss
+                0x00000d00                __exception_reserved
+                0x00000e00                __exception_trap
+                0x00000300                __exception_data_page_fault
+                0x00000600                __exception_unaligned_access
+                0x00000700                __exception_illegal_instruction
+                0x00000500                __exception_tick_timer
+                0x00000800                __exception_external_interrupt
+                0x00000900                __exception_dtlb_miss
+                0x00000c00                __exception_syscall
+
+.interp
+ *(.interp)
+
+.hash
+ *(.hash)
+
+.dynsym
+ *(.dynsym)
+
+.dynstr
+ *(.dynstr)
+
+.init           0x00000f00        0x0
+                0x00000f00                . = .
+ *(.init)
+
+.boot_data      0x00002000        0x0
+                0x00002000                __boot_data = .
+ *(.boot_data)
+
+.text           0x00002000     0x191d
+                0x00002000                __stext = .
+ *(.text*)
+ .text.dump_backtrace
+                0x00002000       0x42 src/MST9U/lib.a(backtrace.o)
+                0x00002000                _dump_backtrace
+ .text.SetBdmaSrcDstDevice
+                0x00002042       0x19 src/MST9U/lib.a(bootaeonsysinit.o)
+                0x00002042                _SetBdmaSrcDstDevice
+ .text.CopyFLH2MIU
+                0x0000205b       0x9e src/MST9U/lib.a(bootaeonsysinit.o)
+                0x0000205b                _CopyFLH2MIU
+ .text.BootFromDRAM
+                0x000020f9       0x24 src/MST9U/lib.a(bootaeonsysinit.o)
+                0x000020f9                _BootFromDRAM
+ .text.Init_Data2
+                0x0000211d       0x2a src/MST9U/lib.a(bootaeonsysinit.o)
+                0x0000211d                _Init_Data2
+ .text.SetSPI_Mode
+                0x00002147       0x32 src/MST9U/lib.a(bootaeonsysinit.o)
+                0x00002147                _SetSPI_Mode
+ .text.start    0x00002179       0xcd src/MST9U/lib.a(bootaeonsysinit.o)
+                0x00002179                _start
+ .text.uart_init
+                0x00002246       0x43 src/MST9U/lib.a(drvAeonUART.o)
+                0x00002246                _uart_init
+ .text.uart_putc
+                0x00002289       0x28 src/MST9U/lib.a(drvAeonUART.o)
+                0x00002289                _uart_putc
+ .text.__MDrv_ReadByte
+                0x000022b1       0x17 src/MST9U/lib.a(drvGlobal.o)
+                0x000022b1                ___MDrv_ReadByte
+ .text.__MDrv_WriteByte
+                0x000022c8       0x14 src/MST9U/lib.a(drvGlobal.o)
+                0x000022c8                ___MDrv_WriteByte
+ .text.MDrv_SysDelayUs
+                0x000022dc       0x3c src/MST9U/lib.a(drvGlobal.o)
+                0x000022dc                _MDrv_SysDelayUs
+ .text.__MDrv_Write3Byte
+                0x00002318       0x49 src/MST9U/lib.a(drvGlobal.o)
+                0x00002318                ___MDrv_Write3Byte
+ .text.__MDrv_Write2Byte
+                0x00002361       0x38 src/MST9U/lib.a(drvGlobal.o)
+                0x00002361                ___MDrv_Write2Byte
+ .text.__MDrv_Read3Byte
+                0x00002399       0x4d src/MST9U/lib.a(drvGlobal.o)
+                0x00002399                ___MDrv_Read3Byte
+ .text.__MDrv_Read2Byte
+                0x000023e6       0x3a src/MST9U/lib.a(drvGlobal.o)
+                0x000023e6                ___MDrv_Read2Byte
+ .text.MDrv_Pad_Init
+                0x00002420        0x2 src/MST9U/lib.a(drvPadConf.o)
+                0x00002420                _MDrv_Pad_Init
+ .text.mhal_exception_handler
+                0x00002422      0x11a src/MST9U/lib.a(exception.o)
+                0x00002422                _mhal_exception_handler
+ .text.mcuSetUartMux
+                0x0000253c       0x91 src/MST9U/lib.a(init_MST9U.o)
+                0x0000253c                _mcuSetUartMux
+ .text.MiuInit2_2133Mhz
+                0x000025cd      0x67d src/MST9U/lib.a(init_MST9U.o)
+                0x000025cd                _MiuInit2_2133Mhz
+ .text.MDrv_MiuBistTest
+                0x00002c4a      0x1cc src/MST9U/lib.a(init_MST9U.o)
+ .text.MDrv_MiuAutoDQSPhase
+                0x00002e16      0x2b9 src/MST9U/lib.a(init_MST9U.o)
+                0x00002e16                _MDrv_MiuAutoDQSPhase
+ .text.BL_Init  0x000030cf      0x32b src/MST9U/lib.a(init_MST9U.o)
+                0x000030cf                _BL_Init
+ .text.mhal_interrupt_handler
+                0x000033fa       0x84 src/MST9U/lib.a(interrupt.o)
+                0x000033fa                _mhal_interrupt_handler
+ .text.__mhal_default_isr
+                0x0000347e       0x19 src/MST9U/lib.a(interrupt.o)
+                0x0000347e                _mhal_default_isr
+ .text.printf   0x00003497       0x67 src/MST9U/lib.a(printf.o)
+                0x00003497                _printk
+                0x00003497                _printf
+ .text.puts     0x000034fe       0x2a src/MST9U/lib.a(puts.o)
+                0x000034fe                _puts
+ .text          0x00003528       0xb2 src/MST9U/lib.a(vectors.o)
+ .text.vsnprintf
+                0x000035da      0x343 src/MST9U/lib.a(vsnprintf.o)
+                0x000035da                _vsnprintf
+ *(.gnu.warning)
+ *(.gnu.linkonce.t.*)
+                0x0000391d                __etext = .
+                0x0000391d                PROVIDE (etext, .)
+
+.fini           0x00003920        0x0
+                0x00003920                . = .
+ *(.fini)
+
+.rodata         0x00003920      0x641
+                0x00003920                . = .
+ *(.rodata)
+ *(.rodata*)
+ .rodata.str1.1
+                0x00003920      0x1f3 src/lib.a(zlib.o)
+                                0x1f4 (size before relaxing)
+ .rodata.str1.1
+                0x00003b13       0x3c src/MST9U/lib.a(backtrace.o)
+                                 0x41 (size before relaxing)
+ .rodata.str1.1
+                0x00003b4f       0xab src/MST9U/lib.a(bootaeonsysinit.o)
+ .rodata.str1.1
+                0x00003bfa      0x1b3 src/MST9U/lib.a(exception.o)
+ *fill*         0x00003dad        0x3 00
+ .rodata.mcuSetUartMux
+                0x00003db0       0x24 src/MST9U/lib.a(init_MST9U.o)
+ .rodata.str1.1
+                0x00003dd4      0x11f src/MST9U/lib.a(init_MST9U.o)
+ .rodata.g_MemTestMode
+                0x00003ef3        0x3 src/MST9U/lib.a(init_MST9U.o)
+                0x00003ef3                _g_MemTestMode
+ .rodata.str1.1
+                0x00003ef6       0x5b src/MST9U/lib.a(interrupt.o)
+                                 0x5c (size before relaxing)
+ .rodata.hex16  0x00003f51       0x10 src/MST9U/lib.a(vsnprintf.o)
+ *(.gnu.linkonce.r*)
+
+.fixup          0x00003f64        0x0
+                0x00003f64                __FIXUP_START__ = <code 342> (.)
+ *(.fixup)
+                0x00003f64                __FIXUP_END__ = <code 342> (.)
+
+.gcc_except_table
+                0x00003f64        0x0
+                0x00003f64                __EXCEPT_START__ = <code 342> (.)
+ *(.gcc_except_table)
+                0x00003f64                __EXCEPT_END__ = <code 342> (.)
+
+.data           0x00003f68        0x0
+                0x00003f68                __ram_data_start = <code 342> (.)
+ *(.gnu.linkonce.d*)
+ *(.2ram.*)
+                0x00003f68                . = ALIGN (0x8)
+                0x00003f68                __rom_data_start = LOADADDR (.data)
+
+.eh_frame       0x00003f68        0x8
+                0x00003f68                . = .
+                0x00003f68                __EH_FRAME_BEGIN__ = .
+ *(.eh_frame)
+                0x00003f68                __FRAME_END__ = .
+                0x00003f70                . = (. + 0x8)
+ *fill*         0x00003f68        0x8 00000000
+
+.ctors          0x00003f70        0x0
+                0x00003f70                . = .
+ *crtbegin.o(.ctors)
+ *_ctors.o(.ctors)
+                0x00003f70                ___CTOR_LIST__ = .
+                0x00003f70                PROVIDE (__CTOR_LIST__, .)
+ *(.ctors)
+ *(SORT(.ctors.*))
+                0x00003f70                ___CTOR_END__ = .
+                0x00003f70                PROVIDE (___CTOR_END__, .)
+
+.dtors          0x00003f70        0x0
+                0x00003f70                . = .
+ *crtbegin.o(.dtors)
+                0x00003f70                __DTOR_LIST__ = .
+                0x00003f70                PROVIDE (__DTOR_LIST__, .)
+ *(SORT(.dtors.*))
+                0x00003f70                __DTOR_END__ = .
+ *(.dtors)
+                0x00003f70                PROVIDE (__DTOR_END__, .)
+
+.got            0x00003f70        0x0
+                0x00003f70                . = .
+ *(.got.plt)
+ *(.got*)
+
+.dynamic        0x00003f70        0x0
+                0x00003f70                . = .
+ *(.dynamic)
+
+.sdata          0x00003f70        0x0
+                0x00003f70                __SDATA_START__ = <code 342> (.)
+                0x00003f70                . = .
+ *(.sdata)
+ *(.sdata.*)
+ *(.gnu.linkonce.s*)
+
+.sbss           0x00003f70        0x0
+                0x00003f70                __sbss_start = <code 342> (.)
+                0x00003f70                __SBSS_START__ = <code 342> (.)
+ *(.sbss.*)
+                0x00003f70                __SBSS_END__ = <code 342> (.)
+                0x00003f70                __SBSSx_START__ = <code 342> (.)
+ *(.sbss*)
+                0x00003f70                __SBSSx_END__ = <code 342> (.)
+ *(.scommon*)
+                0x00003f70                __sbss_end = <code 342> (.)
+
+.lit8           0x00003f70       0x10
+                0x00003f70                . = .
+ *(.lit8)
+                0x00003f70                _MY_MARK = .
+                0x00003f70        0x4 LONG 0xaabbccdd
+                0x00003f80                . = ALIGN (0x10)
+ *fill*         0x00003f74        0xc 00
+                0x00003f80                __text_length = .
+                0x00003f80                ___data2_start_s = .
+
+.data2          0xb0000000        0x0 load address 0x00003f80
+                0xb0000000                ___data2_start_d = <code 342> (.)
+ *(.data*)
+ *(.data.*)
+                0x00003f80                ___data2_end_s = (LOADADDR (.data2) + SIZEOF (.data2))
+
+.bss            0xb0000000      0xa90 load address 0x00003f80
+                0xb0000000                __bss_start = <code 342> (.)
+ *(.dynbss*)
+ *(.bss)
+ *(.bss.*)
+ .bss.c.2377    0xb0000000      0x480 src/lib.a(zlib.o)
+ .bss.v.2190    0xb0000480      0x480 src/lib.a(zlib.o)
+ .bss.expt_table
+                0xb0000900       0x78 src/MST9U/lib.a(exception.o)
+ .bss.intr_table
+                0xb0000978      0x108 src/MST9U/lib.a(interrupt.o)
+ *(COMMON)
+ COMMON         0xb0000a80        0xc src/MST9U/lib.a(init_MST9U.o)
+                0xb0000a90                . = ALIGN (0x10)
+ *fill*         0xb0000a8c        0x4 00
+                0xb0000a90                __bss_end = <code 342> (.)
+
+.ld2            0x01000100     0x4e34 load address 0x00004a10
+                0x01000100                _loader_2nd_vma = .
+ *(.loader_2nd_start.*)
+ .loader_2nd_start.text
+                0x01000100       0x69 src/MST9U/lib.a(bootaeonsysinit.o)
+                0x01000100                _loadAP
+ *(.loader_2nd.*)
+ .loader_2nd.text
+                0x01000169       0x17 src/lib.a(7alloc.o)
+                0x01000169                _MyFree
+                0x01000171                _MyAlloc
+ .loader_2nd.text
+                0x01000180      0x721 src/lib.a(MSDecompress.o)
+                0x01000250                _MsDecompress7
+                0x010002e3                _SzFree
+                0x010001b8                _Boot2DRAM
+                0x01000180                _MemoryAllocatorInit
+                0x010002e9                _SzAlloc
+                0x010001b6                _zfree
+                0x01000200                _print_hex
+                0x0100019c                _zalloc
+                0x010002ef                _MsDecompress
+                0x0100035e                _DoMSDecompression
+                0x010001e4                _putc2
+ *fill*         0x010008a1        0x3 00
+ .loader_2nd.bss
+                0x010008a4       0x14 src/lib.a(MSDecompress.o)
+                0x010008a8                _pEndofDecompressionBuf
+                0x010008b0                _g_Alloc
+                0x010008a4                _pDecompressionBuf
+                0x010008ac                _pCurrentBufPtr
+ .loader_2nd.text
+                0x010008b8     0x1426 src/lib.a(lzmadec.o)
+                0x0100193d                _LzmaDec_AllocateProbs
+                0x010018b2                _LzmaDec_FreeProbs
+                0x010018a7                _LzmaDec_Init
+                0x010018d3                _LzmaProps_Decode
+                0x010019be                _LzmaDec_DecodeToDic
+                0x01001888                _LzmaDec_InitDicAndState
+                0x01001c0c                _LzmaDecode
+ .loader_2nd.text
+                0x01001cde     0x1f0c src/lib.a(zlib.o)
+                0x0100293b                _inflateInit
+                0x010031a6                _inflate_blocks
+                0x010027eb                _inflateSync
+                0x01002a30                _inflate_fast
+                0x01002cd2                _inflate_codes
+                0x01001e1e                _ffree
+                0x010028a1                _inflateInit2
+                0x0100245d                _inflate_trees_dynamic
+                0x010025bb                _inflate_codes_new
+                0x01002733                _inflate_blocks_new
+                0x01001e55                _huft_build
+                0x01001cee                _memcpy
+                0x01002608                _inflate_codes_free
+                0x01002623                _inflate_blocks_reset
+                0x01001cde                __memset
+                0x010027af                _inflateReset
+                0x01002941                _inflate_flush
+                0x01001e20                _inflate_trees_free
+                0x01003b0e                _adler32
+                0x010026a9                _inflate_blocks_free
+                0x0100255d                _inflate_trees_bits
+                0x01001def                _inflate_packet_flush
+                0x01002298                _inflate_trees_fixed
+                0x01001dd9                _inflateIncomp
+                0x01001d03                _inflate_addhistory
+                0x0100386a                _inflate
+                0x01001e00                _falloc
+                0x010026e9                _inflateEnd
+ *fill*         0x01003bea        0x2 00
+ .loader_2nd.rodata
+                0x01003bec      0x278 src/lib.a(zlib.o)
+                0x01003c7c                _cplens
+                0x01003bec                _inflate_mask
+                0x01003cf8                _cplext
+                0x01003c30                _border
+                0x01003dec                _cpdext
+                0x01003d74                _cpdist
+ .loader_2nd.bss
+                0x01003e64        0x8 src/lib.a(zlib.o)
+                0x01003e64                _fixed_lock
+                0x01003e68                _fixed_built
+ .loader_2nd.data
+                0x01003e6c       0x28 src/lib.a(zlib.o)
+                0x01003e70                _zlib_version
+                0x01003e74                _z_errmsg
+                0x01003e6c                _fixed_left
+ .loader_2nd.common
+                0x01003e94     0x10a0 src/lib.a(zlib.o)
+                0x01003e94                _fixed_mem
+                0x01004f24                _fixed_bl
+                0x01004f2c                _fixed_tl
+                0x01004f28                _fixed_bd
+                0x01004f30                _fixed_td
+                0x00004a10                _loader_2nd_lma = LOADADDR (.ld2)
+                0x00004e34                _loader_2nd_len = SIZEOF (.ld2)
+                0x00009844                . = (LOADADDR (.ld2) + SIZEOF (.ld2))
+                0x00010000                __sboot_end = ALIGN (0x10000)
+
+.padding        0x00003f80        0x4 load address 0x0000fffc
+                0x00003f80        0x4 LONG 0x0
+                0x83000000                ___heap = 0x83000000
+                0x85000000                ___heap_end = 0x85000000
+                0x85000000                __usb_big_var_in_mem = ___heap_end
+                0x01000000                __usb_download_buffer = 0x1000000
+                0x02000000                __file_system_pool_buffer = 0x2000000
+                0x00002000                _RISC32_DCACHE_SIZE = 0x2000
+                0x00000010                _RISC32_DCACHE_LINE_SIZE = 0x10
+                0x00000004                _RISC32_DCACHE_WAYS = 0x4
+                0xb0001ff0                PROVIDE (_boot_stack, 0xb0001ff0)
+START GROUP
+LOAD src/lib.a
+LOAD src/MST9U/lib.a
+LOAD src/built-in.o
+LOAD src/MST9U/built-in.o
+END GROUP
+OUTPUT(out/sboot.elf elf32-littleaeon)
+
+.comment        0x00000000      0x17a
+ .comment       0x00000000       0x12 src/lib.a(7alloc.o)
+ .comment       0x00000012       0x12 src/lib.a(MSDecompress.o)
+ .comment       0x00000024       0x12 src/lib.a(lzmadec.o)
+ .comment       0x00000036       0x12 src/lib.a(zlib.o)
+ .comment       0x00000048       0x12 src/MST9U/lib.a(backtrace.o)
+ .comment       0x0000005a       0x12 src/MST9U/lib.a(bootaeonsysinit.o)
+ .comment       0x0000006c       0x12 src/MST9U/lib.a(ddr_bd_mst203a_a01a_esmt_1333.o)
+ .comment       0x0000007e       0x12 src/MST9U/lib.a(ddr_bd_mst203a_a01a_etron_1333.o)
+ .comment       0x00000090       0x12 src/MST9U/lib.a(ddr_bd_mst203a_a01a_winbond_1333.o)
+ .comment       0x000000a2       0x12 src/MST9U/lib.a(drvAeonUART.o)
+ .comment       0x000000b4       0x12 src/MST9U/lib.a(drvGlobal.o)
+ .comment       0x000000c6       0x12 src/MST9U/lib.a(drvPadConf.o)
+ .comment       0x000000d8       0x12 src/MST9U/lib.a(exception.o)
+ .comment       0x000000ea       0x12 src/MST9U/lib.a(init_MST9U.o)
+ .comment       0x000000fc       0x12 src/MST9U/lib.a(interrupt.o)
+ .comment       0x0000010e       0x12 src/MST9U/lib.a(printf.o)
+ .comment       0x00000120       0x12 src/MST9U/lib.a(puts.o)
+ .comment       0x00000132       0x12 src/MST9U/lib.a(risc32.o)
+ .comment       0x00000144       0x12 src/MST9U/lib.a(setSPI.o)
+ .comment       0x00000156       0x12 src/MST9U/lib.a(snprintf.o)
+ .comment       0x00000168       0x12 src/MST9U/lib.a(vsnprintf.o)

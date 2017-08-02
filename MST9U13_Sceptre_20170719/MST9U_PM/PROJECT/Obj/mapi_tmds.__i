@@ -1,0 +1,1 @@
+"..\Code\mapi_tmds.c" OPTIMIZE (9,SPEED) BROWSE INCDIR(..\Code\INC;..\Code\DRIVER\INC;..\Code\DRIVER\MST9U\INC;..\Code\DRIVER\MST9U3\INC) DEFINE (ModelName="MST9U3_DEMO",CHIP_ID="MST9U3") DEBUG OBJECTEXTEND PRINT(.\List\mapi_tmds.lst) OBJECT(.\Obj\mapi_tmds.obj)

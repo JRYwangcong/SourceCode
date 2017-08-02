@@ -1,0 +1,1 @@
+#define CONFIG_MSTAR_MST9U_BD_MSTxxxA_DxxA_S 1

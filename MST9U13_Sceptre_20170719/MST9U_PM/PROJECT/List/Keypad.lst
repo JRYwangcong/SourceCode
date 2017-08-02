@@ -1,0 +1,635 @@
+C51 COMPILER V9.00   KEYPAD                                                                07/03/2017 18:41:21 PAGE 1   
+
+
+C51 COMPILER V9.00, COMPILATION OF MODULE KEYPAD
+OBJECT MODULE PLACED IN .\Obj\Keypad.obj
+COMPILER INVOKED BY: C:\Keil4\C51\BIN\C51.EXE ..\Code\Keypad.c OPTIMIZE(9,SPEED) BROWSE INCDIR(..\Code\INC;..\Code\DRIVE
+                    -R\INC;..\Code\DRIVER\MST9U\INC;..\Code\DRIVER\MST9U3\INC) DEFINE(ModelName=MST9U3_DEMO,CHIP_ID=MST9U3) DEBUG OBJECTEXTEN
+                    -D PRINT(.\List\Keypad.lst) OBJECT(.\Obj\Keypad.obj)
+
+line level    source
+
+   1          ///////////////////////////////////////////////////////////////////////////////
+   2          /// @file Keypad.c
+   3          /// @brief Keypad function.
+   4          /// @author MStarSemi Inc.
+   5          ///
+   6          /// Keypad handler function.
+   7          ///
+   8          /// Features
+   9          ///  -
+  10          ///
+  11          ///////////////////////////////////////////////////////////////////////////////
+  12          #include <math.h>    //MST_MCU
+  13          #include "Types.h"
+  14          #include "Board.h"
+  15          #include "Keypaddef.h"
+  16          #include "ms_reg.h"
+  17          #include "Global.h"
+  18          //#include "MDebug.h"
+  19          #include "Common.h"
+  20          #include "misc.h"
+  21          #include "Ms_rwreg.h"
+  22          #include "Mcu.h"
+  23          //#include "menudef.h"
+  24          #include "GPIO_DEF.h"
+  25          #include "msAPI_MailBox.h"
+  26          #include "drvMBX.h"
+  27          #include "Buzzer.h"
+  28          
+  29          //#include "Menu.h"
+  30          
+  31          BYTE xdata g_u8KeyDebounceCounter=0;
+  32          //BYTE xdata LastKeypadButton=0;
+  33          BYTE xdata g_u8KeypadButton=0;
+  34          WORD xdata g_u32KeyCounter=0;
+  35          extern XDATA ePM_WakeupStatus ucWakeupStatus;
+  36          
+  37          #if (R2_51_DUAL_MODE)
+  38          BYTE xdata g_u8KeypadPressData _at_ 0x5F80;
+  39          #endif
+  40          
+  41          BYTE xdata g_u8KeypadPressData = 0;
+  42          
+  43          extern BYTE xdata g_u8MenuPageIndex;
+  44          
+  45          #ifndef SARADC_MASK
+  46          #define SARADC_MASK 0xFF
+  47          #endif
+  48          BYTE Key_GetKeypadStatus( void )
+  49          {
+  50   1      //SAR_KEY
+  51   1      #if SARKEY_EN
+  52   1      
+  53   1          BYTE u8Keypad = 0xFF;
+C51 COMPILER V9.00   KEYPAD                                                                07/03/2017 18:41:21 PAGE 2   
+
+  54   1          BYTE u8Temp = 0;
+  55   1          BYTE u8Temp1 = 0;
+  56   1          BYTE retry_Key=3;
+  57   1              
+  58   1      #if Special_One_SAR_Key_Func
+                 #if (defined(TaiBei_Project))
+                      u8Temp = KEYPAD_ADC_A  & SARADC_MASK; //  SAR0
+              
+                      while(retry_Key&&(u8Temp<(SARADC_MASK-5)))
+                      {
+                              u8Temp = KEYPAD_ADC_A  & SARADC_MASK; //  SAR0
+                              Delay1ms(15);
+                              u8Temp1 =KEYPAD_ADC_A  & SARADC_MASK;
+                              if(abs(u8Temp-u8Temp1)<5)
+                                      break;
+                              retry_Key--;
+                      }
+                 // u8Temp = KEYPAD_ADC_A  & SARADC_MASK;
+              
+              
+                  if (abs(u8Temp - 0)  <= 4)
+                      u8Keypad &= ~KEY_POWER;
+              
+                  if (abs(u8Temp - 0x0B)  <= 6)
+                      u8Keypad &= ~KEY_INCVALUE;//KEY_MINUS;
+              
+                  if (abs(u8Temp - 0x19)  <= 6)
+                      u8Keypad &= ~KEY_DECVALUE;//KEY_PLUS;
+              
+                  if (abs(u8Temp - 0x2C)  <= 6)
+                      u8Keypad &= ~KEY_PLUS;//KEY_DECVALUE;
+              
+                  if (abs(u8Temp - 0x48)  <= 6)
+                      u8Keypad &= ~KEY_MINUS;//KEY_INCVALUE;
+              
+                  if (abs(u8Temp - 0x72)  <= 6)
+                      u8Keypad &= ~KEY_EXIT;
+                      
+                  if (abs(u8Temp - 0xB8)  <= 6)
+                      u8Keypad &= ~KEY_MENU;
+               #elif (defined(RunFeng_Project))
+                      u8Temp = KEYPAD_ADC_A  & SARADC_MASK; //  SAR0
+              
+                      while(retry_Key&&(u8Temp<(SARADC_MASK-5)))
+                      {
+                              u8Temp = KEYPAD_ADC_A  & SARADC_MASK; //  SAR0
+                              Delay1ms(15);
+                              u8Temp1 =KEYPAD_ADC_A  & SARADC_MASK;
+                              if(abs(u8Temp-u8Temp1)<5)
+                                      break;
+                              retry_Key--;
+                      }
+                 // u8Temp = KEYPAD_ADC_A  & SARADC_MASK;
+              
+              
+                  if (abs(u8Temp - 0x2C)  <= 8)
+                      u8Keypad &= ~KEY_MINUS;
+              
+                  if (abs(u8Temp - 0x56)  <= 8)
+                      u8Keypad &= ~KEY_PLUS;
+              
+                  if (abs(u8Temp - 0x7B)  <= 8)
+C51 COMPILER V9.00   KEYPAD                                                                07/03/2017 18:41:21 PAGE 3   
+
+                      u8Keypad &= ~KEY_MENU;
+              
+                  if (abs(u8Temp - 0x9D)  <= 8)
+                      u8Keypad &= ~KEY_EXIT;
+                      
+                  if (abs(u8Temp - 0xE0)  <= 8)
+                      u8Keypad &= ~KEY_POWER;
+               #endif
+                      
+              #elif ((defined(RunFeng_Project)))
+              
+                      u8Temp = KEYPAD_ADC_A  & SARADC_MASK; //  SAR0
+              
+                      while(retry_Key&&(u8Temp<(SARADC_MASK-5)))
+                      {
+                              u8Temp = KEYPAD_ADC_A  & SARADC_MASK; //  SAR0
+                              Delay1ms(15);
+                              u8Temp1 =KEYPAD_ADC_A  & SARADC_MASK;
+                              if(abs(u8Temp-u8Temp1)<5)
+                                      break;
+                              retry_Key--;
+                      }
+                 // u8Temp = KEYPAD_ADC_A  & SARADC_MASK;
+              
+              
+                  if (abs(u8Temp - ADCKEY_A0_VALUE)  <= KEY_TOL)
+                      u8Keypad &= ~ADCKEY_A0;
+              
+                  if (abs(u8Temp - ADCKEY_A1_VALUE)  <= KEY_TOL)
+                      u8Keypad &= ~ADCKEY_A1;
+              
+                  if (abs(u8Temp - ADCKEY_A2_VALUE)  <= KEY_TOL)
+                      u8Keypad &= ~ADCKEY_A2;
+              
+                     retry_Key=3;
+                      u8Temp = KEYPAD_ADC_B  & SARADC_MASK; //  SAR0
+                      
+                      while(retry_Key&&(u8Temp<(SARADC_MASK-5)))
+                      {
+                              u8Temp = KEYPAD_ADC_B  & SARADC_MASK; //  SAR1
+                              Delay1ms(15);
+                              u8Temp1 =KEYPAD_ADC_B  & SARADC_MASK;
+                              if(abs(u8Temp-u8Temp1)<5)
+                                      break;
+                              retry_Key--;
+                      }
+                  //u8Temp1 = KEYPAD_ADC_B  & SARADC_MASK;
+              
+              
+                  if (abs(u8Temp - ADCKEY_B0_VALUE)  <= KEY_TOL)
+                      u8Keypad &= ~ADCKEY_B0;
+              
+                  if (abs(u8Temp - ADCKEY_B1_VALUE)  <= KEY_TOL)
+                      u8Keypad &= ~ADCKEY_B1;
+                      
+                  if (abs(u8Temp - ADCKEY_B2_VALUE)  <= KEY_TOL)
+                      u8Keypad &= ~ADCKEY_B2;
+              
+                  if (abs(u8Temp - 0x34)  <= KEY_TOL)
+                      u8Keypad &= ~(KEY_POWER|KEY_MENU);
+              
+                  if (HW_GPIO_KEY == 0)
+C51 COMPILER V9.00   KEYPAD                                                                07/03/2017 18:41:21 PAGE 4   
+
+                       u8Keypad &= ~KEY_EXIT;
+                      
+              
+              #else
+ 182   1              u8Temp = KEYPAD_ADC_A  & SARADC_MASK; //  SAR0
+ 183   1      
+ 184   1              while(retry_Key&&(u8Temp<(SARADC_MASK-5)))
+ 185   1              {
+ 186   2                      u8Temp = KEYPAD_ADC_A  & SARADC_MASK; //  SAR0
+ 187   2                      Delay1ms(15);
+ 188   2                      u8Temp1 =KEYPAD_ADC_A  & SARADC_MASK;
+ 189   2                      if(abs(u8Temp-u8Temp1)<5)
+ 190   2                              break;
+ 191   2                      retry_Key--;
+ 192   2              }
+ 193   1         // u8Temp = KEYPAD_ADC_A  & SARADC_MASK;
+ 194   1      
+ 195   1      
+ 196   1          if (abs(u8Temp - ADCKEY_A0_VALUE)  <= KEY_TOL)
+ 197   1              u8Keypad &= ~ADCKEY_A0;
+ 198   1      
+ 199   1          if (abs(u8Temp - ADCKEY_A1_VALUE)  <= KEY_TOL)
+ 200   1              u8Keypad &= ~ADCKEY_A1;
+ 201   1      
+ 202   1          if (abs(u8Temp - ADCKEY_A2_VALUE)  <= KEY_TOL)
+ 203   1              u8Keypad &= ~ADCKEY_A2;
+ 204   1      
+ 205   1             retry_Key=3;
+ 206   1              u8Temp = KEYPAD_ADC_B  & SARADC_MASK; //  SAR0
+ 207   1              
+ 208   1              while(retry_Key&&(u8Temp<(SARADC_MASK-5)))
+ 209   1              {
+ 210   2                      u8Temp = KEYPAD_ADC_B  & SARADC_MASK; //  SAR1
+ 211   2                      Delay1ms(15);
+ 212   2                      u8Temp1 =KEYPAD_ADC_B  & SARADC_MASK;
+ 213   2                      if(abs(u8Temp-u8Temp1)<5)
+ 214   2                              break;
+ 215   2                      retry_Key--;
+ 216   2              }
+ 217   1          //u8Temp1 = KEYPAD_ADC_B  & SARADC_MASK;
+ 218   1      
+ 219   1      
+ 220   1          if (abs(u8Temp - ADCKEY_B0_VALUE)  <= KEY_TOL)
+ 221   1              u8Keypad &= ~ADCKEY_B0;
+ 222   1      
+ 223   1          if (abs(u8Temp - ADCKEY_B1_VALUE)  <= KEY_TOL)
+ 224   1              u8Keypad &= ~ADCKEY_B1;
+ 225   1              
+ 226   1          if (abs(u8Temp - ADCKEY_B2_VALUE)  <= KEY_TOL)
+ 227   1              u8Keypad &= ~ADCKEY_B2;
+ 228   1      
+ 229   1      #endif
+ 230   1      //GPIO_KEY
+ 231   1      #else
+                  BYTE XDATA u8Keypad = 0xFF;
+              
+                  if (HW_KEY_PLUS==0)
+                      u8Keypad &= ~KEY_PLUS;
+                  if (HW_KEY_MINUS==0)
+                      u8Keypad &= ~KEY_MINUS;
+                  if (HW_KEY_MENU==0)
+                      u8Keypad &= ~KEY_MENU;
+C51 COMPILER V9.00   KEYPAD                                                                07/03/2017 18:41:21 PAGE 5   
+
+                  if (HW_KEY_TICK==0)
+                      u8Keypad &= ~KEY_EXIT;
+              #endif
+ 243   1          //POWER_KEY
+ 244   1          if (HW_POWER_KEY == 0)
+ 245   1               u8Keypad &= ~KEY_POWER;
+ 246   1          return u8Keypad;
+ 247   1      }
+ 248          
+ 249          #if ENABLE_MBX_SAR
+              void Key_ScanKeypad( void )
+              {
+                  BYTE u8KeypadStatus=0;
+                  MBX_Msg mbox;
+                  MBX_Result stResult;
+              
+                  if(!g_u8KeyDebounceCounter)
+                  {
+                      u8KeypadStatus=(Key_GetKeypadStatus()^KEYPAD_MASK)&KEYPAD_MASK;
+              
+              #if 0//ENABLE_DEBUG
+                      if(!u8KeypadStatus)
+                      {
+                          if(VKeyPad != VK_NOTHING)
+                          {
+                              g_u8KeypadButton=BTN_NOTHING;
+                              if(VKeyPad==VK_SOURCE)
+                                  u8KeypadStatus=KEY_EXIT;
+                              else if(VKeyPad==VK_MENU)
+                                  u8KeypadStatus=KEY_MENU;
+                              else if(VKeyPad==VK_LEFT || VKeyPad==VK_UP)
+                                  u8KeypadStatus=KEY_PLUS;
+                              else if(VKeyPad==VK_RIGHT || VKeyPad==VK_DOWN)
+                                  u8KeypadStatus=KEY_MINUS;
+                              else if(VKeyPad==VK_POWER)
+                                  u8KeypadStatus=KEY_POWER;
+                              else if(VKeyPad==VK_PIP)
+                                  u8KeypadStatus=KEY_FACTORY;
+                              VKeyPad = 0;
+                              LastKeypadButton=u8KeypadStatus;
+                          }
+                      }
+              #endif
+                      if (u8KeypadStatus)
+                      {
+                          //printf("u8KeypadStatus=%x\n",u8KeypadStatus);
+                  /*        
+                          if(LastKeypadButton!=u8KeypadStatus)
+                          {
+                              LastKeypadButton=u8KeypadStatus;
+                              g_u8KeypadButton=BTN_NOTHING;
+                              goto KeyEnd;
+                          }
+                 */
+                          if (u8KeypadStatus==KEY_MINUS)
+                          {
+                              if(g_u8KeypadButton==BTN_MINUS)
+                              {
+                                  g_u8KeypadButton=BTN_REPEAT;
+                                  if(g_u32KeyCounter == 0)
+                                      g_u32KeyCounter = 75;
+                              }
+C51 COMPILER V9.00   KEYPAD                                                                07/03/2017 18:41:21 PAGE 6   
+
+                              else if(g_u8KeypadButton==BTN_REPEAT)
+                              {
+                                  if(g_u32KeyCounter==0)
+                                      g_u8KeypadButton = BTN_MINUS;
+                              }
+                              else
+                              {
+                                  g_u8KeypadButton=BTN_MINUS;
+                                  g_u32KeyCounter = 0;
+                              }
+                          }
+                          else if (u8KeypadStatus==KEY_PLUS)
+                          {
+                              if(g_u8KeypadButton==BTN_PLUS)
+                              {
+                                  g_u8KeypadButton=BTN_REPEAT;
+                                  if(g_u32KeyCounter == 0)
+                                      g_u32KeyCounter = 75;
+                              }
+                              else if(g_u8KeypadButton==BTN_REPEAT)
+                              {
+                                  if(g_u32KeyCounter==0)
+                                      g_u8KeypadButton = BTN_PLUS;
+                              }
+                              else
+                              {
+                                  g_u8KeypadButton=BTN_PLUS;
+                                  g_u32KeyCounter = 0;
+                              }
+                          }
+                          else if (u8KeypadStatus==KEY_MENU)
+                          {
+                              if (g_u8KeypadButton==BTN_MENU||g_u8KeypadButton==BTN_REPEAT)
+                              {
+                                  g_u8KeypadButton=BTN_REPEAT;
+                              }
+                              else
+                                  g_u8KeypadButton=BTN_MENU;
+                          }
+              
+                          else if (u8KeypadStatus==KEY_POWER)
+                          {
+                              if (g_u8KeypadButton==BTN_POWER || g_u8KeypadButton==BTN_REPEAT)
+                                  g_u8KeypadButton=BTN_REPEAT;
+                              else
+                              {
+                                  g_u8KeypadButton=BTN_POWER;
+                                  g_u32KeyCounter = 0;
+                                  if((sPMInfo.ucPMMode == ePM_POWER_DPMS) || (sPMInfo.ucPMMode == ePM_POWER_DCOFF))
+                                  {
+                                      sPMInfo.ePMState = ePM_EXIT_PM;
+                                  }
+                              }
+                          }
+                          else
+                          {
+                              g_u8KeypadButton=BTN_NOTHING;
+                              g_u32KeyCounter = 0;
+                          }
+              
+                          if( (g_u32KeyCounter == 0) && (sPMInfo.ucPMMode == ePM_POWER_ON))
+                          {
+C51 COMPILER V9.00   KEYPAD                                                                07/03/2017 18:41:21 PAGE 7   
+
+                              MailBox[0] = g_u8KeypadButton;
+                              mbox.eMsgType             = E_MBX_MSG_TYPE_NORMAL;
+                              mbox.u8MsgClass           = E_MBX_CLASS_SAR;
+                              mbox.u8Index              = MB_SAR_CMD_READ_DRAM;
+                              mbox.u8ParameterCount     = 0x04;
+                              mbox.u8Parameters[0]      = ((XDATA_TO_DRAM_ADDR+((WIN0_ADDR_START)<<10))>>24)&0xFF;
+                              mbox.u8Parameters[1]      = ((XDATA_TO_DRAM_ADDR+((WIN0_ADDR_START)<<10))>>16)&0xFF;
+                              mbox.u8Parameters[2]      = ((XDATA_TO_DRAM_ADDR+((WIN0_ADDR_START)<<10))>>8)&0xFF;
+                              mbox.u8Parameters[3]      = ((XDATA_TO_DRAM_ADDR+((WIN0_ADDR_START)<<10)))&0xFF;
+              
+                              stResult = MApi_MBX_SendMsg(&mbox);
+                          }
+                      }
+                      else
+                      {
+                          g_u8KeypadButton=BTN_NOTHING;
+                          //LastKeypadButton=u8KeypadStatus;
+                      }
+              
+                  KeyEnd:
+                      g_u8KeyDebounceCounter=25;
+                  }
+              }
+              #elif 1//R2_51_DUAL_MODE //R2_51_DUAL_MODE without using mailbox
+ 388          void Key_ScanKeypad( void )
+ 389          {
+ 390   1          g_u8KeypadPressData=(Key_GetKeypadStatus()^KEYPAD_MASK)&KEYPAD_MASK;
+ 391   1          if(g_u8KeypadPressData == KEY_POWER)
+ 392   1          {
+ 393   2              if((sPMInfo.ucPMMode == ePM_POWER_DPMS) || (sPMInfo.ucPMMode == ePM_POWER_DCOFF))
+ 394   2              {
+ 395   3                  sPMInfo.ePMState = ePM_EXIT_PM;
+ 396   3                   ucWakeupStatus =ePMSTS_POWERGPIO_ACT;              
+ 397   3              }
+ 398   2          }
+ 399   1      #if InputKeyWakeupEnable        
+               #if (defined(FengYuan_Project)||(defined(KTC_Project))||(defined(XuLi_Project))||(defined(MingCai_Project
+             -)))
+                 else if(g_u8KeypadPressData == KEY_EXIT)     
+               #else     
+                 else if(g_u8KeypadPressData == KEY_MENU||g_u8KeypadPressData == KEY_EXIT||g_u8KeypadPressData == KEY_PL
+             -US||g_u8KeypadPressData == KEY_MINUS||g_u8KeypadPressData == KEY_INCVALUE||g_u8KeypadPressData == KEY_DECVALUE)       
+               #endif
+                 {
+                      if((sPMInfo.ucPMMode == ePM_POWER_DPMS) )
+                      {
+                          sPMInfo.ePMState = ePM_EXIT_PM;
+                        if(g_u8KeypadPressData == KEY_EXIT)           
+                           ucWakeupStatus =ePMSTS_KEYWAKEUP_ACT;              
+                        else
+                           ucWakeupStatus=ePMSTS_SAR_ACT      ;
+                      }
+                 }
+              #endif   
+ 416   1              
+ 417   1      }
+ 418          #else
+              void Key_ScanKeypad( void )
+              {
+                  BYTE u8KeypadStatus=0;
+              
+                  if(!g_u8KeyDebounceCounter)
+C51 COMPILER V9.00   KEYPAD                                                                07/03/2017 18:41:21 PAGE 8   
+
+                  {
+                      u8KeypadStatus=(Key_GetKeypadStatus()^KEYPAD_MASK)&KEYPAD_MASK;
+              
+              #if DEBUG_PRINT_ENABLE
+                  #ifdef FPGA
+                      u8KeypadStatus=((0xFF)^KEYPAD_MASK)&KEYPAD_MASK;
+                  #endif
+                  #if 0
+                      if(!u8KeypadStatus)
+                      {
+                          if(VKeyPad != VK_NOTHING)
+                          {
+                              g_u8KeypadButton=BTN_NOTHING;
+                              if(VKeyPad==VK_SOURCE)
+                                  u8KeypadStatus=KEY_EXIT;
+                              else if(VKeyPad==VK_MENU)
+                                  u8KeypadStatus=KEY_MENU;
+                              else if(VKeyPad==VK_LEFT || VKeyPad==VK_UP)
+                                  u8KeypadStatus=KEY_PLUS;
+                              else if(VKeyPad==VK_RIGHT || VKeyPad==VK_DOWN)
+                                  u8KeypadStatus=KEY_MINUS;
+                              else if(VKeyPad==VK_POWER)
+                                  u8KeypadStatus=KEY_POWER;
+                              else if(VKeyPad==VK_PIP)
+                                  u8KeypadStatus=KEY_FACTORY;
+                              VKeyPad = 0;
+                              LastKeypadButton=u8KeypadStatus;
+                          }
+                      }
+                  #endif
+              #endif
+              
+                      if (u8KeypadStatus)
+                      {
+                          //printf("u8KeypadStatus=%x\n",u8KeypadStatus);
+                    /*      
+                          if(LastKeypadButton!=u8KeypadStatus)
+                          {
+                              LastKeypadButton=u8KeypadStatus;
+                              g_u8KeypadButton=BTN_NOTHING;
+                              goto KeyEnd;
+                          }
+                     */     
+              
+                          if(!POWER_ON_FLAG)
+                          {
+                              if(u8KeypadStatus!=KEY_POWER)
+                              {
+                                  g_u8KeypadButton=BTN_NOTHING;
+                                  goto KeyEnd;
+                              }
+                          }
+              
+                          if (u8KeypadStatus==KEY_MINUS)
+                          {
+                              if(g_u8KeypadButton==BTN_REPEAT)
+                                  g_u8KeypadButton=BTN_REPEAT;
+                              else
+                              {
+                                  g_u8KeypadButton=BTN_MINUS;
+              
+                                  #if (R2_51_DUAL_MODE)
+C51 COMPILER V9.00   KEYPAD                                                                07/03/2017 18:41:21 PAGE 9   
+
+                                  //if(g_u8KeypadPressData==0)
+                                  {
+                                      printMsg("Press MINUS!");
+                                      g_u8KeypadPressData = 0xAA;
+                                  }
+                                  #endif
+                              }
+                          }
+                          else if (u8KeypadStatus==KEY_PLUS)
+                          {
+                              if(g_u8KeypadButton==BTN_REPEAT)
+                                  g_u8KeypadButton=BTN_REPEAT;
+                              else
+                              {
+                                  g_u8KeypadButton=BTN_PLUS;
+              
+                                  #if (R2_51_DUAL_MODE)
+                                  //if(g_u8KeypadPressData==0)
+                                  {
+                                      printMsg("Press PLUS!");
+                                      g_u8KeypadPressData = 0xBB;
+                                  }
+                                  #endif
+                              }
+                          }
+                          else if (u8KeypadStatus==KEY_MENU)
+                          {
+                              if (g_u8KeypadButton==BTN_MENU||g_u8KeypadButton==BTN_REPEAT)
+                              {
+                                  g_u8KeypadButton=BTN_REPEAT;
+                              }
+                              else
+                              {
+                                  g_u8KeypadButton=BTN_MENU;
+              
+                                  #if (R2_51_DUAL_MODE)
+                                  //if(g_u8KeypadPressData==0)
+                                  {
+                                      printMsg("Press MENU!");
+                                      g_u8KeypadPressData = 0xCC;
+                                  }
+                                  #endif
+                              }
+                          }
+                          else if (u8KeypadStatus==KEY_EXIT)
+                          {
+                              if (g_u8KeypadButton==BTN_EXIT || g_u8KeypadButton==BTN_REPEAT)
+                                   g_u8KeypadButton=BTN_REPEAT;
+                              else
+                              {
+                                  g_u8KeypadButton=BTN_EXIT;
+              
+                                  #if (R2_51_DUAL_MODE)
+                                  //if(g_u8KeypadPressData==0)
+                                  {
+                                      printMsg("Press TICK!");
+                                      g_u8KeypadPressData = 0xDD;
+                                  }
+                                  #endif
+                              }
+                          }
+                          else if (u8KeypadStatus==KEY_POWER)
+C51 COMPILER V9.00   KEYPAD                                                                07/03/2017 18:41:21 PAGE 10  
+
+                          {
+                              if (g_u8KeypadButton==BTN_POWER || g_u8KeypadButton==BTN_REPEAT)
+                                  g_u8KeypadButton=BTN_REPEAT;
+                              else
+                              {
+                                  g_u8KeypadButton=BTN_POWER;
+                                  #if (R2_51_DUAL_MODE)
+                                  //if(g_u8KeypadPressData==0)
+                                  {
+                                      printMsg("Press Power!");
+                                      g_u8KeypadPressData = 0xEE;
+                                  }
+                                  #endif
+                              }
+                              if((sPMInfo.ucPMMode == ePM_POWER_DPMS) || (sPMInfo.ucPMMode == ePM_POWER_DCOFF))
+                              {
+                                  sPMInfo.ePMState = ePM_EXIT_PM;
+                              }
+                          }
+                          else
+                          {
+                              g_u8KeypadButton=BTN_NOTHING;
+                              #if R2_51_DUAL_MODE
+                              g_u8KeypadPressData = 0xFF;
+                              #endif
+                          }
+                      }
+                      else
+                      {
+                          g_u8KeypadButton=BTN_NOTHING;
+                          //LastKeypadButton=u8KeypadStatus;
+              
+                          #if (R2_51_DUAL_MODE)
+                          //g_u8KeypadPressData = 0;
+                          #endif
+                      }
+                  KeyEnd:
+                      g_u8KeyDebounceCounter=25;
+              
+                  }
+              }
+              #endif
+ 590          //================================================================
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    328    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =      4    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----       4
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

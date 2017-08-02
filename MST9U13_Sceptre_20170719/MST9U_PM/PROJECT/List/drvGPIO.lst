@@ -1,0 +1,359 @@
+C51 COMPILER V9.00   DRVGPIO                                                               07/03/2017 18:41:25 PAGE 1   
+
+
+C51 COMPILER V9.00, COMPILATION OF MODULE DRVGPIO
+OBJECT MODULE PLACED IN .\Obj\drvGPIO.obj
+COMPILER INVOKED BY: C:\Keil4\C51\BIN\C51.EXE ..\Code\drvGPIO.c OPTIMIZE(9,SPEED) BROWSE INCDIR(..\Code\INC;..\Code\DRIV
+                    -ER\INC;..\Code\DRIVER\MST9U\INC;..\Code\DRIVER\MST9U3\INC) DEFINE(ModelName=MST9U3_DEMO,CHIP_ID=MST9U3) DEBUG OBJECTEXTE
+                    -ND PRINT(.\List\drvGPIO.lst) OBJECT(.\Obj\drvGPIO.obj)
+
+line level    source
+
+   1          ///////////////////////////////////////////////////////////////////////////////
+   2          /// @file drvScalerGPIO.c
+   3          /// @brief Scaler GPIO/PWM access
+   4          /// @author MStarSemi Inc.
+   5          ///
+   6          /// Driver for Scaler GPIO/PWM access.
+   7          ///
+   8          /// Features
+   9          ///  -
+  10          ///  -
+  11          ///////////////////////////////////////////////////////////////////////////////
+  12          #define _DRVGPIO_C
+  13          
+  14          #include "Types.h"
+  15          #include "Board.h"
+  16          #include "Global.h"
+  17          #include "Ms_reg.h"
+  18          #include "Ms_rwreg.h"
+  19          //#include "DebugMsg.h"
+  20          //#include "MDebug.h"
+  21          #include "drvGPIO.h"
+  22          
+  23          //MST_MODULE(drvGPIO)
+  24          #define GPIO_DEBUG    1
+  25          #if ENABLE_DEBUG&&GPIO_DEBUG
+                  #define GPIO_printData(str, value)   printData(str, value)
+                  #define GPIO_printMsg(str)           printMsg(str)
+              #else
+  29              #define GPIO_printData(str, value)
+  30              #define GPIO_printMsg(str)
+  31          #endif
+  32          //PWM driver
+  33          WORD msDrvPWMMaskTransfer(DWORD u32Mask)
+  34          {
+  35   1          if(u32Mask&(_PWM0_GP0_|_PWM0_GP1_))
+  36   1              return _PWM0_;
+  37   1          else if(u32Mask&(_PWM1_GP0_|_PWM1_GP1_))
+  38   1              return _PWM1_;
+  39   1          else if(u32Mask&(_PWM2_GP0_|_PWM2_GP1_))
+  40   1              return _PWM2_;
+  41   1          else if(u32Mask&(_PWM3_GP0_|_PWM3_GP1_))
+  42   1              return _PWM3_;
+  43   1          else if(u32Mask&(_PWM4_GP0_|_PWM4_GP1_))
+  44   1              return _PWM4_;
+  45   1          else if(u32Mask&(_PWM5_GP0_|_PWM5_GP1_))
+  46   1              return _PWM5_;
+  47   1          else if(u32Mask&(_PWM6_GP0_|_PWM6_GP1_))
+  48   1              return _PWM6_;
+  49   1          else if(u32Mask&(_PWM7_GP0_|_PWM7_GP1_))
+  50   1              return _PWM7_;
+  51   1          else if(u32Mask&(_PWM8_GP0_|_PWM8_GP1_))
+  52   1              return _PWM8_;
+  53   1          else if(u32Mask&(_PWM9_GP0_|_PWM9_GP1_))
+C51 COMPILER V9.00   DRVGPIO                                                               07/03/2017 18:41:25 PAGE 2   
+
+  54   1              return _PWM9_;
+  55   1          else if(u32Mask&(_DISP_PWM0_GP0_|_DISP_PWM0_GP1_))
+  56   1              return _DISP_PWM0_;
+  57   1          else if(u32Mask&(_DISP_PWM1_GP0_|_DISP_PWM1_GP1_))
+  58   1              return _DISP_PWM1_;
+  59   1          else if(u32Mask&(_DISP_PWM2_GP0_|_DISP_PWM2_GP1_))
+  60   1              return _DISP_PWM2_;
+  61   1          else if(u32Mask&(_DISP_PWM3_GP0_|_DISP_PWM3_GP1_))
+  62   1              return _DISP_PWM3_;
+  63   1          else if(u32Mask&(_DISP_PWM4_GP0_|_DISP_PWM4_GP1_))
+  64   1              return _DISP_PWM4_;
+  65   1          else if(u32Mask&(_DISP_PWM5_GP0_|_DISP_PWM5_GP1_))
+  66   1              return _DISP_PWM5_;
+  67   1          else
+  68   1              return _NOUSE_;
+  69   1      }
+  70          DWORD msDrvPWMPeriodGet(DWORD u32PWMCh)
+  71          {
+  72   1          DWORD u32Period;
+  73   1          WORD u16PWMCh = msDrvPWMMaskTransfer(u32PWMCh);
+  74   1      
+  75   1          if(u16PWMCh<_DISP_PWM0_||u16PWMCh==_NOUSE_)
+  76   1              return 0;
+  77   1      
+  78   1          //read period bit[15:0]
+  79   1          u32Period = msRead2Byte(REG_103D04+6*(u16PWMCh-_DISP_PWM0_));
+  80   1          //read period bit[17:16]
+  81   1          u32Period|= ((((DWORD)(msRead2Byte(REG_103D40))>>(2*(u16PWMCh-_DISP_PWM0_)))&0x03)<<16);
+  82   1          return u32Period;
+  83   1      }
+  84          
+  85          DWORD msDrvPWMShiftGet(DWORD u32PWMCh)
+  86          {
+  87   1          WORD u16PWMCh = msDrvPWMMaskTransfer(u32PWMCh);
+  88   1          DWORD u32PWMShift = 0;
+  89   1      
+  90   1          if(u16PWMCh<_DISP_PWM0_||u16PWMCh==_NOUSE_)
+  91   1              return 0;
+  92   1      
+  93   1          u32PWMShift = msRead2Byte(REG_103D50+4*(u16PWMCh-_DISP_PWM0_));
+  94   1          u32PWMShift|= (msReadByte(REG_103D52+4*(u16PWMCh-_DISP_PWM0_))&0x03)<<16;
+  95   1          return u32PWMShift;
+  96   1      }
+  97          
+  98          void msDrvPWMShift(DWORD u32PWMCh, DWORD u32PWMShift)
+  99          {
+ 100   1          WORD u16PWMCh = msDrvPWMMaskTransfer(u32PWMCh);
+ 101   1      
+ 102   1          if(u16PWMCh<_DISP_PWM0_||u16PWMCh==_NOUSE_)
+ 103   1              return;
+ 104   1      
+ 105   1          msWrite2Byte(REG_103D50+4*(u16PWMCh-_DISP_PWM0_), u32PWMShift);
+ 106   1          msWriteByteMask(REG_103D52+4*(u16PWMCh-_DISP_PWM0_), (u32PWMShift>>16), BIT0|BIT1);
+ 107   1      }
+ 108          
+ 109          void msDrvPWMAlignSync(DWORD u32PWMCh,BYTE u8Config, BYTE u8Counter)
+ 110          {
+ 111   1          WORD u16PWMCh = msDrvPWMMaskTransfer(u32PWMCh);
+ 112   1          Bool bVEnable = u8Config&BIT2;
+ 113   1          Bool bHEnable = u8Config&BIT3;
+ 114   1      
+ 115   1          if(u16PWMCh >= _NOUSE_)
+C51 COMPILER V9.00   DRVGPIO                                                               07/03/2017 18:41:25 PAGE 3   
+
+ 116   1              return;
+ 117   1          if(bVEnable && bHEnable)
+ 118   1          {
+ 119   2              GPIO_printMsg("Both Hsync and Vsync align are enable, please redefine config");
+ 120   2              return;
+ 121   2          }
+ 122   1          if(u16PWMCh >= _DISP_PWM0_)     //DISP PWM
+ 123   1          {
+ 124   2              msWriteBit(REG_103D09+6*(u16PWMCh-_DISP_PWM0_), bVEnable|bHEnable, BIT2);     //reset enable
+ 125   2      
+ 126   2              if(u8Counter == 0&&bVEnable)        //vsync align
+ 127   2              {
+ 128   3                  if(u16PWMCh % 2)
+ 129   3                      msWriteBit(REG_103D28+(u16PWMCh-_DISP_PWM1_), 0, BIT7);
+ 130   3                  else
+ 131   3                      msWriteBit(REG_103D29+(u16PWMCh-_DISP_PWM0_), 0, BIT7);
+ 132   3      
+ 133   3                  if(msDrvPWMShiftGet(u32PWMCh)==0)
+ 134   3                      msDrvPWMShift(u32PWMCh,1);
+ 135   3              }
+ 136   2              else        //vsync align with counter
+ 137   2              {
+ 138   3                  if(u16PWMCh % 2)
+ 139   3                  {
+ 140   4                      msWriteBit(REG_103D28+(u16PWMCh-_DISP_PWM1_), bVEnable|bHEnable, BIT7);
+ 141   4                      msWriteByteMask(REG_103D28+(u16PWMCh-_DISP_PWM1_), u8Counter, 0x0F);
+ 142   4                  }
+ 143   3                  else
+ 144   3                  {
+ 145   4                      msWriteBit(REG_103D29+(u16PWMCh-_DISP_PWM0_), bVEnable|bHEnable, BIT7);
+ 146   4                      msWriteByteMask(REG_103D29+(u16PWMCh-_DISP_PWM0_), u8Counter, 0x0F);
+ 147   4                  }
+ 148   3                  msWriteBit(REG_103D68, bVEnable, TransNumToBit(u16PWMCh-_DISP_PWM0_));
+ 149   3              }
+ 150   2          }
+ 151   1          else        //PWM
+ 152   1          {
+ 153   2              if(u16PWMCh < _PWM4_)
+ 154   2              {
+ 155   3                  if(bVEnable | bHEnable)
+ 156   3                      msWriteBit(REG_000583+(u16PWMCh<<1), 1, (bVEnable? BIT3: BIT4));
+ 157   3                  else
+ 158   3                      msWriteBit(REG_000583+(u16PWMCh<<1), 0, BIT3|BIT4);
+ 159   3              }
+ 160   2              else
+ 161   2              {
+ 162   3                  if(bVEnable | bHEnable)
+ 163   3                      msWriteBit(REG_00059D+((u16PWMCh-_PWM3_)<<1), 1, (bVEnable? BIT3: BIT4));
+ 164   3                  else
+ 165   3                      msWriteBit(REG_00059D+((u16PWMCh-_PWM3_)<<1), 0, BIT3|BIT4);
+ 166   3              }
+ 167   2          }
+ 168   1      }
+ 169          void msDrvPWMPolarity(DWORD u32PWMCh, BYTE u8Config)
+ 170          {
+ 171   1          WORD u16PWMCh = msDrvPWMMaskTransfer(u32PWMCh);
+ 172   1          Bool bEnable = u8Config&BIT4;
+ 173   1      
+ 174   1          if(u16PWMCh<_DISP_PWM0_||u16PWMCh==_NOUSE_)
+ 175   1              return;
+ 176   1      
+ 177   1          msWriteBit(REG_103D09+6*(u16PWMCh-_DISP_PWM0_), bEnable, BIT0);
+C51 COMPILER V9.00   DRVGPIO                                                               07/03/2017 18:41:25 PAGE 4   
+
+ 178   1      }
+ 179          
+ 180          void msDrvPWMDuty(DWORD u32PWMCh,DWORD u32Duty)
+ 181          {
+ 182   1          WORD u16PWMCh = msDrvPWMMaskTransfer(u32PWMCh);
+ 183   1      
+ 184   1          if(u16PWMCh >= _NOUSE_)
+ 185   1              return;
+ 186   1          if(u16PWMCh >= _DISP_PWM0_)
+ 187   1          {
+ 188   2              msWrite2Byte(REG_103D06+6*(u16PWMCh-_DISP_PWM0_), u32Duty);
+ 189   2              msWriteByteMask(REG_103D42, (u32Duty>>16)<<((u16PWMCh-_DISP_PWM0_)*2), (0x03)<<((u16PWMCh-_DISP_PW
+             -M0_)*2));
+ 190   2          }
+ 191   1          else if(u16PWMCh < _PWM4_)
+ 192   1          {
+ 193   2              msWriteByte(REG_000590+(u16PWMCh), (BYTE)u32Duty);
+ 194   2          }
+ 195   1          else
+ 196   1          {
+ 197   2              msWriteByte(REG_0005AA+(u16PWMCh-_PWM4_), (BYTE)u32Duty);
+ 198   2          }
+ 199   1      }
+ 200          
+ 201          void msDrvPWMFreq(DWORD u32PWMCh,DWORD u32PWMFreq)
+ 202          { //****keep divider is default 0****
+ 203   1          WORD u16PWMCh = msDrvPWMMaskTransfer(u32PWMCh);
+ 204   1          DWORD u32PWMPeriod;
+ 205   1      
+ 206   1          if( u16PWMCh == _NOUSE_ )
+ 207   1              return;
+ 208   1      
+ 209   1      
+ 210   1          //PWM DIV
+ 211   1          if(u16PWMCh>=_DISP_PWM0_)
+ 212   1          {
+ 213   2              u32PWMPeriod = (u32PWMFreq?(((unsigned long)XTAL_CLOCK_KHZ*1000/u32PWMFreq)):0);
+ 214   2              if (u32PWMPeriod<0x40000)
+ 215   2              {
+ 216   3                  msWrite2Byte(REG_103D04+6*(u16PWMCh-_DISP_PWM0_),u32PWMPeriod);
+ 217   3                  msWrite2ByteMask(REG_103D40,(u32PWMPeriod>>16)<<((u16PWMCh-_DISP_PWM0_)*2),(0x03)<<((u16PWMCh-
+             -_DISP_PWM0_)*2));
+ 218   3              }
+ 219   2          }
+ 220   1          else
+ 221   1          {
+ 222   2              u32PWMPeriod = (u32PWMFreq?(((unsigned long)XTAL_CLOCK_KHZ*1000/((u32PWMFreq+1)*256))):0);
+ 223   2              if (u32PWMPeriod<0x800)
+ 224   2              {
+ 225   3                  if(u16PWMCh<_PWM3_)
+ 226   3                      msWrite2ByteMask(REG_000582+2*(u16PWMCh-_PWM0_),u32PWMPeriod,0x7FF);
+ 227   3                  else
+ 228   3                      msWrite2ByteMask(REG_00059C+2*(u16PWMCh-_PWM3_),u32PWMPeriod,0x7FF);
+ 229   3              }
+ 230   2          }
+ 231   1      
+ 232   1      }
+ 233          
+ 234          void msAPIPWMDuty(DWORD u32PWMCh,WORD u16ByteDuty)
+ 235          {
+ 236   1          DWORD u32Temp=msDrvPWMPeriodGet(u32PWMCh);
+ 237   1          WORD u16PWMCh = msDrvPWMMaskTransfer(u32PWMCh);
+C51 COMPILER V9.00   DRVGPIO                                                               07/03/2017 18:41:25 PAGE 5   
+
+ 238   1          //printData("u16ByteDuty=%d",u16ByteDuty);
+ 239   1          if( u16PWMCh == _NOUSE_ )
+ 240   1              return;
+ 241   1      
+ 242   1          if(u16PWMCh>=_DISP_PWM0_)
+ 243   1              u32Temp = LINEAR_MAPPING_VALUE(u16ByteDuty, 0, 0xFFFF, 0, u32Temp);
+ 244   1          else
+ 245   1              u32Temp = u16ByteDuty>>8;
+ 246   1      
+ 247   1              //u32Temp=LINEAR_MAPPING_VALUE(u16ByteDuty, 0, 0xFFFF, 0, 0xFF);
+ 248   1          //printData("Duty hi=%xh",u32Temp>>16);
+ 249   1          //printData("Duty lo=%xh",(WORD)u32Temp);
+ 250   1          msDrvPWMDuty(u32PWMCh, u32Temp);
+ 251   1      }
+ 252          
+ 253          void msDrvPWMDoubleBuffer(DWORD u32PWMCh, BYTE u8Config)
+ 254          {
+ 255   1          WORD u16PWMCh = msDrvPWMMaskTransfer(u32PWMCh);
+ 256   1          Bool bEnable = u8Config & _PWM_DB_EN_;
+ 257   1          Bool bDBVsyncAlign = u8Config & _PWM_DB_VSYNC_MODE_;
+ 258   1      
+ 259   1          if( u16PWMCh == _NOUSE_ )
+ 260   1              return;
+ 261   1          if(u16PWMCh>=_DISP_PWM0_)
+ 262   1          {
+ 263   2              if(bEnable)
+ 264   2              {
+ 265   3                  msWriteBit(REG_103D09+6*(u16PWMCh-_DISP_PWM0_),bDBVsyncAlign,BIT1);
+ 266   3                  msWriteBit(REG_103D09+6*(u16PWMCh-_DISP_PWM0_),!bDBVsyncAlign,BIT3);
+ 267   3                  msWriteBit(REG_103D09+6*(u16PWMCh-_DISP_PWM0_),bDBVsyncAlign,BIT6);
+ 268   3              }
+ 269   2              else
+ 270   2              {
+ 271   3                  msWriteBit(REG_103D09+6*(u16PWMCh-_DISP_PWM0_),FALSE,BIT1);
+ 272   3                  msWriteBit(REG_103D09+6*(u16PWMCh-_DISP_PWM0_),FALSE,BIT3);
+ 273   3                  msWriteBit(REG_103D09+6*(u16PWMCh-_DISP_PWM0_),FALSE,BIT6);
+ 274   3              }
+ 275   2          }
+ 276   1          else
+ 277   1          {
+ 278   2              if(u16PWMCh<_PWM3_)
+ 279   2                  msWriteBit(REG_000583+2*u16PWMCh,bEnable,BIT5);
+ 280   2              else
+ 281   2                  msWriteBit(REG_00059D+2*(u16PWMCh-_PWM3_),bEnable,BIT5);
+ 282   2          }
+ 283   1      
+ 284   1      }
+ 285          
+ 286          void msAPIPWMConfig(DWORD u32PWMCh, WORD u16Freq, WORD u16Duty, BYTE u8Config, BYTE u8Counter)
+ 287          {
+ 288   1          msDrvPWMFreq(u32PWMCh,u16Freq);
+ 289   1          msAPIPWMDuty(u32PWMCh,u16Duty);
+ 290   1          msDrvPWMAlignSync(u32PWMCh,u8Config,u8Counter);
+ 291   1          msDrvPWMDoubleBuffer(u32PWMCh,u8Config);
+ 292   1          msDrvPWMPolarity(u32PWMCh,u8Config);
+ 293   1      }
+ 294          
+ 295          void msDrvPWMEnableSwitch(DWORD u32PWMCh, Bool bEnable)
+ 296          {
+ 297   1          if(u32PWMCh & (_PWM0_GP0_|_PWM0_GP1_))
+ 298   1              msWriteBit(REG_000580, bEnable, BIT0);
+ 299   1          else if(u32PWMCh & (_PWM1_GP0_|_PWM1_GP1_))
+C51 COMPILER V9.00   DRVGPIO                                                               07/03/2017 18:41:25 PAGE 6   
+
+ 300   1              msWriteBit(REG_000580, bEnable, BIT1);
+ 301   1          else if(u32PWMCh & (_PWM2_GP0_|_PWM2_GP1_))
+ 302   1              msWriteBit(REG_000580, bEnable, BIT2);
+ 303   1          else if(u32PWMCh & (_PWM3_GP0_|_PWM3_GP1_))
+ 304   1              msWriteBit(REG_000580, bEnable, BIT7);
+ 305   1          else if(u32PWMCh & (_PWM4_GP0_|_PWM4_GP1_))
+ 306   1              msWriteBit(REG_000581, bEnable, BIT0);
+ 307   1          else if(u32PWMCh & (_PWM5_GP0_|_PWM5_GP1_))
+ 308   1              msWriteBit(REG_000581, bEnable, BIT1);
+ 309   1          else if(u32PWMCh & (_PWM6_GP0_|_PWM6_GP1_))
+ 310   1              msWriteBit(REG_000581, bEnable, BIT2);
+ 311   1          else if(u32PWMCh & (_PWM7_GP0_|_PWM7_GP1_))
+ 312   1              msWriteBit(REG_000581, bEnable, BIT3);
+ 313   1          else if(u32PWMCh & (_PWM8_GP0_|_PWM8_GP1_))
+ 314   1              msWriteBit(REG_000581, bEnable, BIT4);
+ 315   1          else if(u32PWMCh & (_PWM9_GP0_|_PWM9_GP1_))
+ 316   1              msWriteBit(REG_000581, bEnable, BIT5);
+ 317   1      }
+ 318          void drvGPIO_dummy(void)
+ 319          {
+ 320   1          msAPIPWMConfig(0,0,0,0,0);
+ 321   1      }
+ 322          
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =   2349    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =      4    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----      99
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

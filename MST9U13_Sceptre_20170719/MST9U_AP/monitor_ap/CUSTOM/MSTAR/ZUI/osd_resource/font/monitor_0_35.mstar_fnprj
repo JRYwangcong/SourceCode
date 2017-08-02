@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mstar_fnprj version="1.0" width="32" height="32" grayscale="4" fonttype="0">
+  <fonts>
+    <font>
+      <glyph-offset>0 0</glyph-offset>
+      <align-to-right-while-with-negx>0</align-to-right-while-with-negx>
+      <size-info point="false">0.000000 32.000000</size-info>
+      <weight>90</weight>
+      <style>90</style>
+      <facename>Droid Sans Fallback</facename>
+    </font>
+    <font>
+      <glyph-offset>0 0</glyph-offset>
+      <align-to-right-while-with-negx>0</align-to-right-while-with-negx>
+      <size-info point="false">0.000000 32.000000</size-info>
+      <weight>90</weight>
+      <style>90</style>
+      <facename>DejaVu Sans</facename>
+    </font>
+  </fonts>
+  <items/>
+</mstar_fnprj>

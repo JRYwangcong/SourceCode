@@ -1,0 +1,309 @@
+C51 COMPILER V9.00   MAIN                                                                  07/03/2017 18:41:21 PAGE 1   
+
+
+C51 COMPILER V9.00, COMPILATION OF MODULE MAIN
+OBJECT MODULE PLACED IN .\Obj\main.obj
+COMPILER INVOKED BY: C:\Keil4\C51\BIN\C51.EXE ..\Code\main.c OPTIMIZE(9,SPEED) BROWSE INCDIR(..\Code\INC;..\Code\DRIVER\
+                    -INC;..\Code\DRIVER\MST9U\INC;..\Code\DRIVER\MST9U3\INC) DEFINE(ModelName=MST9U3_DEMO,CHIP_ID=MST9U3) DEBUG OBJECTEXTEND 
+                    -PRINT(.\List\main.lst) OBJECT(.\Obj\main.obj)
+
+line level    source
+
+   1          #include "types.h"
+   2          #include "board.h"
+   3          #include "global.h"
+   4          #include "mcu.h"
+   5          #include "ms_reg.h"
+   6          #include "debug.h"
+   7          #include "Common.h"
+   8          #include "ms_rwreg.h"
+   9          #include "misc.h"
+  10          #include "gpio_def.h"
+  11          #include "Keypaddef.h"
+  12          #include "Keypad.h"
+  13          #include "msAPI_MailBox.h"
+  14          #include "Buzzer.h"
+  15          #include "mhal_tmds.h"
+  16          #include "mdrv_mhl.h"
+  17          #include "drvmStar.h"
+  18          #include "drvADC.h"
+  19          #include "Mapi_combo.h"
+  20          #include "mcu.h"
+  21          #if ENABLE_DAISY_CHAIN
+              #include "msAPI_DaisyChain.h"
+              #endif
+  24          #if(IR_REMOTE_SEL != NO_REMOTE)
+              #include "MsIr.h"
+              #include "IrFunc.h"
+              #endif
+  28          #include "Mapi_mhl.h"
+  29          
+  30          ////////////////////////////////////
+  31          extern void i2C_Intial(void);
+  32          ///////////////////////////////////
+  33          void Main_SlowTimerHandler(void);
+  34          bit g_buncall = 0;
+  35          extern void msDrvPWMEnableSwitch(DWORD u32PWMCh, Bool bEnable);
+  36          #if !ENABLE_VGA_INPUT
+  37          void DrvADCNoUse(void);
+  38          #endif
+  39          void uncall_function(void)
+  40          {
+  41   1      
+  42   1          mhal_tmds_Initial(0, 0);
+  43   1          msDrvIP1OfflineGetInputSyncType(0);
+  44   1          msDrvIP1OfflineAdcGlitchRemoval(0, 0);
+  45   1          msDrvIP1OfflineAdcSetCoast( 0,  0,  0,  0);
+  46   1          msDrvSetOfflineIPMux(0,0);
+  47   1          msDrvIP1OfflineReadVSyncWidth(0);
+  48   1          msDrvIP1OfflineReadHperiod(0);
+  49   1          msDrvIP1OfflineSetInputSyncType(0,0 );
+  50   1          msDrvIP1OfflineReadSyncStatus(0);
+  51   1          msDrvIP1OfflineReadVtotal(0);
+  52   1          msDrvPWMEnableSwitch(0,0 );
+  53   1      #if ENABLE_VGA_INPUT    
+C51 COMPILER V9.00   MAIN                                                                  07/03/2017 18:41:21 PAGE 2   
+
+                  drvADC_init(0);
+                  drvADC_SetADCSource(0);
+              #else
+  57   1          DrvADCNoUse();
+  58   1      #endif
+  59   1          drvADC_PowerCtrl(0);
+  60   1          mapi_combo_GetComboMask(0);
+  61   1          mapi_combo_GetComboType(0);
+  62   1          mapi_combo_GetComboInputPort(0);
+  63   1          mcuDMACRC32(0,0,0,0,0,0);
+  64   1          mcuDMADataTransfer(0,0,0,0,0,0);
+  65   1          mcuDMAMemoryFill(0,0,0,0,0);
+  66   1          mcuDMAPatternSearch(0,0,0,0,0);
+  67   1      
+  68   1      #if ENABLE_CABLE_DET
+                  msAPISrcIsCableConnected(0);
+              #endif
+  71   1      #if(IR_REMOTE_SEL != NO_REMOTE)
+                  irDetectTimer0();
+              #endif
+  74   1          i2C_Intial();
+  75   1          ClearWDT();
+  76   1          SetWDTClk(0);
+  77   1          TriggerWDT(CLK_LIVE_XTAL, 0);
+  78   1      #if ENABLE_DAISY_CHAIN
+                      msPM_DCCmdInit();
+                      msPM_DCSetCmdDcOff(0, 0);
+              #endif
+  82   1      
+  83   1      #if ENABLE_SW_DOUBLE_BUFFER
+                  DB_Mode(0);
+                  DB_WB(0,0);
+                  DB_W2B(0,0);
+                  DB_W3B(0,0);
+                  DB_WBMask(0,0,0);
+                  DB_W2BMask(0,0,0);
+                  DB_WBit(0,0,0);
+              #endif
+  92   1      
+  93   1          SetSPI_Quad_En(0);
+  94   1      }
+  95          
+  96          ////////////////////////////////////
+  97          ///////////////////////////////////
+  98          void main( void )
+  99          {               
+ 100   1          Init_MCU();
+ 101   1      
+ 102   1      #if( ENABLE_WATCH_DOG )
+                  ClearWDT();
+              #endif
+ 105   1      
+ 106   1          Init_GlobalVariables();
+ 107   1      
+ 108   1      #if ENABLE_DEBUG
+                  printData("  g_u8SystemSpeedMode:%d", g_u8SystemSpeedMode);
+              #endif
+ 111   1      
+ 112   1      #if !USEFLASH
+ 113   1         // i2C_Intial();
+ 114   1      #endif
+ 115   1      
+C51 COMPILER V9.00   MAIN                                                                  07/03/2017 18:41:21 PAGE 3   
+
+ 116   1          msPM_Init();
+ 117   1          msWriteByteMask(REG_003A60, BIT5, (BIT6|BIT5));
+ 118   1          msWriteByte(REG_003A62, SARKEY_EN);
+ 119   1      
+ 120   1      #if(IR_REMOTE_SEL != NO_REMOTE)
+                  irInitialize(); // initialize IR
+              #endif
+ 123   1      #if ENABLE_MBX
+                  MApi_MBX_Init();
+                  MApi_MBX_Enable(TRUE);
+                  #if ENABLE_MBX_SAR
+                  MApi_MBX_RegisterMSG(E_MBX_CLASS_SAR, 32);
+                  #endif
+              #endif
+ 130   1      
+ 131   1      #if ENABLE_BUZZER
+                  BuzzerInitial();
+              #endif
+ 134   1      
+ 135   1          if(g_buncall)
+ 136   1             uncall_function();
+ 137   1      
+ 138   1          while( 1 )
+ 139   1          {
+ 140   2                      
+ 141   2              msPM_Handler();
+ 142   2      
+ 143   2      #if( ENABLE_WATCH_DOG )
+                      ClearWDT();
+              #endif
+ 146   2      
+ 147   2      #if 1 //(!R2_51_DUAL_MODE) // ???
+ 148   2              if(!msPM_IsState_IDLE())
+ 149   2                  continue;
+ 150   2      #endif
+ 151   2      
+ 152   2              Main_SlowTimerHandler();
+ 153   2              DebugHandler();
+ 154   2      #if UART1
+                      UART1_Handler();
+              #endif
+ 157   2      
+ 158   2      #if ENABLE_DEBUG
+                      if( DebugOnlyFlag )
+                      {
+                          continue;
+                      }
+              #endif
+ 164   2      
+ 165   2      #if(IR_REMOTE_SEL != NO_REMOTE)
+                      irPollingHandler();
+                      irDecodeCommand(); // ir decode command
+                      irDecodeNumKey(); // ir decode number key
+              #endif
+ 170   2      
+ 171   2              Key_ScanKeypad();
+ 172   2      
+ 173   2      #if ENABLE_MBX
+                      if(bMailNT)
+                      {
+                          bMailNT = 0;
+                          _MDrv_MBX_MsgRecvCb(E_INT_FIQ_R2_TO_8051);
+C51 COMPILER V9.00   MAIN                                                                  07/03/2017 18:41:21 PAGE 4   
+
+                      }
+              #endif
+ 180   2          }
+ 181   1      }
+ 182          
+ 183          void Main_SlowTimerHandler(void)
+ 184          {
+ 185   1          if(ms10Flag)
+ 186   1          {
+ 187   2              Clr_ms10Flag();
+ 188   2          if(CheckPMcounter)
+ 189   2              CheckPMcounter++;
+ 190   2      
+ 191   2              mdrv_mhl_TimerHandler();
+ 192   2          }
+ 193   1      
+ 194   1          if(ms50Flag)
+ 195   1          {
+ 196   2              Clr_ms50Flag();
+ 197   2          }
+ 198   1      #if ENABLE_BUZZER
+                  if(bBuzzer)
+                  {
+                      bBuzzer = 0;
+                      BuzzerMute();
+                  }
+              #endif
+ 205   1          if(SecondFlag)
+ 206   1          {
+ 207   2              Second++;
+ 208   2      
+ 209   2              #if EXT_TIMER0_1MS||FPGA_HW_PMMODE
+                          printData("Second: %d", Second);
+                      #endif
+ 212   2              #if ENABLE_R2_INT_M51_Test
+                      if(bR2_int_M51_flag == 1)
+                      {
+                          bR2_int_M51_flag=0x00;
+                          TestCommand_FIQ_INT(0xFF);
+                          #if ENABLE_DEBUG
+                          printData(" nonPM_FIQ interrupt......................................................",0);
+                          #endif
+                      }
+                  #endif
+ 222   2      
+ 223   2      if(sPMInfo.ucPMMode == ePM_POWER_DPMS)
+ 224   2      {
+ 225   3      
+ 226   3      #if LED_FLICKER 
+ 227   3           #if (defined(LianHeChuangXin_Project)/*||defined(Sceptre_Project)*/)
+                   if(!(g_sMailBoxR2.u16PMFlag&BIT0))
+                   {
+                      hw_ClrGreenLed();
+                      hw_ClrAmberLed();
+                   }
+                   else
+                   #endif     
+ 235   3           {
+ 236   4          #if defined(ZhouYang_Project)
+                          if(hw_IsAmberLedOn)
+                          {
+                              hw_ClrAmberLed();
+C51 COMPILER V9.00   MAIN                                                                  07/03/2017 18:41:21 PAGE 5   
+
+                          }
+                          else
+                          {
+                              hw_SetAmberLed();
+                          }
+                  #else
+ 246   4           {
+ 247   5                  if(hw_IsGreenLedOn)
+ 248   5                  {
+ 249   6                      hw_ClrGreenLed();
+ 250   6                  }
+ 251   5                  else
+ 252   5                  {
+ 253   6                      hw_SetGreenLed();
+ 254   6                  }
+ 255   5           }
+ 256   4          #endif
+ 257   4           }
+ 258   3      #endif
+ 259   3      
+ 260   3        if(sPMInfo.ucPMMode == ePM_POWER_DPMS)
+ 261   3        {
+ 262   4           if(PM_SleepModeCounter)
+ 263   4              {
+ 264   5                     if(--PM_SleepModeCounter==0)
+ 265   5                     {
+ 266   6                        Set_SleepMode_Flag();
+ 267   6                     }
+ 268   5              }
+ 269   4        }
+ 270   3       
+ 271   3      }
+ 272   2      
+ 273   2              Clr_SecondFlag();
+ 274   2          }
+ 275   1      }
+ 276          
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    473    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =      1    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)
