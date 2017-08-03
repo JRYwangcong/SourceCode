@@ -16,4 +16,11 @@ aaaaa
 bbbbb
 >>>>>>> dev
 
+<<<<<<< HEAD
 feature1222
+=======
+
+feature1
+>>>>>>> feature1
+
+feature1333
