@@ -8,4 +8,10 @@ Git is free software.
 
 66666
 
+<<<<<<< HEAD
 aaaaa
+=======
+aaaaa
+
+bbbbb
+>>>>>>> dev
