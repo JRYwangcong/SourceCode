@@ -27,4 +27,8 @@ feature1333
 
 123456
 
+<<<<<<< HEAD
 issue-101
+=======
+stash
+>>>>>>> dev
