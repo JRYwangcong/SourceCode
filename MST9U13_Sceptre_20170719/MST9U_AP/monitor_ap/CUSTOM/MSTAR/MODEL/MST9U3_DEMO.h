@@ -257,27 +257,6 @@
 #define ENABLE_DAISY_CHAIN      0
 #define ENABLE_DC_SDM_FORWARD   (0 && ENABLE_DAISY_CHAIN)	// need sync with 51 setting
 
-#elif (MS_BOARD_TYPE_SEL==BD_MST9UHD_GV1)
-#define INPUT_TYPE              (INPUT_3C)
-#define ENABLE_VGA_INPUT        (INPUT_TYPE&INPUT_1A)
-#define ENABLE_DVI_INPUT           0
-#define ENABLE_DVI2ND_INPUT     0
-#define ENABLE_DVI3ND_INPUT     0
-#define ENABLE_HDMI_INPUT          1
-#define ENABLE_HDMI2ND_INPUT    1
-#define ENABLE_HDMI3ND_INPUT    0
-#define ENABLE_HDMI4ND_INPUT    0
-#define ENABLE_DP_OUTPUT       PANEL_EDP // 1
-#define ENABLE_DP_INPUT         1
-#define ENABLE_DP2ND_INPUT      0
-#define ENABLE_DP3ND_INPUT      0
-#define ENABLE_DP4ND_INPUT      0
-#define ENABLE_DP5ND_INPUT      0
-#define ENABLE_DP6ND_INPUT      0
-#define ENABLE_VD_INPUT         0
-#define ENABLE_LED_CONTROLLER   0
-#define ENABLE_DAISY_CHAIN      0
-#define ENABLE_DC_SDM_FORWARD   (0 && ENABLE_DAISY_CHAIN)	// need sync with 51 setting
 
 
 
