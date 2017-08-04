@@ -1,1 +1,0 @@
-#undef CONFIG_DIGITAL_TI5707

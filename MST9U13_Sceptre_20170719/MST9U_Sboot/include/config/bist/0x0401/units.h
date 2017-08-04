@@ -1,1 +1,0 @@
-#undef CONFIG_BIST_0x0401_UNITS

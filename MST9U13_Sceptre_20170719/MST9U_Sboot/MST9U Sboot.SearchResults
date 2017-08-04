@@ -1,6 +1,0 @@
----- CLK_DDR_1333 Matches (5 in 4 files) ----
-Ddr_bd_mst203a_a01a_esmt_1333.c (src\mst9u):#define CLK_DDR_1333    1333  // 2133,  1866,  1600,  1400
-Ddr_bd_mst203a_a01a_etron_1333.c (src\mst9u):#define CLK_DDR_1333    1333  // 2133,  1866,  1600,  1400
-Ddr_bd_mst203a_a01a_winbond_1333.c (src\mst9u):#define CLK_DDR_1333    1333  // 2133,  1866,  1600,  1400
-init_MST9U.c (src\mst9u):#define CLK_DDR_1333    1333  // 2133,  1866,  1600,  1400
-init_MST9U.c (src\mst9u):#define CLK_DDR_1333    1333  // 2133,  1866,  1600,  1400

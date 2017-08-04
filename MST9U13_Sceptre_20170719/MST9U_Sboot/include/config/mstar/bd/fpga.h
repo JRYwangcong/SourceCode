@@ -1,1 +1,0 @@
-#undef CONFIG_MSTAR_BD_FPGA

@@ -1,1 +1,0 @@
-#undef CONFIG_UART1_SEL

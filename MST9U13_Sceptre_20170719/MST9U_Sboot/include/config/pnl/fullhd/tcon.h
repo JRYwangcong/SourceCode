@@ -1,1 +1,0 @@
-#undef CONFIG_PNL_FULLHD_TCON

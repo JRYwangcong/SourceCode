@@ -1,1 +1,0 @@
-#undef CONFIG_CMD_EXT2

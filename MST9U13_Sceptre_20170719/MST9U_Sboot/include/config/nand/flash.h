@@ -1,1 +1,0 @@
-#define CONFIG_NAND_FLASH 1

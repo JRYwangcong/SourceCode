@@ -1,1 +1,0 @@
-#undef CONFIG_MEM1066MHz

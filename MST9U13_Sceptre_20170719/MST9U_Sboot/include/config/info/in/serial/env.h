@@ -1,1 +1,0 @@
-#undef CONFIG_INFO_IN_SERIAL_ENV

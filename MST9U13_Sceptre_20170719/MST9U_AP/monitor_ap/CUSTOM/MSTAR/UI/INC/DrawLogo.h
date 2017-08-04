@@ -1,5 +1,0 @@
-
-
-
-extern void DrawLogo(void);
-

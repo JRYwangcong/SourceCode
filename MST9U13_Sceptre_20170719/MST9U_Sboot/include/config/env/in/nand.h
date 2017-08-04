@@ -1,1 +1,0 @@
-#define CONFIG_ENV_IN_NAND 1

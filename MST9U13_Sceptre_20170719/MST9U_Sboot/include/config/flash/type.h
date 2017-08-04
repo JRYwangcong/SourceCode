@@ -1,1 +1,0 @@
-#define CONFIG_FLASH_TYPE 1

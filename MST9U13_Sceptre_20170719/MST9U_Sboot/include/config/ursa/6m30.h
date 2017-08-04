@@ -1,1 +1,0 @@
-#undef CONFIG_URSA_6M30

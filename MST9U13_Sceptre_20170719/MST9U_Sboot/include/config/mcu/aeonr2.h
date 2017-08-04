@@ -1,1 +1,0 @@
-#define CONFIG_MCU_AEONR2 1

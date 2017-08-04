@@ -1,1 +1,0 @@
-#define CONFIG_CPU_320MHZ 1

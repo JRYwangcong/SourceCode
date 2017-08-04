@@ -1,1 +1,0 @@
-#undef CONFIG_DDR3_8BIT_MODE

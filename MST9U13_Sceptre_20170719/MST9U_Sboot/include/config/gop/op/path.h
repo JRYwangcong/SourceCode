@@ -1,1 +1,0 @@
-#undef CONFIG_GOP_OP_PATH

@@ -1,1 +1,0 @@
-#define CONFIG_MEM2133MHz 1
