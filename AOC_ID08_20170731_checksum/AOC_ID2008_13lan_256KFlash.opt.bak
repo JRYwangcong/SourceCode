@@ -1,0 +1,185 @@
+### uVision2 Project, (C) Keil Software
+### Do not modify !
+
+ cExt (*.c)
+ aExt (*.s*; *.src; *.a*)
+ oExt (*.obj)
+ lExt (*.lib)
+ tExt (*.txt; *.h; *.inc)
+ pExt (*.plm)
+ CppX (*.cpp)
+ DaveTm { 0,0,0,0,0,0,0,0 }
+
+Target (DEBUG MODE), 0x0000 // Tools: 'MCS-51'
+Target (ENVISION_P2071l_TSUMXXNX), 0x0000 // Tools: 'MCS-51'
+Target (ENVISION_P2271w_TSUMXXNX), 0x0000 // Tools: 'MCS-51'
+Target (ENVISION_P2471w), 0x0000 // Tools: 'MCS-51'
+Target (ENVISION_P2471w_TSUMXXNX), 0x0000 // Tools: 'MCS-51'
+Target (ENVISION_P971wl), 0x0000 // Tools: 'MCS-51'
+GRPOPT 1,(Source),1,0,0
+GRPOPT 2,(bank0),0,0,0
+GRPOPT 3,(bank1),0,0,0
+GRPOPT 4,(bank2),0,0,0
+GRPOPT 5,(bank3),0,0,0
+GRPOPT 6,(last_file),1,0,0
+
+OPTFFF 1,1,1,0,0,0,0,0,<.\main.c><main.c> 
+OPTFFF 1,2,1,0,0,0,0,0,<.\Common.c><Common.c> 
+OPTFFF 1,3,1,0,0,0,0,0,<.\isr.c><isr.c> 
+OPTFFF 1,4,1,0,0,0,0,0,<.\ms_rwreg.c><ms_rwreg.c> 
+OPTFFF 1,5,2,50331648,0,0,0,0,<.\L51_4BANK.A51><L51_4BANK.A51> 
+OPTFFF 1,6,4,0,0,0,0,0,<.\CompFont.LIB><CompFont.LIB> 
+OPTFFF 1,7,2,704643072,0,0,0,0,<.\STARTUP.A51><STARTUP.A51> 
+OPTFFF 1,8,1,0,0,0,0,0,<.\DDC2Bi_Isr.c><DDC2Bi_Isr.c> 
+OPTFFF 2,9,1,2,0,667,671,0,<.\MenuStr.c><MenuStr.c> { 44,0,0,0,2,0,0,0,3,0,0,0,255,255,255,255,255,255,255,255,248,255,255,255,226,255,255,255,22,0,0,0,29,0,0,0,199,3,0,0,14,1,0,0 }
+OPTFFF 2,10,1,1862270976,0,0,0,0,<.\msOSD.c><msOSD.c> 
+OPTFFF 2,11,1,0,0,0,0,0,<.\menu.c><menu.c> 
+OPTFFF 3,12,1,0,0,0,0,0,<.\NVRam.c><NVRam.c> 
+OPTFFF 3,13,1,0,0,0,0,0,<.\Global.c><Global.c> 
+OPTFFF 3,14,1,0,0,0,0,0,<.\MenuFunc.c><MenuFunc.c> 
+OPTFFF 3,15,1,0,0,0,0,0,<.\i2c.c><i2c.c> 
+OPTFFF 3,16,1,0,0,0,0,0,<.\DDC.c><DDC.c> 
+OPTFFF 3,17,1,0,0,0,0,0,<.\mode.c><mode.c> 
+OPTFFF 3,18,1,0,0,0,0,0,<.\mStar.c><mStar.c> 
+OPTFFF 3,19,1,0,0,0,0,0,<.\UserPref.c><UserPref.c> 
+OPTFFF 3,20,1,0,0,0,0,0,<.\detect.c><detect.c> 
+OPTFFF 3,21,1,0,0,0,0,0,<.\AutoFunc.c><AutoFunc.c> 
+OPTFFF 3,22,1,0,0,0,0,0,<.\MsHDCP.c><MsHDCP.c> 
+OPTFFF 3,23,1,0,0,0,0,0,<.\MsDLC.c><MsDLC.c> 
+OPTFFF 3,24,1,0,0,0,0,0,<.\msHDMI.c><msHDMI.c> 
+OPTFFF 3,25,1,0,0,0,0,0,<.\msHDMIACE.c><msHDMIACE.c> 
+OPTFFF 3,26,4,0,0,0,0,0,<.\MsOVD_W3.LIB><MsOVD_W3.LIB> 
+OPTFFF 3,27,1,436207616,0,0,0,0,<.\misc.c><misc.c> 
+OPTFFF 3,28,4,0,0,0,0,0,<.\ACE.LIB><ACE.LIB> 
+OPTFFF 3,29,1,0,0,0,0,0,<.\DDC2Bi.c><DDC2Bi.c> 
+OPTFFF 3,30,4,0,0,0,0,0,<.\MSTRTE.LIB><MSTRTE.LIB> 
+OPTFFF 3,31,4,0,0,0,0,0,<.\GammaLd.LIB><GammaLd.LIB> 
+OPTFFF 3,32,1,0,0,0,0,0,<.\Debug.c><Debug.c> 
+OPTFFF 3,33,1,1006632960,0,0,0,0,<.\Gamma.c><Gamma.c> 
+OPTFFF 3,34,1,0,0,0,0,0,<.\power.c><power.c> 
+OPTFFF 3,35,1,0,0,0,0,0,<.\msDAC.c><msDAC.c> 
+OPTFFF 3,36,1,0,0,0,0,0,<.\Adjust.c><Adjust.c> 
+OPTFFF 3,37,1,0,0,0,0,0,<.\Ms_PM.c><Ms_PM.c> 
+OPTFFF 3,38,4,0,0,0,0,0,<.\MsID_V1.LIB><MsID_V1.LIB> 
+OPTFFF 4,39,1,0,0,0,0,0,<.\mcu.c><mcu.c> 
+OPTFFF 4,40,1,0,0,0,0,0,<.\MainTitleFont.c><MainTitleFont.c> 
+OPTFFF 4,41,4,0,0,0,0,0,<.\CompProp.LIB><CompProp.LIB> 
+OPTFFF 4,42,1,0,0,0,0,0,<.\PropFont.c><PropFont.c> 
+OPTFFF 4,43,1,0,0,0,0,0,<.\Keypad.c><Keypad.c> 
+OPTFFF 4,44,4,0,0,0,0,0,<.\CompProp_3Set.LIB><CompProp_3Set.LIB> 
+OPTFFF 5,45,1,0,0,0,0,0,<.\msflash.c><msflash.c> 
+OPTFFF 5,46,1,0,0,0,0,0,<.\UserOT.c><UserOT.c> 
+OPTFFF 5,47,1,0,0,0,0,0,<.\ScanKey.c><ScanKey.c> 
+OPTFFF 5,48,1,0,0,0,0,0,<.\SynaOT.c><SynaOT.c> 
+OPTFFF 5,49,1,0,0,0,0,0,<.\UserDataSpace.C><UserDataSpace.C> 
+OPTFFF 6,50,2,0,0,0,0,0,<.\MST_INIT_2011.A51><MST_INIT_2011.A51> 
+
+
+TARGOPT 1, (DEBUG MODE)
+ CLK51=12000000
+  OPTTT 1,1,1,0
+  OPTHX 0,65535,0,0,0
+  OPTLX 120,65,8,<.\list\>
+  OPTOX 16
+  OPTLT 1,1,1,0,1,1,0,1,0,0,0,0
+  OPTXL 1,1,1,1,1,1,1,0,0
+  OPTFL 1,0,0
+  OPTAX 0
+  OPTDL (S8051.DLL)()(DP51.DLL)(-p52)(S8051.DLL)()(TP51.DLL)(-p52)
+  OPTDBG 48125,0,()()()()()()()()()() (BIN\MON51.DLL)()()()
+  OPTDF 0x0
+  OPTLE <>
+  OPTLC <>
+EndOpt
+
+TARGOPT 2, (ENVISION_P2071l_TSUMXXNX)
+ CLK51=12000000
+  OPTTT 1,1,1,0
+  OPTHX 0,65535,0,0,0
+  OPTLX 120,65,8,<.\list\>
+  OPTOX 16
+  OPTLT 0,0,1,0,1,1,0,1,0,0,0,0
+  OPTXL 1,1,1,1,1,1,1,0,0
+  OPTFL 1,0,0
+  OPTAX 0
+  OPTDL (S8051.DLL)()(DP51.DLL)(-p52)(S8051.DLL)()(TP51.DLL)(-p52)
+  OPTDBG 48125,-1,()()()()()()()()()() (BIN\MON51.DLL)()()()
+  OPTBB 0,0,3,1,0,0,0,0,0,0,<LIGHTSENSOR.C>()()
+  OPTDF 0x0
+  OPTLE <>
+  OPTLC <>
+EndOpt
+
+TARGOPT 3, (ENVISION_P2271w_TSUMXXNX)
+ CLK51=12000000
+  OPTTT 1,1,1,0
+  OPTHX 0,65535,0,0,0
+  OPTLX 120,65,8,<.\list\>
+  OPTOX 16
+  OPTLT 0,0,1,0,1,1,0,1,0,0,0,0
+  OPTXL 1,1,1,1,1,1,1,0,0
+  OPTFL 1,0,0
+  OPTAX 0
+  OPTDL (S8051.DLL)()(DP51.DLL)(-p52)(S8051.DLL)()(TP51.DLL)(-p52)
+  OPTDBG 48125,-1,()()()()()()()()()() (BIN\MON51.DLL)()()()
+  OPTBB 0,0,3,1,0,0,0,0,0,0,<LIGHTSENSOR.C>()()
+  OPTDF 0x0
+  OPTLE <>
+  OPTLC <>
+EndOpt
+
+TARGOPT 4, (ENVISION_P2471w)
+ CLK51=12000000
+  OPTTT 1,1,1,0
+  OPTHX 0,65535,0,0,0
+  OPTLX 120,65,8,<.\list\>
+  OPTOX 16
+  OPTLT 0,0,1,0,1,1,0,1,0,0,0,0
+  OPTXL 1,1,1,1,1,1,1,0,0
+  OPTFL 1,0,0
+  OPTAX 0
+  OPTDL (S8051.DLL)()(DP51.DLL)(-p52)(S8051.DLL)()(TP51.DLL)(-p52)
+  OPTDBG 48125,-1,()()()()()()()()()() (BIN\MON51.DLL)()()()
+  OPTBB 0,0,3,1,0,0,0,0,0,0,<LIGHTSENSOR.C>()()
+  OPTDF 0x0
+  OPTLE <>
+  OPTLC <>
+EndOpt
+
+TARGOPT 5, (ENVISION_P2471w_TSUMXXNX)
+ CLK51=12000000
+  OPTTT 1,1,1,0
+  OPTHX 0,65535,0,0,0
+  OPTLX 120,65,8,<.\list\>
+  OPTOX 16
+  OPTLT 0,0,1,0,1,1,0,1,0,0,0,0
+  OPTXL 1,1,1,1,1,1,1,0,0
+  OPTFL 1,0,0
+  OPTAX 0
+  OPTDL (S8051.DLL)()(DP51.DLL)(-p52)(S8051.DLL)()(TP51.DLL)(-p52)
+  OPTDBG 48125,-1,()()()()()()()()()() (BIN\MON51.DLL)()()()
+  OPTBB 0,0,3,1,0,0,0,0,0,0,<LIGHTSENSOR.C>()()
+  OPTDF 0x0
+  OPTLE <>
+  OPTLC <>
+EndOpt
+
+TARGOPT 6, (ENVISION_P971wl)
+ CLK51=12000000
+  OPTTT 1,1,1,0
+  OPTHX 0,65535,0,0,0
+  OPTLX 120,65,8,<.\list\>
+  OPTOX 16
+  OPTLT 0,0,1,0,1,1,0,1,0,0,0,0
+  OPTXL 1,1,1,1,1,1,1,0,0
+  OPTFL 1,0,1
+  OPTAX 0
+  OPTDL (S8051.DLL)()(DP51.DLL)(-p52)(S8051.DLL)()(TP51.DLL)(-p52)
+  OPTDBG 48125,-1,()()()()()()()()()() (BIN\MON51.DLL)()()()
+  OPTBB 0,0,721,1,0,0,0,0,0,0,<power.c>()()
+  OPTBB 1,0,3,1,0,0,0,0,0,0,<LIGHTSENSOR.C>()()
+  OPTDF 0x0
+  OPTLE <>
+  OPTLC <>
+EndOpt
+

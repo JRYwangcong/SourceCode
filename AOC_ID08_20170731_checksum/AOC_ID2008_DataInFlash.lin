@@ -1,0 +1,30 @@
+BankArea(0x0000,0xFFFF) 
+PRINT(".\List\TSUM.m51") RAMSIZE(256) 
+BANK0(
+
+  		 ?CO?MSOSD(0x2500)
+		,?CO?MENUSTR
+	    ,?CO?MENU
+	 )
+
+BANK1(
+		?CO?MENUFUNC(0x2500)
+		,?CO?MODE
+		,?CO?MSTAR
+		//,?CO?DETECT
+         ,?CO?MSHDMI
+		 ,?CO?DDC2Bi
+		 ,?CO?GAMMA
+
+	)
+BANK2(
+	
+		?CO?PROPFONT(0x2500)
+		,?CO?MAINTITLEFONT
+	)
+
+BANK3(
+	  ?CO?USERDATASPACE(0xA000)
+
+	)
+XDATA( 0X0400-0X07FF )

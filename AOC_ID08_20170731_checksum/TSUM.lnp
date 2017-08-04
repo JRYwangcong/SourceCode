@@ -1,0 +1,70 @@
+COMMON {"isr.obj"},
+COMMON {"ms_rwreg.obj"},
+COMMON {"Common.obj"},
+COMMON {"L51_4BANK.obj"},
+COMMON {"STARTUP.obj"},
+BANK0 {"mcu.obj"},
+BANK0 {"menu.obj"},
+BANK0 {"MenuStr.obj"},
+BANK0 {"msflash.obj"},
+BANK0 {"main.obj"},
+BANK0 {"DDC2Bi.obj"},
+BANK0 {"msOSD.obj"},
+BANK0 {"Debug.obj"},
+BANK0 {"MainTitleFont.obj"},
+BANK0 {".\CompFont.LIB"},
+BANK1 {"NVRam.obj"},
+BANK1 {"Global.obj"},
+BANK1 {"MenuFunc.obj"},
+BANK1 {"i2c.obj"},
+BANK1 {"DDC.obj"},
+BANK1 {"mode.obj"},
+BANK1 {"mStar.obj"},
+BANK1 {"UserPref.obj"},
+BANK1 {"detect.obj"},
+BANK1 {"AutoFunc.obj"},
+BANK1 {"Gamma.obj"},
+BANK1 {"MsHDCP.obj"},
+BANK1 {"MsDLC.obj"},
+BANK1 {"PropFont.obj"},
+BANK1 {"msHDMIACE.obj"},
+BANK1 {"msHDMI.obj"},
+BANK1 {"Adjust.obj"},
+BANK1 {".\CompProp.LIB"},
+BANK1 {".\msOVD.LIB"},
+BANK1 {"misc.obj"},
+BANK1 {".\GammaLd.LIB"},
+BANK1 {".\MSTRTE.LIB"},
+BANK1 {".\ACE.LIB"},
+BANK2 {"power.obj"},
+BANK3 {"Keypad.obj"} 
+TO "TSUM"
+BankArea(0x0000,0xFFFF) 
+PRINT(".\List\TSUM.m51") RAMSIZE(256) 
+BANK0(
+
+  		 ?CO?MSOSD(0x2500)
+		,?CO?MENUSTR
+	    ,?CO?MENU
+		,?CO?MAINTITLEFONT
+
+	 )
+
+BANK1(
+	
+    	?CO?GAMMA(0x2500)
+		,?CO?MENUFUNC
+		,?CO?MODE
+		//,?CO?DDC
+
+		,?CO?MSTAR
+		,?CO?DETECT
+ 
+        ,?CO?MSHDMI
+        //,?CO?_MSOVD
+        ,?CO?PROPFONT
+        //,?CO?MSACE 
+		,?CO?DDC2Bi
+	)
+
+XDATA( 0X0400-0X07FF )

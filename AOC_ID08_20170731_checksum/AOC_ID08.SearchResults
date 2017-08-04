@@ -1,0 +1,19 @@
+---- PanelLM185TT3A Matches (18 in 11 files) ----
+Adjust.c:#elif(PanelType == PanelLM185TT3A)
+Adjust.c:	#elif (PanelType == PanelLM185TT3A)
+Board.h:    #define PanelLM185TT3A			114
+Board.h:#if ((PanelType!=PanelLGLP156WHB_DP)&&(PanelType!=PanelB156XTN02)&&(PanelType!=PanelB156XTN07)&&(PanelType!=PanelNT156WHM_N12)&&(PanelType!=PanelM185BGE_L23)&&(PanelType!=PanelM185WHB_N10)&&(PanelType!=PanelLM185TT3A))
+DDC.c:#if(PanelType == PanelLM185TT3A)
+DDC2Bi.c:		#elif(PanelType == PanelLM185TT3A)
+ENVISION_JRYL1PTR_EV1.h:#define PanelType 				PanelLM185TT3A//PanelAUOM215HW03//PanelM185WHB_N10//PanelM185BGE_L23//PanelAUOM215HW03//PanelNT156WHM_N12//PanelAUOM215HW03//PanelB156XTN07//PanelB156XTN02//PanelAUOM215HW03//PanelAUOM215HW03//PanelLGLP156WHB_DP////////PanelTPM200O1L02//
+ENVISION_JRYL1PTR_EV1.h:#elif (PanelType == PanelM185WHB_N10||PanelType == PanelLM185TT3A)
+Gamma.c:#elif (ModelName==ENVISION_JRYL1PTR_EV1&&(PanelType==PanelM185WHB_N10||PanelType==PanelLM185TT3A)) 
+Gamma.c:#elif (ModelName==ENVISION_JRYL1PTR_EV1&&(PanelType==PanelM185WHB_N10||PanelType==PanelLM185TT3A))
+Global.h:#if (PanelType==PanelM185WHB_N10||PanelType==PanelLM185TT3A)
+Global.h:#elif PanelType==PanelLM185TT3A
+ITE6251.c:||PanelType==PanelLGLP156WHB_DP||PanelType == PanelINNN173FGE_E23_DP||PanelType == PanelM185WHB_N10||||PanelType == PanelLM185TT3A)
+ITE6251.c:||PanelType == PanelINNN173FGE_E23_DP||PanelType == PanelM185WHB_N10||||PanelType == PanelLM185TT3A)
+MenuFunc.c:        #if((PanelType == PanelB156XTN02)||(PanelType == PanelB156XTN07)||(PanelType == PanelNT156WHM_N12)||(PanelType == PanelM185WHB_N10)||(PanelType == PanelLM185TT3A)/*||(PanelType == PanelM185BGE_L23)*/)
+mStar.c:                #if  ((PanelType == PanelB156XTN02)||(PanelType == PanelB156XTN07)||(PanelType == PanelNT156WHM_N12)||(PanelType == PanelM185BGE_L23)||(PanelType == PanelM185WHB_N10)||(PanelType == PanelLM185TT3A))
+Panel.h:	 #elif (PanelType == PanelLM185TT3A)
+Panel.h:    	#include "PanelLM185TT3A.h"

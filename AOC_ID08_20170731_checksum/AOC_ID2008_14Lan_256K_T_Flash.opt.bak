@@ -1,0 +1,362 @@
+### uVision2 Project, (C) Keil Software
+### Do not modify !
+
+ cExt (*.c)
+ aExt (*.s*; *.src; *.a*)
+ oExt (*.obj)
+ lExt (*.lib)
+ tExt (*.txt; *.h; *.inc)
+ pExt (*.plm)
+ CppX (*.cpp)
+ DaveTm { 0,0,0,0,0,0,0,0 }
+
+Target (==========T serise============), 0x0000 // Tools: 'MCS-51'
+Target (AOC_1620Sw_T), 0x0000 // Tools: 'MCS-51'
+Target (ENVISION_P2071L_T), 0x0000 // Tools: 'MCS-51'
+Target (AOC_e1620Swb_2), 0x0000 // Tools: 'MCS-51'
+Target (AOC_e1620Swb_3), 0x0000 // Tools: 'MCS-51'
+Target (AOC_e1620Swb_4), 0x0000 // Tools: 'MCS-51'
+Target (ENVISION_H2030WS), 0x0000 // Tools: 'MCS-51'
+Target (ENVISION_H2083WL), 0x0000 // Tools: 'MCS-51'
+Target (ENVISION_H2083LS), 0x0000 // Tools: 'MCS-51'
+Target (ENVISION_P971waL_CMI), 0x0000 // Tools: 'MCS-51'
+Target (ENVISION_P971WALS), 0x0000 // Tools: 'MCS-51'
+Target (ENVISION_H2083WM), 0x0000 // Tools: 'MCS-51'
+Target (ENVISION_JRY1PTRL), 0x0000 // Tools: 'MCS-51'
+Target (ENVISION_JRYL1PTR_EV1), 0x0000 // Tools: 'MCS-51'
+Target (------SL-BOARD-------------), 0x0000 // Tools: 'MCS-51'
+Target (ENVISION_R2218WS), 0x0000 // Tools: 'MCS-51'
+Target (ENVISION_R2018WS), 0x0000 // Tools: 'MCS-51'
+GRPOPT 1,(Source),0,0,0
+GRPOPT 2,(bank0),0,0,0
+GRPOPT 3,(bank1),0,0,0
+GRPOPT 4,(bank2),0,0,0
+GRPOPT 5,(bank3),0,0,0
+GRPOPT 6,(last_file),1,0,0
+
+OPTFFF 1,1,1,0,0,0,0,0,<.\Common.c><Common.c> 
+OPTFFF 1,2,1,201326592,0,0,0,0,<.\isr.c><isr.c> 
+OPTFFF 1,3,1,0,0,0,0,0,<.\ms_rwreg.c><ms_rwreg.c> 
+OPTFFF 1,4,2,50331648,0,0,0,0,<.\L51_4BANK.A51><L51_4BANK.A51> 
+OPTFFF 1,5,2,889192448,0,0,0,0,<.\STARTUP.A51><STARTUP.A51> 
+OPTFFF 1,6,4,0,0,0,0,0,<.\CompFont.LIB><CompFont.LIB> 
+OPTFFF 1,7,4,0,0,0,0,0,<.\CompProp_5Set.LIB><CompProp_5Set.LIB> 
+OPTFFF 1,8,1,0,0,0,0,0,<.\DDC2Bi_Isr.c><DDC2Bi_Isr.c> 
+OPTFFF 2,9,1,0,0,0,0,0,<.\main.c><main.c> 
+OPTFFF 2,10,1,0,0,0,0,0,<.\Gamma.c><Gamma.c> 
+OPTFFF 2,11,4,0,0,0,0,0,<.\GammaLd.LIB><GammaLd.LIB> 
+OPTFFF 2,12,1,0,0,0,0,0,<.\MenuStr.c><MenuStr.c> 
+OPTFFF 2,13,1,620756992,0,0,0,0,<.\msOSD.c><msOSD.c> 
+OPTFFF 2,14,1,33554432,0,0,0,0,<.\menu.c><menu.c> 
+OPTFFF 3,15,1,0,0,0,0,0,<.\AutoFunc.c><AutoFunc.c> 
+OPTFFF 3,16,1,0,0,0,0,0,<.\Adjust.c><Adjust.c> 
+OPTFFF 3,17,1,0,0,0,0,0,<.\NVRam.c><NVRam.c> 
+OPTFFF 3,18,1,0,0,0,0,0,<.\Ms_PM.c><Ms_PM.c> 
+OPTFFF 3,19,1,0,0,0,0,0,<.\MsDLC.c><MsDLC.c> 
+OPTFFF 3,20,1,0,0,0,0,0,<.\detect.c><detect.c> 
+OPTFFF 3,21,1,0,0,0,0,0,<.\MsHDCP.c><MsHDCP.c> 
+OPTFFF 3,22,1,0,0,0,0,0,<.\msHDMI.c><msHDMI.c> 
+OPTFFF 3,23,1,587202560,0,0,0,0,<.\mStar.c><mStar.c> 
+OPTFFF 3,24,1,0,0,0,0,0,<.\mode.c><mode.c> 
+OPTFFF 3,25,1,0,0,0,0,0,<.\msHDMIACE.c><msHDMIACE.c> 
+OPTFFF 3,26,1,0,0,0,0,0,<.\MenuFunc.c><MenuFunc.c> 
+OPTFFF 3,27,1,0,0,0,0,0,<.\MainTitleFont_1.c><MainTitleFont_1.c> 
+OPTFFF 3,28,1,0,0,0,0,0,<.\MsADC.c><MsADC.c> 
+OPTFFF 3,29,4,0,0,0,0,0,<.\MsID_V2.LIB><MsID_V2.LIB> 
+OPTFFF 3,30,4,0,0,0,0,0,<.\MsOVD_LIB_V03.LIB><MsOVD_LIB_V03.LIB> 
+OPTFFF 3,31,4,0,0,0,0,0,<.\ACE_TSUMT.LIB><ACE_TSUMT.LIB> 
+OPTFFF 3,32,1,0,0,0,0,0,<.\ITE6251.c><ITE6251.c> 
+OPTFFF 4,33,1,0,0,0,0,0,<.\DDC.c><DDC.c> 
+OPTFFF 4,34,1,0,0,0,0,0,<.\Global.c><Global.c> 
+OPTFFF 4,35,1,0,0,0,0,0,<.\msDAC.c><msDAC.c> 
+OPTFFF 4,36,1,0,0,0,0,0,<.\MainTitleFont.c><MainTitleFont.c> 
+OPTFFF 4,37,1,0,0,0,0,0,<.\mcu.c><mcu.c> 
+OPTFFF 4,38,1,0,0,0,0,0,<.\power.c><power.c> 
+OPTFFF 4,39,1,0,0,0,0,0,<.\misc.c><misc.c> 
+OPTFFF 4,40,1,0,0,0,0,0,<.\PropFont.c><PropFont.c> 
+OPTFFF 4,41,1,0,0,0,0,0,<.\msMiniLVDSI2C.c><msMiniLVDSI2C.c> 
+OPTFFF 5,42,1,0,0,0,0,0,<.\UserPref.c><UserPref.c> 
+OPTFFF 5,43,1,0,0,0,0,0,<.\Keypad.c><Keypad.c> 
+OPTFFF 5,44,1,0,0,0,0,0,<.\SynaOT.c><SynaOT.c> 
+OPTFFF 5,45,1,0,0,0,0,0,<.\UserOT.c><UserOT.c> 
+OPTFFF 5,46,1,0,0,0,0,0,<.\ScanKey.c><ScanKey.c> 
+OPTFFF 5,47,1,0,0,0,0,0,<.\i2c.c><i2c.c> 
+OPTFFF 5,48,1,0,0,0,0,0,<.\Debug.c><Debug.c> 
+OPTFFF 5,49,1,0,0,0,0,0,<.\DDC2Bi.c><DDC2Bi.c> 
+OPTFFF 5,50,1,0,0,0,0,0,<.\msflash.c><msflash.c> 
+OPTFFF 5,51,1,0,0,0,0,0,<.\UserDataSpace.C><UserDataSpace.C> 
+OPTFFF 6,52,2,0,0,0,0,0,<.\MST_INIT_2011.A51><MST_INIT_2011.A51> 
+
+
+TARGOPT 1, (==========T serise============)
+ CLK51=12000000
+  OPTTT 1,1,1,0
+  OPTHX 0,65535,0,0,0
+  OPTLX 120,65,8,<.\list\>
+  OPTOX 16
+  OPTLT 1,1,1,0,1,1,0,1,0,0,0,0
+  OPTXL 1,1,1,1,1,1,1,0,0
+  OPTFL 1,0,0
+  OPTDL (S8051.DLL)()(DP51.DLL)(-p52)(S8051.DLL)()(TP51.DLL)(-p52)
+  OPTDBG 48125,0,()()()()()()()()()() ()()()()
+  OPTDF 0x0
+  OPTLE <>
+  OPTLC <>
+EndOpt
+
+TARGOPT 2, (AOC_1620Sw_T)
+ CLK51=12000000
+  OPTTT 1,1,1,0
+  OPTHX 0,65535,0,0,0
+  OPTLX 120,65,8,<.\list\>
+  OPTOX 16
+  OPTLT 1,1,1,0,1,1,0,1,0,0,0,0
+  OPTXL 1,1,1,1,1,1,1,0,0
+  OPTFL 1,0,0
+  OPTDL (S8051.DLL)()(DP51.DLL)(-p52)(S8051.DLL)()(TP51.DLL)(-p52)
+  OPTDBG 48125,0,()()()()()()()()()() ()()()()
+  OPTDF 0x0
+  OPTLE <>
+  OPTLC <>
+EndOpt
+
+TARGOPT 3, (ENVISION_P2071L_T)
+ CLK51=12000000
+  OPTTT 1,1,1,0
+  OPTHX 0,65535,0,0,0
+  OPTLX 120,65,8,<.\list\>
+  OPTOX 16
+  OPTLT 1,1,1,0,1,1,0,1,0,0,0,0
+  OPTXL 1,1,1,1,1,1,1,0,0
+  OPTFL 1,0,0
+  OPTDL (S8051.DLL)()(DP51.DLL)(-p52)(S8051.DLL)()(TP51.DLL)(-p52)
+  OPTDBG 48125,0,()()()()()()()()()() ()()()()
+  OPTDF 0x0
+  OPTLE <>
+  OPTLC <>
+EndOpt
+
+TARGOPT 4, (AOC_e1620Swb_2)
+ CLK51=12000000
+  OPTTT 1,1,1,0
+  OPTHX 0,65535,0,0,0
+  OPTLX 120,65,8,<.\list\>
+  OPTOX 16
+  OPTLT 1,1,1,0,1,1,0,1,0,0,0,0
+  OPTXL 1,1,1,1,1,1,1,0,0
+  OPTFL 1,0,0
+  OPTDL (S8051.DLL)()(DP51.DLL)(-p52)(S8051.DLL)()(TP51.DLL)(-p52)
+  OPTDBG 48125,0,()()()()()()()()()() ()()()()
+  OPTDF 0x0
+  OPTLE <>
+  OPTLC <>
+EndOpt
+
+TARGOPT 5, (AOC_e1620Swb_3)
+ CLK51=12000000
+  OPTTT 1,1,1,0
+  OPTHX 0,65535,0,0,0
+  OPTLX 120,65,8,<.\list\>
+  OPTOX 16
+  OPTLT 1,1,1,0,1,1,0,1,0,0,0,0
+  OPTXL 1,1,1,1,1,1,1,0,0
+  OPTFL 1,0,0
+  OPTDL (S8051.DLL)()(DP51.DLL)(-p52)(S8051.DLL)()(TP51.DLL)(-p52)
+  OPTDBG 48125,0,()()()()()()()()()() ()()()()
+  OPTDF 0x0
+  OPTLE <>
+  OPTLC <>
+EndOpt
+
+TARGOPT 6, (AOC_e1620Swb_4)
+ CLK51=12000000
+  OPTTT 1,1,1,0
+  OPTHX 0,65535,0,0,0
+  OPTLX 120,65,8,<.\list\>
+  OPTOX 16
+  OPTLT 1,1,1,0,1,1,0,1,0,0,0,0
+  OPTXL 1,1,1,1,1,1,1,0,0
+  OPTFL 1,0,0
+  OPTDL (S8051.DLL)()(DP51.DLL)(-p52)(S8051.DLL)()(TP51.DLL)(-p52)
+  OPTDBG 48125,0,()()()()()()()()()() ()()()()
+  OPTDF 0x0
+  OPTLE <>
+  OPTLC <>
+EndOpt
+
+TARGOPT 7, (ENVISION_H2030WS)
+ CLK51=12000000
+  OPTTT 1,1,1,0
+  OPTHX 0,65535,0,0,0
+  OPTLX 120,65,8,<.\list\>
+  OPTOX 16
+  OPTLT 1,1,1,0,1,1,0,1,0,0,0,0
+  OPTXL 1,1,1,1,1,1,1,0,0
+  OPTFL 1,0,0
+  OPTDL (S8051.DLL)()(DP51.DLL)(-p52)(S8051.DLL)()(TP51.DLL)(-p52)
+  OPTDBG 48125,0,()()()()()()()()()() ()()()()
+  OPTDF 0x0
+  OPTLE <>
+  OPTLC <>
+EndOpt
+
+TARGOPT 8, (ENVISION_H2083WL)
+ CLK51=12000000
+  OPTTT 1,1,1,0
+  OPTHX 0,65535,0,0,0
+  OPTLX 120,65,8,<.\list\>
+  OPTOX 16
+  OPTLT 1,1,1,0,1,1,0,1,0,0,0,0
+  OPTXL 1,1,1,1,1,1,1,0,0
+  OPTFL 1,0,0
+  OPTDL (S8051.DLL)()(DP51.DLL)(-p52)(S8051.DLL)()(TP51.DLL)(-p52)
+  OPTDBG 48125,0,()()()()()()()()()() ()()()()
+  OPTDF 0x0
+  OPTLE <>
+  OPTLC <>
+EndOpt
+
+TARGOPT 9, (ENVISION_H2083LS)
+ CLK51=12000000
+  OPTTT 1,1,1,0
+  OPTHX 0,65535,0,0,0
+  OPTLX 120,65,8,<.\list\>
+  OPTOX 16
+  OPTLT 1,1,1,0,1,1,0,1,0,0,0,0
+  OPTXL 1,1,1,1,1,1,1,0,0
+  OPTFL 1,0,0
+  OPTDL (S8051.DLL)()(DP51.DLL)(-p52)(S8051.DLL)()(TP51.DLL)(-p52)
+  OPTDBG 48125,0,()()()()()()()()()() ()()()()
+  OPTDF 0x0
+  OPTLE <>
+  OPTLC <>
+EndOpt
+
+TARGOPT 10, (ENVISION_P971waL_CMI)
+ CLK51=12000000
+  OPTTT 1,1,1,0
+  OPTHX 0,65535,0,0,0
+  OPTLX 120,65,8,<.\list\>
+  OPTOX 16
+  OPTLT 1,1,1,0,1,1,0,1,0,0,0,0
+  OPTXL 1,1,1,1,1,1,1,0,0
+  OPTFL 1,0,0
+  OPTDL (S8051.DLL)()(DP51.DLL)(-p52)(S8051.DLL)()(TP51.DLL)(-p52)
+  OPTDBG 48125,0,()()()()()()()()()() ()()()()
+  OPTDF 0x0
+  OPTLE <>
+  OPTLC <>
+EndOpt
+
+TARGOPT 11, (ENVISION_P971WALS)
+ CLK51=12000000
+  OPTTT 1,1,1,0
+  OPTHX 0,65535,0,0,0
+  OPTLX 120,65,8,<.\list\>
+  OPTOX 16
+  OPTLT 1,1,1,0,1,1,0,1,0,0,0,0
+  OPTXL 1,1,1,1,1,1,1,0,0
+  OPTFL 1,0,0
+  OPTDL (S8051.DLL)()(DP51.DLL)(-p52)(S8051.DLL)()(TP51.DLL)(-p52)
+  OPTDBG 48125,0,()()()()()()()()()() ()()()()
+  OPTDF 0x0
+  OPTLE <>
+  OPTLC <>
+EndOpt
+
+TARGOPT 12, (ENVISION_H2083WM)
+ CLK51=12000000
+  OPTTT 0,1,1,0
+  OPTHX 0,65535,0,0,0
+  OPTLX 120,65,8,<.\list\>
+  OPTOX 16
+  OPTLT 1,1,1,0,1,1,0,1,0,0,0,0
+  OPTXL 1,1,1,1,1,1,1,0,0
+  OPTFL 1,0,0
+  OPTDL (S8051.DLL)()(DP51.DLL)(-p52)(S8051.DLL)()(TP51.DLL)(-p52)
+  OPTDBG 48125,0,()()()()()()()()()() ()()()()
+  OPTDF 0x0
+  OPTLE <>
+  OPTLC <>
+EndOpt
+
+TARGOPT 13, (ENVISION_JRY1PTRL)
+ CLK51=12000000
+  OPTTT 1,1,1,0
+  OPTHX 0,65535,0,0,0
+  OPTLX 120,65,8,<.\list\>
+  OPTOX 16
+  OPTLT 1,1,1,0,1,1,0,1,0,0,0,0
+  OPTXL 1,1,1,1,1,1,1,0,0
+  OPTFL 1,0,0
+  OPTDL (S8051.DLL)()(DP51.DLL)(-p52)(S8051.DLL)()(TP51.DLL)(-p52)
+  OPTDBG 48125,0,()()()()()()()()()() ()()()()
+  OPTDF 0x0
+  OPTLE <>
+  OPTLC <>
+EndOpt
+
+TARGOPT 14, (ENVISION_JRYL1PTR_EV1)
+ CLK51=12000000
+  OPTTT 1,1,1,0
+  OPTHX 0,65535,0,0,0
+  OPTLX 120,65,8,<.\list\>
+  OPTOX 16
+  OPTLT 1,1,1,0,1,1,0,1,0,0,0,0
+  OPTXL 1,1,1,1,1,1,1,0,0
+  OPTFL 1,0,1
+  OPTDL (S8051.DLL)()(DP51.DLL)(-p52)(S8051.DLL)()(TP51.DLL)(-p52)
+  OPTDBG 48125,0,()()()()()()()()()() ()()()()
+  OPTDF 0x0
+  OPTLE <>
+  OPTLC <>
+EndOpt
+
+TARGOPT 15, (------SL-BOARD-------------)
+ CLK51=12000000
+  OPTTT 1,1,1,0
+  OPTHX 0,65535,0,0,0
+  OPTLX 120,65,8,<.\list\>
+  OPTOX 16
+  OPTLT 1,1,1,0,1,1,0,1,0,0,0,0
+  OPTXL 1,1,1,1,1,1,1,0,0
+  OPTFL 1,0,0
+  OPTDL (S8051.DLL)()(DP51.DLL)(-p52)(S8051.DLL)()(TP51.DLL)(-p52)
+  OPTDBG 48125,0,()()()()()()()()()() ()()()()
+  OPTDF 0x0
+  OPTLE <>
+  OPTLC <>
+EndOpt
+
+TARGOPT 16, (ENVISION_R2218WS)
+ CLK51=12000000
+  OPTTT 1,1,1,0
+  OPTHX 0,65535,0,0,0
+  OPTLX 120,65,8,<.\list\>
+  OPTOX 16
+  OPTLT 1,1,1,0,1,1,0,1,0,0,0,0
+  OPTXL 1,1,1,1,1,1,1,0,0
+  OPTFL 1,0,0
+  OPTDL (S8051.DLL)()(DP51.DLL)(-p52)(S8051.DLL)()(TP51.DLL)(-p52)
+  OPTDBG 48125,0,()()()()()()()()()() ()()()()
+  OPTDF 0x0
+  OPTLE <>
+  OPTLC <>
+EndOpt
+
+TARGOPT 17, (ENVISION_R2018WS)
+ CLK51=12000000
+  OPTTT 1,1,1,0
+  OPTHX 0,65535,0,0,0
+  OPTLX 120,65,8,<.\list\>
+  OPTOX 16
+  OPTLT 1,1,1,0,1,1,0,1,0,0,0,0
+  OPTXL 1,1,1,1,1,1,1,0,0
+  OPTFL 1,0,0
+  OPTDL (S8051.DLL)()(DP51.DLL)(-p52)(S8051.DLL)()(TP51.DLL)(-p52)
+  OPTDBG 48125,0,()()()()()()()()()() ()()()()
+  OPTDF 0x0
+  OPTLE <>
+  OPTLC <>
+EndOpt
+
