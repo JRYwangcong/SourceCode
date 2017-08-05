@@ -289,7 +289,7 @@ printData("brightness            ==%x", brightness);
 
 
 #define	MIN_BLIGHT_DISP_VALUE	0
-#define	MAX_BLIGHT_DISP_VALUE	100
+#define	MAX_BLIGHT_DISP_VALUE	50
 #define	DEF_BLIGHT_DISP_VALUE	(MIN_BLIGHT_DISP_VALUE + ((MAX_BLIGHT_DISP_VALUE-MIN_BLIGHT_DISP_VALUE)/2))
 
 
